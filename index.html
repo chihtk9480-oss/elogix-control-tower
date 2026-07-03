@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V7.7 - Auto Realtime Host Mirror</title>
+    <title>E-Logix Cyber Shield V7.8 - Auto Live Host Mirror</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1274,7 +1274,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V7.0</h1>
+            <h1>E-LOGIX SHIELD V7.8</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Hologram Warroom</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
@@ -1475,12 +1475,12 @@
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
         const NETWORK_TOPIC = "elogix_warroom_realtime_stream_2026";
-        const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_real_screen_webrtc_v76";
+        const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_auto_live_tab_webrtc_v78";
         const RTC_CONFIG = { iceServers: [
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:global.stun.twilio.com:3478" }
         ]};
-        window.trueActualMirrorOnly = false; // V7.7: host luôn hiện màn chơi realtime bằng dữ liệu game; screen share thật chỉ là tùy chọn
+        window.trueActualMirrorOnly = true; // V7.8: host ưu tiên hiện LIVE TAB thật tự động, không cần người chơi bấm bật live
         window.realScreenStreams = {};
         window.hostRtcPeers = {};
         window.hostRtcSessions = {};
@@ -1516,7 +1516,7 @@
                 const data = JSON.parse(event.data);
                 if (!data || data.event !== 'message' || !data.message) return null;
                 const msg = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
-                if (!msg || msg.game !== 'elogix-real-screen-v76') return null;
+                if (!msg || msg.game !== 'elogix-real-screen-v78') return null;
                 return msg;
             } catch(e) { return null; }
         }
@@ -1524,51 +1524,42 @@
         function sendRtcSignal(msg) {
             return fetch(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}`, {
                 method: 'POST',
-                body: JSON.stringify(Object.assign({ game:'elogix-real-screen-v76', ts:Date.now() }, msg))
+                body: JSON.stringify(Object.assign({ game:'elogix-real-screen-v78', ts:Date.now() }, msg))
             }).catch(() => {});
         }
 
         function installPlayerSharePanel() {
-            if (isHost || document.getElementById('real-share-panel')) return;
-            const panel = document.createElement('div');
-            panel.id = 'real-share-panel';
-            panel.className = 'real-share-panel';
-            panel.innerHTML = `
-                <div class="real-share-title">📡 HOST ĐANG THEO DÕI REALTIME</div>
-                <button id="real-share-btn" class="real-share-btn" onclick="requestTrueScreenShare()">TÙY CHỌN: CHIA SẺ MÀN HÌNH THẬT</button>
-                <div id="real-share-note" class="real-share-note">Không cần bấm nút này host vẫn thấy màn chơi realtime. Nút này chỉ dùng khi mở bằng máy tính Chrome/Edge để stream màn hình thật.</div>
-            `;
-            document.body.appendChild(panel);
-            updatePlayerSharePanel();
+            // V7.8: bỏ hoàn toàn nút tùy chọn. Người chơi bấm vào chơi là hệ thống tự bật LIVE TAB cho host.
+            const oldPanel = document.getElementById('real-share-panel');
+            if (oldPanel) oldPanel.remove();
         }
 
         function updatePlayerSharePanel() {
-            const btn = document.getElementById('real-share-btn');
-            const note = document.getElementById('real-share-note');
-            if (!btn || !note) return;
-            const st = window.trueScreenShareStatus || 'off';
-            btn.classList.toggle('stop', st === 'live' || st === 'live_tab');
-            if (st === 'live') {
-                btn.innerHTML = '🔴 ĐANG LIVE MÀN HÌNH THẬT — BẤM ĐỂ TẮT';
-                note.innerHTML = 'Host đang nhận trực tiếp screen share thật của nhóm. Đừng chuyển tab chứa thông tin riêng tư.';
-                btn.onclick = stopTrueScreenShare;
-            } else if (st === 'live_tab') {
-                btn.innerHTML = '🔵 ĐANG LIVE TAB GAME — BẤM ĐỂ TẮT';
-                note.innerHTML = 'Điện thoại không hỗ trợ share màn hình hệ thống nên web đang truyền trực tiếp hình ảnh tab game hiện tại lên host. Không còn pop-up lỗi.';
-                btn.onclick = stopTrueScreenShare;
-            } else if (st === 'requesting') {
-                btn.innerHTML = '⏳ ĐANG KẾT NỐI LIVE...';
-                note.innerHTML = 'Nếu trình duyệt có hộp thoại chia sẻ, chọn tab game. Nếu điện thoại không hỗ trợ, hệ thống sẽ tự chuyển sang LIVE TAB.';
-                btn.onclick = requestTrueScreenShare;
-            } else if (st === 'error') {
-                btn.innerHTML = '⚠️ BẬT LẠI LIVE MÀN HÌNH';
-                note.innerHTML = 'Không tạo được live stream trên trình duyệt này. Thử mở bằng Chrome/Edge, hoặc tải lại trang rồi bấm lại.';
-                btn.onclick = requestTrueScreenShare;
-            } else {
-                btn.innerHTML = 'TÙY CHỌN: CHIA SẺ MÀN HÌNH THẬT';
-                note.innerHTML = 'Host đã tự nhận trạng thái và màn chơi realtime qua hệ thống game. Chỉ bấm nút này nếu dùng máy tính Chrome/Edge và muốn stream màn hình thật.';
-                btn.onclick = requestTrueScreenShare;
+            // Không hiển thị nút bật/tắt live cho người chơi nữa.
+        }
+
+        let autoLiveBooting = false;
+        let autoLiveRetryTimer = null;
+        async function autoStartPlayerLiveMirror(reason = 'auto-start-on-play') {
+            if (isHost || !teamId) return;
+            if (window.trueScreenShareStatus === 'live_tab' && window.trueScreenStream) return;
+            if (autoLiveBooting) return;
+            autoLiveBooting = true;
+            ensurePlayerRtcListener();
+            try {
+                const ok = await startLiveTabCapture(reason);
+                if (!ok) throw new Error('auto-live-tab-failed');
+            } catch(e) {
+                window.trueScreenShareStatus = 'error';
+                broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'auto_retrying' }));
+                clearTimeout(autoLiveRetryTimer);
+                autoLiveRetryTimer = setTimeout(() => {
+                    autoLiveBooting = false;
+                    autoStartPlayerLiveMirror('auto-retry');
+                }, 3000);
+                return;
             }
+            autoLiveBooting = false;
         }
 
         function isLikelyMobileDevice() {
@@ -1844,12 +1835,21 @@
             if (!viewport || !payload) return;
             const team = String(payload.team);
             const stream = window.realScreenStreams[team];
+            if (stream) {
+                const existingVideo = document.getElementById(`actual-screen-video-${team}`);
+                if (existingVideo && existingVideo.srcObject === stream) {
+                    const title = document.getElementById('spec-title');
+                    if (title) title.innerHTML = `📺 LIVE TAB THẬT: NHÓM ${esc(team)}`;
+                    updateAutoFollowButton();
+                    return;
+                }
+            }
             const presence = getTruePresence(payload);
             const shareStatus = payload.screenShareStatus || payload.extra?.shareStatus || (stream ? 'live' : 'off');
             const hp = Number(payload.hp ?? 100);
             const time = Number(payload.time || 0);
             const onlineText = presence.isPlaying ? '<span class="real-live-badge">🟢 ĐANG CHƠI THẬT</span>' : presence.isOnline ? '<span class="real-warn-badge">🟡 ONLINE / ĐANG NGHỈ</span>' : '<span class="real-dead-badge">⚫ MẤT TÍN HIỆU</span>';
-            const shareText = stream ? (shareStatus === 'live_tab' || payload.extra?.shareMode === 'live_tab' ? '<span class="tab-capture-badge">🔵 ĐANG LIVE TAB GAME</span>' : '<span class="real-live-badge">🔴 ĐANG STREAM MÀN HÌNH THẬT</span>') : (shareStatus === 'live' || shareStatus === 'live_tab' ? '<span class="real-warn-badge">🟡 ĐANG KẾT NỐI STREAM...</span>' : '<span class="real-warn-badge">CHƯA BẬT LIVE MÀN HÌNH</span>');
+            const shareText = stream ? (shareStatus === 'live_tab' || payload.extra?.shareMode === 'live_tab' ? '<span class="tab-capture-badge">🔵 ĐANG LIVE TAB GAME</span>' : '<span class="real-live-badge">🔴 ĐANG STREAM MÀN HÌNH THẬT</span>') : (shareStatus === 'live' || shareStatus === 'live_tab' ? '<span class="real-warn-badge">🟡 ĐANG KẾT NỐI STREAM...</span>' : '<span class="real-warn-badge">🟡 ĐANG TỰ KẾT NỐI LIVE</span>');
             viewport.innerHTML = `
                 <div class="real-mirror-shell">
                     <div class="real-mirror-header">
@@ -1862,7 +1862,7 @@
                         <div class="real-status-card"><div class="real-status-label">Độ toàn vẹn</div><div class="real-status-value" style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">${hp}%</div></div>
                     </div>
                     <div class="real-video-frame">
-                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">CHƯA CÓ LIVE MÀN HÌNH TỪ NHÓM ${esc(team)}</div><div>Host đang thấy trạng thái online/chơi/idle thật. Để thấy màn chơi realtime, nhóm bấm <b>“BẬT LIVE MÀN HÌNH”</b>. Trên máy tính sẽ dùng screen share thật; trên điện thoại hệ thống tự dùng <b>LIVE TAB</b> nên không còn báo lỗi trình duyệt không hỗ trợ.</div></div>`}
+                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">ĐANG KẾT NỐI LIVE TAB TỰ ĐỘNG TỪ NHÓM ${esc(team)}</div><div>Người chơi không cần bấm bật live. Khi nhóm nhấn vào chơi, thiết bị sẽ tự truyền tab game lên host. Nếu đứng quá lâu ở đây, hãy đảm bảo điện thoại và host đang mở đúng cùng bản V7.8, cùng link Vercel, rồi tải lại trang người chơi.</div></div>`}
                     </div>
                 </div>`;
             if (stream) {
@@ -1978,7 +1978,7 @@
             const pill = document.getElementById('live-status-pill');
             if (btn) {
                 btn.classList.toggle('active', !!window.hostAutoFollow);
-                btn.innerHTML = window.hostAutoFollow ? '🔴 AUTO-FOLLOW NHÓM ĐANG CHƠI' : '📌 ĐANG GHIM NHÓM THỦ CÔNG';
+                btn.innerHTML = '🔴 TỰ ĐỘNG HIỆN NHÓM ĐANG CHƠI';
             }
             if (pill) {
                 const live = window.selectedSpecTeam ? window.teamStates[window.selectedSpecTeam] : null;
@@ -2026,17 +2026,17 @@
         }
 
         function selectSpecTeam(id) {
-            window.hostAutoFollow = false;
+            window.hostAutoFollow = true;
             window.selectedSpecTeam = id;
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
             document.getElementById(`card-team-${id}`).classList.add('spec-selected');
-            document.getElementById('spec-title').innerHTML = `📌 PIN SCREEN: NHÓM ${id}`;
+            document.getElementById('spec-title').innerHTML = `📡 REALTIME GAME MIRROR: NHÓM ${id}`;
             updateAutoFollowButton();
             requestScreenFromTeam(id);
             if (window.teamStates[id]) {
                 mirrorPlayerScreen(window.teamStates[id]);
             } else {
-                document.getElementById('mirror-viewport').innerHTML = `<div class="real-mirror-shell"><div class="real-no-stream" style="margin:auto;"><div class="big">NHÓM ${id} CHƯA CÓ TÍN HIỆU THẬT</div><div>Chưa có heartbeat từ thiết bị người chơi. Khi nhóm bấm kích hoạt trên điện thoại/laptop, host sẽ hiện online/chơi/idle và nếu nhóm bật chia sẻ màn hình thì sẽ hiện video thật.</div></div></div>`;
+                document.getElementById('mirror-viewport').innerHTML = `<div class="real-mirror-shell"><div class="real-no-stream" style="margin:auto;"><div class="big">NHÓM ${id} CHƯA CÓ TÍN HIỆU THẬT</div><div>Chưa có heartbeat từ thiết bị người chơi. Khi nhóm bấm kích hoạt trên điện thoại/laptop, host sẽ tự hiện màn chơi realtime, không cần bấm bật live.</div></div></div>`;
             }
         }
 
@@ -2280,6 +2280,9 @@
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
             installPlayerSharePanel();
             ensurePlayerRtcListener();
+            startPlayerRealtimeLoop();
+            sendCurrentPlayerPayload();
+            setTimeout(() => autoStartPlayerLiveMirror('auto-start-on-login'), 450);
             try { if (audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {}
             if (bgmIntervalId) return;
             originalAudioStarted = true;
@@ -2353,7 +2356,7 @@
             if (targetView) targetView.classList.add('active');
             stageTransitionSound(viewId);
         }
-        function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
+        function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); autoStartPlayerLiveMirror('auto-start-on-stage1'); initStage1(); }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array;
