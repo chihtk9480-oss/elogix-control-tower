@@ -1083,6 +1083,40 @@
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
         }
 
+
+        /* V7.4 TRUE LIVE MIRROR: host nhìn giống màn điện thoại người chơi */
+        .mirror-controls { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin:12px 0 4px; }
+        .mirror-control-btn { border:1px solid rgba(0,240,255,0.45); background:rgba(0,210,255,0.06); color:var(--neon-blue); border-radius:999px; padding:8px 14px; font-weight:900; letter-spacing:1px; cursor:pointer; font-family:inherit; box-shadow:0 0 18px rgba(0,210,255,0.12); }
+        .mirror-control-btn.active { border-color:var(--neon-green); color:var(--neon-green); background:rgba(0,255,102,0.1); box-shadow:0 0 22px rgba(0,255,102,0.22); }
+        .live-status-pill { border:1px solid rgba(176,38,255,0.45); background:rgba(176,38,255,0.08); color:#d8b4fe; border-radius:999px; padding:8px 14px; font-weight:900; letter-spacing:0.8px; font-size:0.82rem; }
+        .mirror-phone-viewport { min-height:620px; }
+        .live-phone-shell { width:min(100%, 560px); margin:0 auto; min-height:560px; border-radius:28px; padding:18px; background:radial-gradient(circle at 50% -15%, rgba(0,210,255,0.16), transparent 38%), linear-gradient(180deg, rgba(4,10,29,0.98), rgba(2,3,10,0.98)); border:1px solid rgba(0,240,255,0.38); box-shadow:0 0 40px rgba(0,210,255,0.16), inset 0 0 36px rgba(176,38,255,0.09); position:relative; overflow:hidden; }
+        .live-phone-shell::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); transform:translateX(-120%); animation: liveSweep 4s linear infinite; }
+        @keyframes liveSweep { 0%{transform:translateX(-120%);} 60%,100%{transform:translateX(120%);} }
+        .live-phone-top { display:flex; justify-content:space-between; gap:10px; align-items:center; border:1px solid rgba(0,240,255,0.28); border-radius:16px; padding:10px 12px; background:rgba(0,0,0,0.3); margin-bottom:14px; font-weight:900; font-size:0.86rem; }
+        .live-dot { width:9px; height:9px; border-radius:50%; background:var(--neon-green); display:inline-block; box-shadow:0 0 12px var(--neon-green); margin-right:8px; animation: pulseLive 1s infinite alternate; }
+        @keyframes pulseLive { from{opacity:.45; transform:scale(.9);} to{opacity:1; transform:scale(1.2);} }
+        .live-stage-label { color:var(--neon-purple); font-family:monospace; letter-spacing:1.2px; text-transform:uppercase; }
+        .live-phone-shell h2 { font-size:1.35rem; margin:10px 0 12px; text-align:center; }
+        .live-terminal { background:#03050f; padding:14px; border-radius:14px; font-size:0.95rem; color:#cbd5e1; min-height:48px; margin-bottom:13px; border-left:5px solid var(--neon-purple); line-height:1.55; text-align:justify; box-shadow:inset 0 0 18px rgba(0,0,0,0.62); }
+        .live-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:12px 0; }
+        .live-cell { background:rgba(13,20,52,0.62); border:1px solid rgba(34,45,99,0.9); padding:15px 8px; min-height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:900; font-size:0.9rem; word-break:break-word; overflow-wrap:anywhere; color:#e2e8f0; box-shadow:0 4px 14px rgba(0,0,0,0.32); }
+        .live-cell.bad { border-color:var(--neon-red); color:var(--neon-red); background:rgba(255,0,68,0.18); box-shadow:0 0 20px rgba(255,0,68,0.25); }
+        .live-cell.good { border-color:var(--neon-green); color:var(--neon-green); background:rgba(0,255,102,0.14); box-shadow:0 0 20px rgba(0,255,102,0.2); }
+        .live-option { display:block; width:100%; text-align:left; margin:8px 0; padding:13px 14px; border-radius:12px; border:1px solid rgba(0,240,255,0.28); background:rgba(13,20,52,0.64); color:#e2e8f0; font-weight:900; line-height:1.35; }
+        .live-request-box { background:#03050f; padding:16px; border-radius:14px; text-align:center; margin-bottom:14px; border:1px solid rgba(0,240,255,0.25); }
+        .live-ip-pill { display:inline-block; margin-bottom:10px; padding:7px 13px; border-radius:999px; border:1px solid rgba(0,210,255,0.45); background:rgba(0,210,255,0.1); color:var(--neon-blue); font-family:monospace; font-weight:900; letter-spacing:.8px; }
+        .live-action-row { display:flex; gap:12px; }
+        .live-action { flex:1; text-align:center; padding:15px 10px; border-radius:13px; font-weight:1000; border:1px solid; }
+        .live-action.allow { border-color:var(--neon-green); color:var(--neon-green); background:rgba(0,255,102,0.04); }
+        .live-action.block { border-color:var(--neon-red); color:var(--neon-red); background:rgba(255,0,68,0.04); }
+        .live-progress { height:12px; background:#03050f; border:1px solid rgba(0,240,255,0.25); border-radius:999px; overflow:hidden; margin-top:10px; }
+        .live-progress > span { display:block; height:100%; background:linear-gradient(90deg,#00ff66,#00d2ff); box-shadow:0 0 14px #00ff66; transition:width .2s; }
+        .live-next { margin-top:12px; border:1px solid rgba(0,255,102,.55); color:var(--neon-green); background:rgba(0,255,102,.08); border-radius:13px; padding:12px; text-align:center; font-weight:1000; letter-spacing:.8px; }
+        .live-waiting { margin:auto; text-align:center; color:#94a3b8; line-height:1.7; }
+        .host-card.live-playing { box-shadow:0 0 28px rgba(0,255,102,0.32), inset 0 0 20px rgba(0,255,102,0.05); border-color:var(--neon-green)!important; }
+        @media (max-width: 900px) { .mirror-phone-viewport { min-height:520px; } .live-phone-shell { min-height:480px; padding:14px; } }
+
     </style>
 </head>
 <body id="main-body">
@@ -1120,6 +1154,10 @@
                 
                 <div class="host-right-side">
                     <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📡 MIRROR MATRIX FEED: IDLE</div>
+                    <div class="mirror-controls">
+                        <button class="mirror-control-btn active" id="auto-follow-btn" onclick="enableAutoFollow()">🔴 AUTO-FOLLOW NHÓM ĐANG CHƠI</button>
+                        <span class="live-status-pill" id="live-status-pill">Đang chờ tín hiệu...</span>
+                    </div>
                     <div class="mirror-phone-viewport" id="mirror-viewport">
                         <div style="text-align: center; color: #475569; font-style: italic; margin: auto;">
                             Hãy click chuột chọn một nhóm cổ đông ở bên trái để kích hoạt tính năng chiếu gương màn hình điện thoại của họ lên máy chiếu lớp!
@@ -1145,7 +1183,7 @@
                 <option value="7">Nhóm Cổ Đông 7</option>
                 <option value="8">Nhóm Cổ Đông 8</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); broadcastState('🔑 Đăng nhập', { text: 'Đang kết nối tháp...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
+            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); window.currentStageCode='intro'; broadcastState('🚨 Tầng mở đầu · Khủng hoảng Maersk', { text: 'Đang đọc bối cảnh khủng hoảng...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
         </div>
 
         <!-- TẦNG 2: CỐT TRUYỆN -->
@@ -1335,6 +1373,7 @@
 
         window.teamStates = {};
         window.selectedSpecTeam = null;
+        window.hostAutoFollow = true;
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
         
@@ -1410,84 +1449,168 @@
             }).join("");
         }
 
+        function updateAutoFollowButton() {
+            const btn = document.getElementById('auto-follow-btn');
+            const pill = document.getElementById('live-status-pill');
+            if (btn) {
+                btn.classList.toggle('active', !!window.hostAutoFollow);
+                btn.innerHTML = window.hostAutoFollow ? '🔴 AUTO-FOLLOW NHÓM ĐANG CHƠI' : '📌 ĐANG GHIM NHÓM THỦ CÔNG';
+            }
+            if (pill) {
+                const live = window.selectedSpecTeam ? window.teamStates[window.selectedSpecTeam] : null;
+                pill.innerHTML = live ? `LIVE: NHÓM ${live.team} · ${live.stage || 'Đang đồng bộ'}` : 'Đang chờ tín hiệu...';
+            }
+        }
+
+        function livePriority(payload) {
+            const code = payload?.stageCode || 'login';
+            if (['c1','c2','c3','c4','c5'].includes(code)) return 50;
+            if (code === 'win') return 35;
+            if (code === 'intro') return 20;
+            return 10;
+        }
+
+        function chooseAutoFollowTeam(incomingPayload) {
+            if (!incomingPayload) return null;
+            const current = window.selectedSpecTeam ? window.teamStates[window.selectedSpecTeam] : null;
+            if (!current) return incomingPayload.team;
+            const inP = livePriority(incomingPayload);
+            const curP = livePriority(current);
+            if (inP > curP) return incomingPayload.team;
+            if (inP === curP && (incomingPayload._receivedAt || 0) >= (current._receivedAt || 0)) return incomingPayload.team;
+            return window.selectedSpecTeam;
+        }
+
+        function enableAutoFollow() {
+            window.hostAutoFollow = true;
+            const candidates = Object.values(window.teamStates || {}).sort((a,b) => {
+                const p = livePriority(b) - livePriority(a);
+                if (p !== 0) return p;
+                return (b._receivedAt || 0) - (a._receivedAt || 0);
+            });
+            if (candidates.length) {
+                window.selectedSpecTeam = candidates[0].team;
+                document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
+                const autoCard = document.getElementById(`card-team-${window.selectedSpecTeam}`);
+                if (autoCard) autoCard.classList.add('spec-selected');
+                const title = document.getElementById('spec-title');
+                if (title) title.innerHTML = `📡 TRUE LIVE SCREEN: NHÓM ${window.selectedSpecTeam}`;
+                mirrorPlayerScreen(candidates[0]);
+            }
+            updateAutoFollowButton();
+        }
+
         function selectSpecTeam(id) {
+            window.hostAutoFollow = false;
             window.selectedSpecTeam = id;
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
             document.getElementById(`card-team-${id}`).classList.add('spec-selected');
-            document.getElementById('spec-title').innerHTML = `📡 SCREEN MIRRORING: NHÓM ${id}`;
-            
+            document.getElementById('spec-title').innerHTML = `📌 PIN SCREEN: NHÓM ${id}`;
+            updateAutoFollowButton();
             if (window.teamStates[id]) {
                 mirrorPlayerScreen(window.teamStates[id]);
             } else {
-                document.getElementById('mirror-viewport').innerHTML = `<div style="margin: auto; text-align:center; color:#475569;">Nhóm ${id} đang chờ lệnh kích hoạt từ điện thoại...</div>`;
+                document.getElementById('mirror-viewport').innerHTML = `<div class="live-phone-shell"><div class="live-waiting">Nhóm ${id} đang chờ kích hoạt từ điện thoại...</div></div>`;
             }
+        }
+
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+        }
+
+        function arr(v) { return Array.isArray(v) ? v : []; }
+
+        function liveTopBar(payload) {
+            const hp = Number(payload.hp ?? 100);
+            const time = Number(payload.time || 0);
+            return `<div class="live-phone-top">
+                <span><span class="live-dot"></span>NHÓM ${esc(payload.team)} · ${time}s</span>
+                <span style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">HỆ THỐNG: ${hp}%</span>
+            </div>
+            <div class="live-stage-label">TẦNG HIỆN TẠI: ${esc((payload.stage || 'Đang đồng bộ').toUpperCase())}</div>`;
+        }
+
+        function renderLiveGrid(items, badClicked=[], goodClicked=[], type='malware') {
+            return `<div class="live-grid">${arr(items).map(txt => {
+                const bad = arr(badClicked).includes(txt);
+                const good = arr(goodClicked).includes(txt);
+                return `<div class="live-cell ${bad ? 'bad' : good ? 'good' : ''}">${esc(txt)}</div>`;
+            }).join('')}</div>`;
         }
 
         function mirrorPlayerScreen(payload) {
             const viewport = document.getElementById('mirror-viewport');
-            if (!viewport) return;
+            if (!viewport || !payload) return;
+            const extra = payload.extra || {};
+            const hp = Number(payload.hp ?? 100);
+            let body = '';
 
-            let html = `
-                <div class="status-bar" style="font-size:0.85rem; padding:8px 12px; margin-bottom:10px;">
-                    <span>⚡ VIRTUAL SCREEN</span>
-                    <span style="color:var(--neon-green)">HP: ${payload.hp}%</span>
-                </div>
-                <div style="font-size:0.85rem; color:var(--neon-purple); font-family:monospace; margin-bottom:10px;">TẦNG HIỆN TẠI: ${payload.stage.toUpperCase()}</div>
-            `;
-
-            if (payload.stageCode === "c1") {
-                html += `<h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2><div class="mirror-grid">`;
-                payload.extra.items.forEach(txt => {
-                    let isBadSelected = payload.extra.badClicked.includes(txt);
-                    let isGoodSelected = payload.extra.goodClicked.includes(txt);
-                    let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
-                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
-                });
-                html += `</div><div style="font-size:0.8rem; margin-top:5px;">Tiến độ: ${payload.extra.found}/4</div>`;
-            } else if (payload.stageCode === "c2") {
-                html += `<h2>CẤU TRÚC KHO BÃI WMS</h2><div class="mirror-grid">`;
-                payload.extra.items.forEach(txt => {
-                    let isDone = payload.extra.doneSteps.includes(txt);
-                    html += `<div class="mirror-item ${isDone ? 'm-good' : ''}">${txt}</div>`;
-                });
-                html += `</div>`;
-            } else if (payload.stageCode === "c3") {
-                html += `<h2>ĐẤU TRÍ INCOTERMS</h2>
-                         <div style="background:#040714; padding:10px; border-radius:6px; font-size:0.9rem; margin-bottom:10px; border:1px solid #222d66;">${payload.extra.qText}</div>
-                         <div style="display: flex; flex-direction: column; gap: 8px;">`;
-                payload.extra.opts.forEach(o => {
-                    html += `<div class="mirror-item" style="text-align: left; padding: 10px;">${o}</div>`;
-                });
-                html += `</div>`;
-            } else if (payload.stageCode === "c4") {
-                html += `<h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2><div class="mirror-grid">`;
-                payload.extra.items.forEach(txt => {
-                    let isBadSelected = payload.extra.badClicked.includes(txt);
-                    let isGoodSelected = payload.extra.goodClicked.includes(txt);
-                    let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
-                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
-                });
-                html += `</div>`;
-            } else if (payload.stageCode === "c5") {
-                const mirrorTaskText = payload.extra.taskText || payload.extra.text || "Đang quét...";
-                const mirrorTaskIp = payload.extra.taskIp || payload.extra.ip || "Đang quét...";
-                html += `<h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
-                         <div style="background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;">
-                            <div style="display:inline-block; margin-bottom:8px; padding:5px 10px; border-radius:999px; border:1px solid rgba(0,210,255,0.35); background:rgba(0,210,255,0.08); color:var(--neon-blue); font-family:monospace; font-weight:800;">IP NGUỒN: ${mirrorTaskIp}</div>
-                            <div style="line-height:1.45; font-weight:bold; color:#f8fafc;">${mirrorTaskText}</div>
-                         </div>
-                         <div style="display:flex; gap:10px;"><div class="mirror-item" style="flex:1; border-color:var(--neon-green); color:var(--neon-green);">ALLOW</div><div class="mirror-item" style="flex:1; border-color:var(--neon-red); color:var(--neon-red);">BLOCK</div></div>`;
-            } else if (payload.stageCode === "win") {
-                html += `<div style="text-align:center; margin:auto;"><h2 style="color:var(--neon-green); font-size:1.5rem;">🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style="font-size:1.1rem; margin-top:10px;">Hệ thống khôi phục: ${payload.hp}%</div><div style="font-size:0.9rem; color:#64748b;">Thời gian: ${payload.time}s</div></div>`;
+            if (payload.stageCode === 'c1') {
+                const found = Number(extra.found || 0);
+                body = `${liveTopBar(payload)}
+                    <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
+                    <div class="live-terminal">&gt; LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!</div>
+                    ${renderLiveGrid(extra.items || [], extra.badClicked || [], extra.goodClicked || [])}
+                    <div class="live-progress"><span style="width:${Math.min(100, found / 4 * 100)}%"></span></div>
+                    ${found >= 4 ? '<div class="live-next">TIẾN VÀO TẦNG SAO LƯU KHO</div>' : ''}`;
+            } else if (payload.stageCode === 'c2') {
+                const items = extra.items || ['1. BLOCK','2. ROW','3. LINE','4. TIER'];
+                const done = arr(extra.doneSteps || []);
+                body = `${liveTopBar(payload)}
+                    <h2>CẤU TRÚC ĐỊNH VỊ KHO BÃI</h2>
+                    <div class="live-terminal">&gt; LỖI: Sập sơ đồ kho WMS. Hãy khôi phục lại sơ đồ vị trí lưu giữ hàng hóa theo đúng thứ tự phân tầng chuỗi logistics từ RỘNG NHẤT đến HẸP NHẤT!</div>
+                    <div style="text-align:center; color:var(--neon-blue); font-weight:1000; margin:8px 0 10px;">${done.length >= 4 ? '✅ KHÔI PHỤC THÀNH CÔNG SƠ ĐỒ KHO BÃI!' : '[ TỰ NHỚ - BẮT ĐẦU TỪ BLOCK ]'}</div>
+                    <div class="live-grid">${arr(items).map(step => `<div class="live-cell ${done.includes(step) ? 'good' : ''}">${esc(String(step).split(' ').slice(1).join(' ') || step)}</div>`).join('')}</div>
+                    ${done.length >= 4 ? '<div class="live-next">TIẾN VÀO TẦNG QUẢN LÝ RỦI RO</div>' : ''}`;
+            } else if (payload.stageCode === 'c3') {
+                body = `${liveTopBar(payload)}
+                    <h2>ĐẤU TRÍ TRANH CHẤP RỦI RO</h2>
+                    <div class="live-terminal">&gt; LỖI: Phát sinh tranh chấp bảo hiểm do tàu dừng hoạt động. Hãy giải quyết nhanh bài toán Incoterms thực tế sau:</div>
+                    <div class="live-request-box" style="text-align:justify; font-weight:900; line-height:1.55;">${esc(extra.qText || 'Đang tải tình huống...')}</div>
+                    ${(extra.opts || []).map(o => `<div class="live-option">${esc(o)}</div>`).join('')}`;
+            } else if (payload.stageCode === 'c4') {
+                const cleared = arr(extra.badClicked || []).length;
+                body = `${liveTopBar(payload)}
+                    <h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2>
+                    <div class="live-terminal">&gt; LỖI: Hệ thống một cửa bị chèn tờ khai gian lận. Dựa vào kiến thức nghiệp vụ cảng Cát Lái, hãy quét tìm và click chặn đứng đúng 4 tờ khai giả mạo!</div>
+                    ${renderLiveGrid(extra.items || [], extra.badClicked || [], extra.goodClicked || [])}
+                    ${cleared >= 4 ? '<div class="live-next">TIẾN VÀO KHÓA TRUY CẬP CUỐI</div>' : ''}`;
+            } else if (payload.stageCode === 'c5') {
+                const taskText = extra.taskText || extra.text || 'Đang quét...';
+                const taskIp = extra.taskIp || extra.ip || 'Đang quét...';
+                body = `${liveTopBar(payload)}
+                    <h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
+                    <div class="live-terminal">&gt; HƯỚNG DẪN: Nếu phát hiện hành vi phá hoại dữ liệu ➔ BLOCK. Nếu là tác vụ công việc hợp pháp ➔ ALLOW.</div>
+                    <div class="live-request-box">
+                        <div style="font-size:.74rem; color:#64748b; text-transform:uppercase; margin-bottom:7px;">Yêu cầu hệ thống phát hiện:</div>
+                        <div class="live-ip-pill">IP NGUỒN: ${esc(taskIp)}</div>
+                        <div style="font-weight:1000; color:#fff; line-height:1.5;">${esc(taskText)}</div>
+                    </div>
+                    <div class="live-action-row"><div class="live-action allow">ALLOW<br><span style="font-size:.75rem;">HỢP PHÁP</span></div><div class="live-action block">BLOCK<br><span style="font-size:.75rem;">NGUY HIỂM</span></div></div>`;
+            } else if (payload.stageCode === 'win') {
+                body = `${liveTopBar(payload)}
+                    <div style="text-align:center; margin-top:60px;">
+                        <h2 style="color:var(--neon-green); text-shadow:0 0 18px var(--neon-green);">🏆 HỆ THỐNG ĐÃ KHÔI PHỤC</h2>
+                        <div style="font-size:4rem; font-weight:1000; color:var(--neon-green); text-shadow:0 0 25px rgba(0,255,102,.45);">${hp}%</div>
+                        <div style="line-height:1.9; color:#cbd5e1; font-weight:900;">Nhóm Cổ Đông ${esc(payload.team)}<br>Thời gian phá đảo: <span style="color:var(--neon-blue)">${esc(payload.time || 0)} giây</span></div>
+                    </div>`;
+            } else if (payload.stageCode === 'intro') {
+                body = `${liveTopBar(payload)}
+                    <div style="background: rgba(255,0,68,0.15); border: 1px solid var(--neon-red); padding: 12px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin: 20px 0;">🚨 CẢNH BÁO KHỦNG HOẢNG TOÀN CẦU 🚨</div>
+                    <div class="live-terminal" style="border-left-color:var(--neon-red);">Hãng tàu Maersk bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Hội đồng cổ đông hãy vượt qua 5 tầng bảo mật để tự cứu lấy dữ liệu vận tải doanh nghiệp.</div>
+                    <div class="live-next">KÍCH HOẠT CHIẾN DỊCH GIẢI CỨU</div>`;
             } else {
-                const fallbackText = payload.extra?.text || payload.stage || "Đang chuẩn bị nhận lệnh phòng tác chiến...";
-                html += `<div style="text-align:center; margin:auto; color:#94a3b8; line-height:1.6;">
-                    <div style="font-size:1.05rem; color:var(--neon-blue); font-weight:900; margin-bottom:10px;">ĐÃ NHẬN TÍN HIỆU TỪ NHÓM ${payload.team}</div>
-                    <div>${fallbackText}</div>
-                </div>`;
+                body = `${liveTopBar(payload)}
+                    <div class="live-waiting" style="padding-top:80px;">
+                        <div style="font-size:1.15rem; color:var(--neon-blue); font-weight:1000; margin-bottom:12px;">ĐÃ NHẬN TÍN HIỆU TỪ NHÓM ${esc(payload.team)}</div>
+                        <div>${esc(extra.text || payload.stage || 'Đang kết nối tháp...')}</div>
+                    </div>`;
             }
 
-            viewport.innerHTML = html;
+            viewport.innerHTML = `<div class="live-phone-shell">${body}</div>`;
+            const title = document.getElementById('spec-title');
+            if (title && window.hostAutoFollow) title.innerHTML = `📡 TRUE LIVE SCREEN: NHÓM ${esc(payload.team)}`;
+            updateAutoFollowButton();
         }
 
         function parseNtfyPayload(data) {
@@ -1501,10 +1624,16 @@
 
         function applyHostPayload(payload) {
             if (!payload || !payload.team) return;
+            const previousPayload = window.teamStates[payload.team];
+            const incomingStamp = Number(payload.sentAt || 0);
+            const previousStamp = Number(previousPayload?.sentAt || 0);
+            if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
+            payload._receivedAt = incomingStamp || Date.now();
             window.teamStates[payload.team] = payload;
 
+            document.querySelectorAll('.host-card').forEach(c => c.classList.remove('live-playing'));
             let card = document.getElementById(`card-team-${payload.team}`);
-            if(card) card.classList.add("active-card");
+            if(card) { card.classList.add("active-card"); if (livePriority(payload) >= 50) card.classList.add('live-playing'); }
             let stageEl = document.getElementById(`host-stage-${payload.team}`);
             if(stageEl) stageEl.innerHTML = payload.stage || "Đang đồng bộ...";
             let timeEl = document.getElementById(`host-time-${payload.team}`);
@@ -1519,17 +1648,16 @@
                 else fill.style.background = "var(--neon-green)";
             }
 
-            // Tự chiếu nhóm vừa có tín hiệu nếu host chưa bấm chọn nhóm nào.
-            if (!window.selectedSpecTeam) {
-                window.selectedSpecTeam = payload.team;
+            // Auto-follow: host tự nhảy sang nhóm đang chơi/thao tác mới nhất để thấy màn hình thật theo thời gian thực.
+            if (window.hostAutoFollow) {
+                window.selectedSpecTeam = chooseAutoFollowTeam(payload);
                 document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
-                const autoCard = document.getElementById(`card-team-${payload.team}`);
+                const autoCard = document.getElementById(`card-team-${window.selectedSpecTeam}`);
                 if (autoCard) autoCard.classList.add('spec-selected');
-                const title = document.getElementById('spec-title');
-                if (title) title.innerHTML = `📡 SCREEN MIRRORING: NHÓM ${payload.team}`;
             }
 
             if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
+            updateAutoFollowButton();
             renderLeaderboard();
         }
 
@@ -1576,11 +1704,28 @@
             };
         }
 
-        function broadcastState(stageName, extraData = {}) {
+        let playerRealtimeTimer = null;
+        let lastStageName = "🔑 Đăng nhập";
+        let lastExtraData = { text: "Đang kết nối tháp..." };
+
+        function startPlayerRealtimeLoop() {
+            if (isHost || playerRealtimeTimer) return;
+            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 1000);
+        }
+
+        function sendCurrentPlayerPayload() {
             if (isHost || !teamId) return;
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            const payload = { team: teamId, stage: stageName, stageCode: window.currentStageCode || "login", hp: integrity, time: currentSeconds, extra: extraData };
+            const payload = { team: teamId, stage: lastStageName, stageCode: window.currentStageCode || "login", hp: integrity, time: currentSeconds, sentAt: Date.now(), extra: lastExtraData || {} };
             fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
+        }
+
+        function broadcastState(stageName, extraData = {}) {
+            if (isHost || !teamId) return;
+            lastStageName = stageName || lastStageName;
+            lastExtraData = extraData || {};
+            startPlayerRealtimeLoop();
+            sendCurrentPlayerPayload();
         }
 
         // ĐIỀU HƯỚNG ROUTING BAN ĐẦU
