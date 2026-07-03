@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V7.8 - Auto Live Host Mirror</title>
+    <title>E-Logix Cyber Shield V7.9 - Stable Realtime Host Mirror</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1287,7 +1287,7 @@
                 <option value="7">Nhóm Cổ Đông 7</option>
                 <option value="8">Nhóm Cổ Đông 8</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); requestTrueScreenShare(); window.currentStageCode='intro'; broadcastState('🚨 Tầng mở đầu · Khủng hoảng Maersk', { text: 'Đang đọc bối cảnh khủng hoảng...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
+            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); window.currentStageCode='intro'; broadcastState('🚨 Tầng mở đầu · Khủng hoảng Maersk', { text: 'Đang đọc bối cảnh khủng hoảng...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
         </div>
 
         <!-- TẦNG 2: CỐT TRUYỆN -->
@@ -1480,7 +1480,7 @@
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:global.stun.twilio.com:3478" }
         ]};
-        window.trueActualMirrorOnly = true; // V7.8: host ưu tiên hiện LIVE TAB thật tự động, không cần người chơi bấm bật live
+        window.trueActualMirrorOnly = false; // V7.9 FIX: dùng lại cơ chế mirror trạng thái game như V4.4; không xin quyền share màn hình
         window.realScreenStreams = {};
         window.hostRtcPeers = {};
         window.hostRtcSessions = {};
@@ -1541,25 +1541,12 @@
         let autoLiveBooting = false;
         let autoLiveRetryTimer = null;
         async function autoStartPlayerLiveMirror(reason = 'auto-start-on-play') {
+            // V7.9 FIX: không dùng getDisplayMedia/WebRTC/html2canvas nữa.
+            // Người chơi bấm vào game là tự gửi heartbeat + trạng thái game cho host.
             if (isHost || !teamId) return;
-            if (window.trueScreenShareStatus === 'live_tab' && window.trueScreenStream) return;
-            if (autoLiveBooting) return;
-            autoLiveBooting = true;
-            ensurePlayerRtcListener();
-            try {
-                const ok = await startLiveTabCapture(reason);
-                if (!ok) throw new Error('auto-live-tab-failed');
-            } catch(e) {
-                window.trueScreenShareStatus = 'error';
-                broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'auto_retrying' }));
-                clearTimeout(autoLiveRetryTimer);
-                autoLiveRetryTimer = setTimeout(() => {
-                    autoLiveBooting = false;
-                    autoStartPlayerLiveMirror('auto-retry');
-                }, 3000);
-                return;
-            }
-            autoLiveBooting = false;
+            window.trueScreenShareStatus = 'game_state';
+            startPlayerRealtimeLoop();
+            sendCurrentPlayerPayload();
         }
 
         function isLikelyMobileDevice() {
@@ -1897,7 +1884,7 @@
             if (window.selectedSpecTeam && window.teamStates[window.selectedSpecTeam]) {
                 const current = window.teamStates[window.selectedSpecTeam];
                 // chỉ refresh text khi không có video để tránh nhấp nháy video
-                if (!window.realScreenStreams[String(window.selectedSpecTeam)]) renderActualMirror(current);
+                if (!window.realScreenStreams[String(window.selectedSpecTeam)]) mirrorPlayerScreen(current);
             }
         }
 
@@ -2020,7 +2007,6 @@
                 const title = document.getElementById('spec-title');
                 if (title) title.innerHTML = `📡 REALTIME GAME MIRROR: NHÓM ${window.selectedSpecTeam}`;
                 mirrorPlayerScreen(candidates[0]);
-                requestScreenFromTeam(candidates[0].team);
             }
             updateAutoFollowButton();
         }
@@ -2032,11 +2018,10 @@
             document.getElementById(`card-team-${id}`).classList.add('spec-selected');
             document.getElementById('spec-title').innerHTML = `📡 REALTIME GAME MIRROR: NHÓM ${id}`;
             updateAutoFollowButton();
-            requestScreenFromTeam(id);
             if (window.teamStates[id]) {
                 mirrorPlayerScreen(window.teamStates[id]);
             } else {
-                document.getElementById('mirror-viewport').innerHTML = `<div class="real-mirror-shell"><div class="real-no-stream" style="margin:auto;"><div class="big">NHÓM ${id} CHƯA CÓ TÍN HIỆU THẬT</div><div>Chưa có heartbeat từ thiết bị người chơi. Khi nhóm bấm kích hoạt trên điện thoại/laptop, host sẽ tự hiện màn chơi realtime, không cần bấm bật live.</div></div></div>`;
+                document.getElementById('mirror-viewport').innerHTML = `<div class="real-mirror-shell"><div class="real-no-stream" style="margin:auto;"><div class="big">NHÓM ${id} CHƯA CÓ TÍN HIỆU REALTIME</div><div>Chưa có heartbeat từ thiết bị người chơi. Khi nhóm bấm KÍCH HOẠT HỆ THỐNG MẠNG trên điện thoại/laptop, host sẽ tự hiện màn chơi realtime, không cần bật live hay cấp quyền chia sẻ màn hình.</div></div></div>`;
             }
         }
 
@@ -2183,7 +2168,7 @@
                 if (autoCard) autoCard.classList.add('spec-selected');
             }
 
-            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); requestScreenFromTeam(payload.team); }
+            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
             updateAutoFollowButton();
             refreshHostPresenceCards();
             renderLeaderboard();
