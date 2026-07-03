@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V7.2 - Supreme UI with V4.4 Audio</title>
+    <title>E-Logix Cyber Shield V7.3 - Supreme UI with V4.4 Audio</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1480,41 +1480,99 @@
             } else if (payload.stageCode === "win") {
                 html += `<div style="text-align:center; margin:auto;"><h2 style="color:var(--neon-green); font-size:1.5rem;">🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style="font-size:1.1rem; margin-top:10px;">Hệ thống khôi phục: ${payload.hp}%</div><div style="font-size:0.9rem; color:#64748b;">Thời gian: ${payload.time}s</div></div>`;
             } else {
-                html += `<div style="text-align:center; margin:auto; color:#64748b;">Đang chuẩn bị nhận lệnh phòng tác chiến...</div>`;
+                const fallbackText = payload.extra?.text || payload.stage || "Đang chuẩn bị nhận lệnh phòng tác chiến...";
+                html += `<div style="text-align:center; margin:auto; color:#94a3b8; line-height:1.6;">
+                    <div style="font-size:1.05rem; color:var(--neon-blue); font-weight:900; margin-bottom:10px;">ĐÃ NHẬN TÍN HIỆU TỪ NHÓM ${payload.team}</div>
+                    <div>${fallbackText}</div>
+                </div>`;
             }
 
             viewport.innerHTML = html;
         }
 
+        function parseNtfyPayload(data) {
+            try {
+                if (!data || data.event !== "message" || !data.message) return null;
+                const payload = typeof data.message === "string" ? JSON.parse(data.message) : data.message;
+                if (!payload || !payload.team) return null;
+                return payload;
+            } catch(e) { return null; }
+        }
+
+        function applyHostPayload(payload) {
+            if (!payload || !payload.team) return;
+            window.teamStates[payload.team] = payload;
+
+            let card = document.getElementById(`card-team-${payload.team}`);
+            if(card) card.classList.add("active-card");
+            let stageEl = document.getElementById(`host-stage-${payload.team}`);
+            if(stageEl) stageEl.innerHTML = payload.stage || "Đang đồng bộ...";
+            let timeEl = document.getElementById(`host-time-${payload.team}`);
+            if(timeEl) timeEl.innerHTML = (payload.time || 0) + "s";
+            let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
+            if(hpTxtEl) hpTxtEl.innerHTML = (payload.hp ?? 100) + "%";
+            const fill = document.getElementById(`host-hp-fill-${payload.team}`);
+            if(fill) {
+                fill.style.width = (payload.hp ?? 100) + "%";
+                if(payload.hp < 40) fill.style.background = "var(--neon-red)";
+                else if(payload.hp < 75) fill.style.background = "orange";
+                else fill.style.background = "var(--neon-green)";
+            }
+
+            // Tự chiếu nhóm vừa có tín hiệu nếu host chưa bấm chọn nhóm nào.
+            if (!window.selectedSpecTeam) {
+                window.selectedSpecTeam = payload.team;
+                document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
+                const autoCard = document.getElementById(`card-team-${payload.team}`);
+                if (autoCard) autoCard.classList.add('spec-selected');
+                const title = document.getElementById('spec-title');
+                if (title) title.innerHTML = `📡 SCREEN MIRRORING: NHÓM ${payload.team}`;
+            }
+
+            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
+            renderLeaderboard();
+        }
+
+        async function loadCachedPlayerStates() {
+            if (!isHost) return;
+            try {
+                const res = await fetch(`https://ntfy.sh/${NETWORK_TOPIC}/json?poll=1&_=${Date.now()}`, { cache: "no-store" });
+                const text = await res.text();
+                if (!text.trim()) return;
+                text.trim().split(/\n+/).forEach(line => {
+                    try {
+                        const data = JSON.parse(line);
+                        const payload = parseNtfyPayload(data);
+                        if (payload) applyHostPayload(payload);
+                    } catch(e) {}
+                });
+            } catch(e) {
+                const title = document.getElementById('spec-title');
+                if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: ĐANG THỬ KẾT NỐI LẠI";
+            }
+        }
+
         function listenToPlayerUpdates() {
+            // 1) Lấy lại tín hiệu cache: sửa lỗi host mở sau người chơi nên không thấy màn hình.
+            loadCachedPlayerStates();
+            setInterval(loadCachedPlayerStates, 3000);
+
+            // 2) Nghe real-time qua SSE như bản cũ.
             const source = new EventSource(`https://ntfy.sh/${NETWORK_TOPIC}/sse`);
+            source.onopen = () => {
+                const title = document.getElementById('spec-title');
+                if (title && !window.selectedSpecTeam) title.innerHTML = "📡 MIRROR MATRIX FEED: ĐÃ KẾT NỐI, ĐANG CHỜ NGƯỜI CHƠI";
+            };
             source.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    if (data.event === "message") {
-                        const payload = JSON.parse(data.message);
-                        if (payload && payload.team) {
-                            window.teamStates[payload.team] = payload;
-                            let card = document.getElementById(`card-team-${payload.team}`);
-                            if(card) card.classList.add("active-card");
-                            let stageEl = document.getElementById(`host-stage-${payload.team}`);
-                            if(stageEl) stageEl.innerHTML = payload.stage;
-                            let timeEl = document.getElementById(`host-time-${payload.team}`);
-                            if(timeEl) timeEl.innerHTML = payload.time + "s";
-                            let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
-                            if(hpTxtEl) hpTxtEl.innerHTML = payload.hp + "%";
-                            const fill = document.getElementById(`host-hp-fill-${payload.team}`);
-                            if(fill) {
-                                fill.style.width = payload.hp + "%";
-                                if(payload.hp < 40) fill.style.background = "var(--neon-red)";
-                                else if(payload.hp < 75) fill.style.background = "orange";
-                                else fill.style.background = "var(--neon-green)";
-                            }
-                            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
-                            renderLeaderboard();
-                        }
-                    }
+                    const payload = parseNtfyPayload(data);
+                    if (payload) applyHostPayload(payload);
                 } catch(e) {}
+            };
+            source.onerror = () => {
+                const title = document.getElementById('spec-title');
+                if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: MẠNG CHẬP CHỜN, ĐANG TỰ KẾT NỐI LẠI";
             };
         }
 
@@ -1534,7 +1592,7 @@
             document.getElementById("view-login").classList.add("active");
         }
 
-        // V7.2 AUDIO CORE: khôi phục đúng chất âm bản 4.4
+        // V7.3 AUDIO CORE: khôi phục đúng chất âm bản 4.4
         // Giữ giao diện V7.1, nhưng âm thanh quay về kiểu spy/cyber đơn giản của V4.4.
         let originalAudioStarted = false;
 
