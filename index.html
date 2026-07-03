@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V4.2 - Mission Control Center</title>
+    <title>E-Logix Cyber Shield V4.4 - Multi-Device Cinematic HUD</title>
     <style>
         :root {
             --bg-color: #020308;
-            --panel-bg: rgba(6, 11, 30, 0.9);
+            --panel-bg: rgba(6, 11, 30, 0.92);
             --neon-green: #00ff66;
             --neon-red: #ff0044;
             --neon-blue: #00d2ff;
@@ -16,6 +16,7 @@
             --text-sub: #475569;
         }
 
+        /* NỀN MA TRẬN KHÔNG GIAN SÂN KHẤU */
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
@@ -33,6 +34,7 @@
             box-sizing: border-box;
         }
 
+        /* KHUNG TÁC CHIẾN MỞ RỘNG BIÊN ĐỘ VÀ RESPONSIVE */
         .game-wrapper {
             width: 100%;
             max-width: 760px;
@@ -48,9 +50,8 @@
             transition: max-width 0.4s ease;
         }
 
-        /* Khi ở chế độ máy chiếu, tự động mở rộng khung cực đại để xếp 2 bên */
         body.host-mode-active .game-wrapper {
-            max-width: 1180px;
+            max-width: 1240px;
         }
 
         .game-wrapper::before { content: ""; position: absolute; top: 15px; left: 15px; width: 22px; height: 22px; border-top: 3px solid var(--neon-blue); border-left: 3px solid var(--neon-blue); pointer-events: none; }
@@ -73,10 +74,13 @@
         .btn:hover { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 25px rgba(0,255,102,0.4); transform: translateY(-2px); }
         .btn-action { background: linear-gradient(135deg, var(--neon-purple), #4900c2); color: white; border: none; box-shadow: 0 0 25px rgba(189,0,255,0.6); font-size: 1.25rem; letter-spacing: 1px; }
 
-        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 15px 0; }
-        .grid-item { background: rgba(13, 20, 52, 0.5); border: 1px solid rgba(34, 45, 99, 0.8); padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .grid-item.selected-malware { border-color: var(--neon-red) !important; color: var(--neon-red); background: rgba(255,0,68,0.2) !important; box-shadow: 0 0 25px var(--neon-red) !important; }
-        .grid-item.selected-clean { border-color: var(--neon-green) !important; color: var(--neon-green); background: rgba(0,255,102,0.18) !important; box-shadow: 0 0 25px var(--neon-green) !important; }
+        /* ÉP GIỚI HẠN KHÔNG CHO GRID PHÌNH TO VƯỢT KHUNG HÌNH ĐIỆN THOẠI */
+        .grid-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin: 15px 0; }
+        
+        /* BỔ SUNG TỰ ĐỘNG BẺ DÒNG CHỮ DÀI CHỐNG TRÀN */
+        .grid-item { background: rgba(13, 20, 52, 0.5); border: 1px solid rgba(34, 45, 99, 0.8); padding: 22px 12px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); word-break: break-all; overflow-wrap: break-word; }
+        .grid-item.selected-malware { border-color: var(--neon-red) !important; color: var(--neon-red); background: rgba(255,0,68,0.25) !important; box-shadow: 0 0 25px var(--neon-red) !important; }
+        .grid-item.selected-clean { border-color: var(--neon-green) !important; color: var(--neon-green); background: rgba(0,255,102,0.2) !important; box-shadow: 0 0 25px var(--neon-green) !important; }
 
         .terminal-text { background: #03050f; padding: 18px; border-radius: 12px; font-size: 1.05rem; color: #cbd5e1; min-height: 55px; margin-bottom: 15px; border-left: 5px solid var(--neon-purple); line-height: 1.6; text-align: justify; }
         .status-bar { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 18px; background: rgba(3, 5, 15, 0.8); padding: 12px 18px; border-radius: 10px; border-left: 5px solid var(--neon-blue); }
@@ -84,56 +88,79 @@
         .progress-bar { width: 100%; background: #03050f; height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid rgba(0,240,255,0.2); margin-top: 5px; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff66, #00ffcc); width: 0%; transition: width 0.2s; box-shadow: 0 0 10px var(--neon-green); }
 
-        /* --- PHÂN HỆ PHÒNG CHIẾU TÁC CHIẾN ĐA KÊNH --- */
-        .host-split-layout { display: flex; gap: 25px; margin-top: 20px; width: 100%; }
-        .host-left-side { flex: 1.2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; height: auto; }
-        .host-right-side { flex: 1; background: rgba(3, 5, 15, 0.9); border: 2px dashed rgba(0, 240, 255, 0.4); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); position: relative; }
+        /* --- TRUNG TÂM ĐIỀU PHỐI MÁY CHIẾU --- */
+        .host-split-layout { display: flex; gap: 30px; margin-top: 20px; width: 100%; }
+        .host-left-side { flex: 1.1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .host-right-side { flex: 1; background: rgba(3, 5, 15, 0.95); border: 2px solid var(--neon-purple); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(176,38,255,0.2), inset 0 0 20px rgba(0,0,0,0.9); position: relative; }
         
         .host-card { background: rgba(12, 18, 44, 0.85); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s ease; }
         .host-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,240,255,0.2); transform: scale(1.02); }
-        .host-card.active-card { border-color: var(--neon-green) !important; box-shadow: 0 0 20px rgba(0,255,102,0.3); }
-        .host-card.spec-selected { border-color: var(--neon-purple) !important; box-shadow: 0 0 20px rgba(189,0,255,0.4); background: rgba(189,0,255,0.05); }
+        .host-card.active-card { border-color: var(--neon-green) !important; box-shadow: 0 0 20px rgba(0,255,102,0.2); }
+        .host-card.spec-selected { border-color: var(--neon-purple) !important; box-shadow: 0 0 25px rgba(189,0,255,0.5); background: rgba(189,0,255,0.06); }
         
-        .host-team-name { font-size: 1.15rem; font-weight: bold; color: var(--neon-blue); display: flex; justify-content: space-between; }
-        .host-team-stage { font-size: 0.85rem; color: #cbd5e1; margin: 8px 0; font-family: monospace; background: #02040a; padding: 5px 8px; border-radius: 4px; border-left: 3px solid var(--neon-purple); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .host-team-name { font-size: 1.2rem; font-weight: bold; color: var(--neon-blue); display: flex; justify-content: space-between; }
+        .host-team-stage { font-size: 0.9rem; color: #cbd5e1; margin: 8px 0; font-family: monospace; background: #02040a; padding: 6px 10px; border-radius: 5px; border-left: 3px solid var(--neon-purple); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .host-hp-bar { width: 100%; background: #02040a; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px; }
         .host-hp-fill { height: 100%; width: 100%; background: var(--neon-green); transition: all 0.3s; }
 
-        /* KHUNG SIMULATOR ĐIỆN THOẠI TRÊN MÁY CHIẾU */
-        .live-screen-container { background: #040612; border: 2px solid var(--neon-purple); border-radius: 12px; padding: 18px; flex: 1; margin-top: 15px; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(189,0,255,0.15); }
-        .live-screen-header { font-size: 0.85rem; color: var(--neon-purple); font-family: monospace; border-bottom: 1px solid rgba(189,0,255,0.3); padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; }
-        .live-screen-body { font-size: 0.95rem; color: #f1f5f9; line-height: 1.5; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        /* VIRTUAL SCREEN CHIẾU GƯƠNG */
+        .mirror-phone-viewport { background: #040714; border: 1px solid #1a265e; border-radius: 14px; padding: 20px; flex: 1; margin-top: 15px; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        .mirror-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+        .mirror-item { background: rgba(255,255,255,0.03); border: 1px solid #222d66; padding: 15px 8px; text-align: center; border-radius: 8px; font-size: 0.9rem; font-weight: bold; color: #cbd5e1; word-break: break-all; }
+        .mirror-item.m-bad { border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,68,0.1); }
+        .mirror-item.m-good { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,102,0.1); }
+        .mirror-incoterm-btn { background: #111738; color: #cbd5e1; border: 1px solid #222d66; padding: 12px; margin-top: 8px; border-radius: 6px; text-align: left; font-size: 0.9rem; font-weight: bold; }
+
+        /* ======================================================= */
+        /* TRUNG TÂM BẢO TRÌ BỘ KHUNG ĐỒ HỌA RESPONSIVE CHO MOBILE */
+        /* ======================================================= */
+        @media (max-width: 480px) {
+            .game-wrapper {
+                padding: 20px 15px;
+                border-radius: 16px;
+            }
+            h1 { font-size: 1.8rem; letter-spacing: 1px; }
+            h2 { font-size: 1.3rem; }
+            .status-bar { font-size: 0.85rem; padding: 8px 12px; margin-bottom: 12px; }
+            .terminal-text { font-size: 0.9rem; padding: 12px; min-height: 70px; margin-bottom: 12px; }
+            .grid-container { gap: 10px; margin: 10px 0; }
+            .grid-item {
+                font-size: 0.85rem;
+                padding: 14px 6px;
+                min-height: 52px;
+                border-radius: 8px;
+            }
+            .btn { padding: 14px; font-size: 1rem; border-radius: 8px; }
+        }
     </style>
 </head>
 <body id="main-body">
 
     <div class="game-wrapper" id="console-box">
         
+        <!-- TRUNG TÂM GIÁM SÁT MÁY CHIẾU -->
         <div id="view-host" class="view">
-            <h1>CO-LOGIX WAR ROOM MONITOR</h1>
-            <div style="text-align: center; color: var(--neon-purple); font-weight: bold; font-size: 1.05rem; letter-spacing: 1px;">[ CLICK CHỌN 1 NHÓM ĐỂ THEO DÕI QUÁ TRÌNH CHƠI REAL-TIME ]</div>
+            <h1>CO-LOGIX MISSION CONTROL CENTER</h1>
+            <div style="text-align: center; color: var(--neon-purple); font-weight: bold; font-size: 1.05rem; letter-spacing: 1px;">[ CHỌN 1 NHÓM ĐỂ CHIẾU GƯƠNG MÀN HÌNH HỌ ĐANG CHƠI REAL-TIME ]</div>
             
             <div class="host-split-layout">
                 <div class="host-left-side" id="host-dashboard"></div>
                 
                 <div class="host-right-side">
-                    <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-purple); text-shadow: 0 0 10px rgba(189,0,255,0.4); text-align: center;" id="spec-title">📡 ORBITAL LIVE FEED SCANNER</div>
-                    
-                    <div class="live-screen-container" id="spec-container">
-                        <div class="live-screen-header">
-                            <span>FEED STATUS: IDLE</span>
-                            <span id="spec-hud-time">00:00</span>
-                        </div>
-                        <div class="live-screen-body" id="spec-body" style="text-align: center; color: #475569; font-style: italic;">
-                            Hãy click chuột chọn một nhóm cổ đông ở sơ đồ bên trái để tiến hành đồng bộ truyền hình vệ tinh và theo dõi chi tiết quá trình làm bài của họ!
+                    <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📡 MIRROR MATRIX FEED: IDLE</div>
+                    <div class="mirror-phone-viewport" id="mirror-viewport">
+                        <div style="text-align: center; color: #475569; font-style: italic; margin: auto;">
+                            Hãy click chuột chọn một nhóm cổ đông ở bên trái để kích hoạt tính năng chiếu gương màn hình điện thoại của họ lên máy chiếu lớp!
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
+        <!-- CHẶNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V4.2</h1>
+            <h1>E-LOGIX SHIELD V4.4</h1>
             <div style="text-align:center; margin-bottom: 25px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
@@ -145,19 +172,21 @@
                 <option value="7">Nhóm Cổ Đông 7</option>
                 <option value="8">Nhóm Cổ Đông 8</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); reportToProjector('🔑 Đăng nhập', 'Đã thiết lập kết nối, chuẩn bị nhận kịch bản giải cứu.'); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
+            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); broadcastState('🔑 Đăng nhập', { text: 'Đang kết nối tháp...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
         </div>
 
+        <!-- CHẶNG 2: CỐT TRUYỆN -->
         <div id="view-intro" class="view">
             <div style="background: rgba(255,0,68,0.15); border: 1px solid var(--neon-red); padding: 12px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 20px;">🚨 CẢNH BÁO KHỦNG HOẢNG TOÀN CẦU 🚨</div>
-            <p style="font-size: 1.1rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 20px;">
-                Hãng tàu <strong>Maersk</strong> bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Toàn bộ container hàng hóa trị giá triệu đô của công ty chúng ta (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài khơi biển Đông.
+            <p style="font-size: 1.05rem; line-height: 1.6; color: #cbd5e1; text-align: justify; margin-bottom: 20px;">
+                Hãng tàu <strong>Maersk</strong> bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Toàn bộ container hàng hóa trị giá triệu đô của công ty mình (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài khơi biển Đông.
                 <br><br>
                 Hội đồng cổ đông hãy vượt qua 5 tầng bảo mật để tự cứu lấy dữ liệu vận tải doanh nghiệp. Nhấn sai hệ thống sẽ tự động thiết lập lại từ đầu màn chơi!
             </p>
             <button class="btn btn-action" onclick="enterStage1()">KÍCH HOẠT CHIẾN DỊCH GIẢI CỨU</button>
         </div>
 
+        <!-- CHẶNG 3: TẦNG 1 -->
         <div id="view-stage1" class="view">
             <div class="status-bar"><span>🔒 CHẶNG 1: CYBERSECURITY</span><span id="hp-s1" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
@@ -167,6 +196,7 @@
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">TIẾN VÀO TẦNG SAO LƯU KHO</button>
         </div>
 
+        <!-- CHẶNG 4: TẦNG 2 -->
         <div id="view-stage2" class="view">
             <div class="status-bar"><span>💾 CHẶNG 2: CLOUD BACKUP</span><span id="hp-s2" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>CẤU TRÚC ĐỊNH VỊ KHO BÃI</h2>
@@ -176,6 +206,7 @@
             <button class="btn btn-action" id="next-s2" style="display:none;" onclick="initStage3()">TIẾN VÀO TẦNG QUẢN LÝ RỦI RO</button>
         </div>
 
+        <!-- CHẶNG 5: TẦNG 3 -->
         <div id="view-stage3" class="view">
             <div class="status-bar"><span>🛳️ CHẶNG 3: INCOTERMS STRATEGY</span><span id="hp-s3" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>ĐẤU TRÍ TRANH CHẤP RỦI RO</h2>
@@ -184,6 +215,7 @@
             <div id="options-s3" style="display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
 
+        <!-- CHẶNG 6: TẦNG 4 -->
         <div id="view-stage4" class="view">
             <div class="status-bar"><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2>
@@ -192,6 +224,7 @@
             <button class="btn btn-action" id="next-s4" style="display:none;" onclick="initStage5()">TIẾN VÀO KHÓA TRUY CẬP CUỐI</button>
         </div>
 
+        <!-- CHẶNG 7: TẦNG 5 -->
         <div id="view-stage5" class="view">
             <div class="status-bar"><span>🔑 CHẶNG 5: ACCESS CONTROL</span><span id="hp-s5" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
@@ -206,6 +239,7 @@
             </div>
         </div>
 
+        <!-- CHẶNG 8: KẾT QUẢ -->
         <div id="view-result" class="view">
             <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green);">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
             <div style="text-align: center; font-size: 4.8rem; font-weight: bold; margin: 12px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(0,255,102,0.4);" id="final-integrity">0%</div>
@@ -227,7 +261,6 @@
         const isHost = urlParams.get('role') === 'host';
         const NETWORK_TOPIC = "elogix_warroom_realtime_stream_2026";
 
-        // Kho lưu trữ dữ liệu các nhóm phục vụ Spy Mode
         window.teamStates = {};
         window.selectedSpecTeam = null;
 
@@ -249,27 +282,73 @@
 
         function selectSpecTeam(id) {
             window.selectedSpecTeam = id;
-            document.querySelectorAll('.host-card').forEach(c => v=c.classList.remove('spec-selected'));
+            document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
             document.getElementById(`card-team-${id}`).classList.add('spec-selected');
-            document.getElementById('spec-title').innerHTML = `📡 LIVE STREAMING: NHÓM ${id}`;
+            document.getElementById('spec-title').innerHTML = `📡 SCREEN MIRRORING: NHÓM ${id}`;
             
             if (window.teamStates[id]) {
-                updateSpectatorPanel(window.teamStates[id]);
+                mirrorPlayerScreen(window.teamStates[id]);
             } else {
-                document.getElementById('spec-body').innerHTML = `<div style="text-align:center; color:#64748b;">Nhóm ${id} chưa kích hoạt tháp điều khiển. Đang chờ luồng tín hiệu...</div>`;
+                document.getElementById('mirror-viewport').innerHTML = `<div style="margin: auto; text-align:center; color:#475569;">Nhóm ${id} đang chờ lệnh kích hoạt từ điện thoại...</div>`;
             }
         }
 
-        function updateSpectatorPanel(payload) {
-            document.getElementById('spec-hud-time').innerHTML = payload.time + " Giây";
-            let bodyHTML = `
-                <div style="margin-bottom: 10px;"><strong style="color:var(--neon-blue)">📍 Vị trí hiện tại:</strong> ${payload.stage}</div>
-                <div style="margin-bottom: 10px;"><strong style="color:var(--neon-green)">🩸 Sức khỏe hệ thống:</strong> ${payload.hp}%</div>
-                <div style="border: 1px dashed rgba(189,0,255,0.3); padding: 10px; background:#020308; border-radius:6px; font-family:monospace; font-size:0.9rem;">
-                    <span style="color:var(--neon-purple)">[LOGS]:</span> ${payload.detail || "Đang phân tích lệnh hành động..."}
+        function mirrorPlayerScreen(payload) {
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport) return;
+
+            let html = `
+                <div class="status-bar" style="font-size:0.85rem; padding:8px 12px; margin-bottom:10px;">
+                    <span>⚡ VIRTUAL SCREEN</span>
+                    <span style="color:var(--neon-green)">HP: ${payload.hp}%</span>
                 </div>
+                <div style="font-size:0.85rem; color:var(--neon-purple); font-family:monospace; margin-bottom:10px;">STAGE: ${payload.stage.toUpperCase()}</div>
             `;
-            document.getElementById('spec-body').innerHTML = bodyHTML;
+
+            if (payload.stageCode === "c1") {
+                html += `<h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2><div class="mirror-grid">`;
+                payload.extra.items.forEach(txt => {
+                    let isBadSelected = payload.extra.badClicked.includes(txt);
+                    let isGoodSelected = payload.extra.goodClicked.includes(txt);
+                    let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
+                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
+                });
+                html += `</div><div style="font-size:0.8rem; margin-top:5px;">Tiến độ: ${payload.extra.found}/4</div>`;
+            } else if (payload.stageCode === "c2") {
+                html += `<h2>CẤU TRÚC KHO BÃI WMS</h2><div class="mirror-grid">`;
+                payload.extra.items.forEach(txt => {
+                    let isDone = payload.extra.doneSteps.includes(txt);
+                    html += `<div class="mirror-item ${isDone ? 'm-good' : ''}">${txt}</div>`;
+                });
+                html += `</div>`;
+            } else if (payload.stageCode === "c3") {
+                html += `<h2>ĐẤU TRÍ INCOTERMS</h2>
+                         <div style="background:#040714; padding:10px; border-radius:6px; font-size:0.9rem; margin-bottom:10px; border:1px solid #222d66;">${payload.extra.qText}</div>
+                         <div style="display: flex; flex-direction: column; gap: 8px;">`;
+                payload.extra.opts.forEach(o => {
+                    html += `<div class="mirror-item" style="text-align: left; padding: 10px;">${o}</div>`;
+                });
+                html += `</div>`;
+            } else if (payload.stageCode === "c4") {
+                html += `<h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2><div class="mirror-grid">`;
+                payload.extra.items.forEach(txt => {
+                    let isBadSelected = payload.extra.badClicked.includes(txt);
+                    let isGoodSelected = payload.extra.goodClicked.includes(txt);
+                    let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
+                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
+                });
+                html += `</div>`;
+            } else if (payload.stageCode === "c5") {
+                html += `<h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
+                         <div style="background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;">${payload.extra.text}</div>
+                         <div style="display:flex; gap:10px;"><div class="mirror-item" style="flex:1; border-color:var(--neon-green); color:var(--neon-green);">ALLOW</div><div class="mirror-item" style="flex:1; border-color:var(--neon-red); color:var(--neon-red);">BLOCK</div></div>`;
+            } else if (payload.stageCode === "win") {
+                html += `<div style="text-align:center; margin:auto;"><h2 style="color:var(--neon-green); font-size:1.5rem;">🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style="font-size:1.1rem; margin-top:10px;">Hệ thống khôi phục: ${payload.hp}%</div><div style="font-size:0.9rem; color:#64748b;">Thời gian: ${payload.time}s</div></div>`;
+            } else {
+                html += `<div style="text-align:center; margin:auto; color:#64748b;">Đang chuẩn bị nhận lệnh phòng tác chiến...</div>`;
+            }
+
+            viewport.innerHTML = html;
         }
 
         function listenToPlayerUpdates() {
@@ -280,21 +359,15 @@
                     if (data.event === "message") {
                         const payload = JSON.parse(data.message);
                         if (payload && payload.team) {
-                            // Lưu vào bộ nhớ máy chủ
                             window.teamStates[payload.team] = payload;
-                            
                             let card = document.getElementById(`card-team-${payload.team}`);
                             if(card) card.classList.add("active-card");
-                            
                             let stageEl = document.getElementById(`host-stage-${payload.team}`);
                             if(stageEl) stageEl.innerHTML = payload.stage;
-                            
                             let timeEl = document.getElementById(`host-time-${payload.team}`);
                             if(timeEl) timeEl.innerHTML = payload.time + "s";
-                            
                             let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
                             if(hpTxtEl) hpTxtEl.innerHTML = payload.hp + "%";
-                            
                             const fill = document.getElementById(`host-hp-fill-${payload.team}`);
                             if(fill) {
                                 fill.style.width = payload.hp + "%";
@@ -302,24 +375,21 @@
                                 else if(payload.hp < 75) fill.style.background = "orange";
                                 else fill.style.background = "var(--neon-green)";
                             }
-
-                            // Nếu nhóm này đang được bật chế độ Spy, cập nhật luôn màn hình phụ
-                            if (window.selectedSpecTeam === payload.team) {
-                                updateSpectatorPanel(payload);
-                            }
+                            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
                         }
                     }
                 } catch(e) {}
             };
         }
 
-        function reportToProjector(stageName, detailText = "") {
+        function broadcastState(stageName, extraData = {}) {
             if (isHost || !teamId) return;
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            const payload = { team: teamId, stage: stageName, hp: integrity, time: currentSeconds, detail: detailText };
+            const payload = { team: teamId, stage: stageName, stageCode: window.currentStageCode || "login", hp: integrity, time: currentSeconds, extra: extraData };
             fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
         }
 
+        // ĐIỀU HƯỚNG ROUTING BAN ĐẦU
         if (isHost) {
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
@@ -328,7 +398,6 @@
             document.getElementById("view-login").classList.add("active");
         }
 
-        // --- NHẠC nỀN SYNTH v2 MAXIMUM VOLUME (0.9) ---
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
@@ -368,17 +437,17 @@
         function wrongSound() { playTone(100, 'sawtooth', 0.25, 0.7); }
         function winSound() { if(bgmIntervalId) clearInterval(bgmIntervalId); let arr = [523, 659, 784, 1046, 1318]; arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.5), i*80)); }
 
-        function triggerDamage(stage, logTxt) {
+        function triggerDamage(stage, extraPayload = {}) {
             wrongSound(); integrity -= 6; if(integrity < 0) integrity = 0;
             document.getElementById(`hp-${stage}`).innerHTML = `HỆ THỐNG: ${integrity}%`;
             document.getElementById(`hp-${stage}`).style.color = integrity > 40 ? 'var(--neon-green)' : 'var(--neon-red)';
             let box = document.getElementById('console-box'); box.classList.add('shake');
             setTimeout(() => box.classList.remove('shake'), 300);
-            reportToProjector(`⚠️ Lỗi chặng ${stage.toUpperCase()}`, logTxt);
+            broadcastState(`⚠️ Lỗi chặng ${stage.toUpperCase()}`, extraPayload);
         }
 
         function nextView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
-        function enterStage1() { startTime = Date.now(); nextView('view-stage1'); initStage1(); reportToProjector("🔒 Chặng 1: Cybersecurity", "Hệ thống đang rà quét dọn dẹp virus độc hại."); }
+        function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array;
@@ -391,45 +460,58 @@
             { text: "Spyware_Admin_Crack.bat", bad: true }, { text: "TMS_Delivery_Note.pdf", bad: false },
             { text: "Trojan_CryptoLocker.exe", bad: true }, { text: "Inbound_Bill_Of_Lading.pdf", bad: false }
         ];
-        let s1Found = 0;
-        function initStage1() {
+        let s1Found = 0; let s1BadClicked = []; let s1GoodClicked = []; let s1Scrambled = [];
+        function initStage1() { s1Scrambled = shuffleArray([...s1Data]); syncS1(); }
+        function syncS1() {
             const grid = document.getElementById('grid-s1'); grid.innerHTML = "";
-            let scrambled = shuffleArray([...s1Data]);
-            scrambled.forEach(item => {
+            s1Scrambled.forEach(item => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = item.text;
+                if(s1BadClicked.includes(item.text)) div.classList.add('selected-malware');
+                if(s1GoodClicked.includes(item.text)) div.classList.add('selected-clean');
                 div.onclick = () => {
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
                     if(item.bad) { 
-                        correctSound(); div.className = 'grid-item selected-malware'; s1Found++; document.getElementById('progress-s1').style.width = (s1Found / 4) * 100 + "%"; 
-                        reportToProjector("🔒 Chặng 1: Cybersecurity", `Đã xử lý cách ly thành công ${s1Found}/4 phần mềm gián điệp.`);
-                        if(s1Found === 4) document.getElementById('next-s1').style.display = "block"; 
+                        correctSound(); s1Found++; s1BadClicked.push(item.text);
+                        document.getElementById('progress-s1').style.width = (s1Found / 4) * 100 + "%";
+                        if(s1Found === 4) document.getElementById('next-s1').style.display = "block";
+                        broadcastState("Diệt mã độc (C1)", { found: s1Found, badClicked: s1BadClicked, goodClicked: s1GoodClicked, items: s1Scrambled.map(x=>x.text) });
+                        syncS1();
+                    } else { 
+                        s1GoodClicked.push(item.text);
+                        triggerDamage('s1', { found: s1Found, badClicked: s1BadClicked, goodClicked: s1GoodClicked, items: s1Scrambled.map(x=>x.text) }); 
+                        syncS1();
                     }
-                    else { div.className = 'grid-item selected-clean'; triggerDamage('s1', `Bấm nhầm tệp sạch "${item.text}". Hệ thống bị trừ máu!`); }
                 };
                 grid.appendChild(div);
             });
+            broadcastState("Diệt mã độc (C1)", { found: s1Found, badClicked: s1BadClicked, goodClicked: s1GoodClicked, items: s1Scrambled.map(x=>x.text) });
         }
 
         // CHẶNG 2
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
-        let s2Idx = 0;
-        function initStage2() { nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = `HỆ THỐNG: ${integrity}%`; reportToProjector("💾 Chặng 2: Cloud Backup", "Đang tiến hành re-boot nhập mã cấu trúc kho bãi."); renderStage2Grid(); }
+        let s2Idx = 0; let s2DoneSteps = []; let s2Scrambled = [];
+        function initStage2() { window.currentStageCode = "c2"; nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = `HỆ THỐNG: ${integrity}%`; renderStage2Grid(); }
         function renderStage2Grid() {
             const grid = document.getElementById('grid-s2'); grid.innerHTML = "";
-            let scrambled = shuffleArray([...s2Steps]);
-            scrambled.forEach(step => {
+            s2Scrambled = shuffleArray([...s2Steps]);
+            s2Scrambled.forEach(step => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = step.split(' ')[1];
+                if(s2DoneSteps.includes(step)) div.classList.add('selected-clean');
                 div.onclick = () => {
                     if (step === s2Steps[s2Idx]) { 
-                        correctSound(); s2Idx++; 
-                        reportToProjector("💾 Chặng 2: Cloud Backup", `Đã khôi phục thành công tọa độ phân vị chặng: ${step.split(' ')[1]}`);
+                        correctSound(); s2Idx++; s2DoneSteps.push(step);
                         if(s2Idx === 4) { document.getElementById('target-s2').innerHTML = "✅ KHÔI PHỤC THÀNH CÔNG SƠ ĐỒ KHO BÃI!"; document.getElementById('next-s2').style.display = "block"; } 
                         else { document.getElementById('target-s2').innerHTML = `GHI NHẬN THÀNH CÔNG BƯỚC ${s2Idx}...`; renderStage2Grid(); } 
+                        broadcastState("Cấu trúc kho (C2)", { doneSteps: s2DoneSteps, items: s2Steps });
+                    } else { 
+                        s2Idx = 0; s2DoneSteps = [];
+                        triggerDamage('s2', { doneSteps: [], items: s2Steps }); 
+                        document.getElementById('target-s2').innerHTML = "❌ RESET! SAI THỨ TỰ LOGISTICS! ẤN LẠI TỪ BLOCK!"; renderStage2Grid(); 
                     }
-                    else { triggerDamage('s2', `Sai quy trình phân tầng vị trí tại bước ${s2Idx+1}. Sơ đồ bị reset!`); s2Idx = 0; document.getElementById('target-s2').innerHTML = "❌ RESET! SAI THỨ TỰ LOGISTICS! ẤN LẠI TỪ BLOCK!"; renderStage2Grid(); }
                 };
                 grid.appendChild(div);
             });
+            broadcastState("Cấu trúc kho (C2)", { doneSteps: s2DoneSteps, items: s2Steps });
         }
 
         // CHẶNG 3
@@ -439,19 +521,16 @@
             { text: "Tình huống 3: Đối tác bắt bên mình tự điều xe đến kho nước ngoài của họ lấy hàng, tự lo mọi thủ tục hải quan và chi phí đầu xuất lẫn đầu nhập từ A-Z. Ta nên chọn điều kiện thương mại nào đúng luật?", opts: ["A. Lựa chọn điều kiện thương mại FOB", "B. Lựa chọn điều kiện thương mại CIF", "C. Lựa chọn điều kiện thương mại DDP", "D. Lựa chọn điều kiện thương mại EXW (Tại xưởng)"], ans: 3 }
         ];
         let s3RoundIdx = 0;
-        function initStage3() { nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = `HỆ THỐNG: ${integrity}%`; showS3Question(); }
+        function initStage3() { window.currentStageCode = "c3"; nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = `HỆ THỐNG: ${integrity}%`; showS3Question(); }
         function showS3Question() {
             if(s3RoundIdx < s3Scenarios.length) {
                 let q = s3Scenarios[s3RoundIdx]; document.getElementById('text-s3').innerHTML = q.text; let optDiv = document.getElementById('options-s3'); optDiv.innerHTML = "";
-                reportToProjector("🛳️ Chặng 3: Incoterms Strategy", `Đang đấu trí xử lý câu hỏi rủi ro thương mại số ${s3RoundIdx + 1}`);
                 q.opts.forEach((o, i) => {
                     let b = document.createElement('button'); b.className = "btn"; b.innerHTML = o; 
-                    b.onclick = () => { 
-                        if(i === q.ans) { correctSound(); s3RoundIdx++; showS3Question(); } 
-                        else { triggerDamage('s3', `Chọn đáp án sai tại câu số ${s3RoundIdx+1}. Bị trừ máu an ninh!`); } 
-                    }; 
+                    b.onclick = () => { if(i === q.ans) { correctSound(); s3RoundIdx++; showS3Question(); } else { triggerDamage('s3', { qText: q.text, opts: q.opts }); } }; 
                     optDiv.appendChild(b);
                 });
+                broadcastState("Đấu trí Incoterms (C3)", { qText: q.text, opts: q.opts });
             } else { nextView('view-stage4'); initStage4(); }
         }
 
@@ -462,24 +541,22 @@
             { text: "TK: 74210 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 44102 / CH-CATLAI / 02A1", fake: true },
             { text: "TK: 88512 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 12053 / CH-HACKER / 02D7", fake: true }
         ];
-        let s4Cleared = 0;
-        function initStage4() {
-            nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = `HỆ THỐNG: ${integrity}%`; const grid = document.getElementById('grid-s4'); grid.innerHTML = "";
-            reportToProjector("🛂 Chặng 4: Customs Audit", "Đang rà quét ma trận chứng từ tìm 4 tờ khai giả mạo.");
-            let scrambled = shuffleArray([...s4Data]);
-            scrambled.forEach(item => {
+        let s4Cleared = 0; let s4BadClicked = []; let s4GoodClicked = []; let s4Scrambled = [];
+        function initStage4() { window.currentStageCode = "c4"; nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = `HỆ THỐNG: ${integrity}%`; s4Scrambled = shuffleArray([...s4Data]); syncS4(); }
+        function syncS4() {
+            const grid = document.getElementById('grid-s4'); grid.innerHTML = "";
+            s4Scrambled.forEach(item => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = item.text;
+                if(s4BadClicked.includes(item.text)) div.classList.add('selected-malware');
+                if(s4GoodClicked.includes(item.text)) div.classList.add('selected-clean');
                 div.onclick = () => {
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
-                    if(item.fake) { 
-                        correctSound(); div.className = 'grid-item selected-malware'; s4Cleared++; 
-                        reportToProjector("🛂 Chặng 4: Customs Audit", `Đã phát hiện triệt hạ thành công ${s4Cleared}/4 lệnh Hải quan bẩn.`);
-                        if(s4Cleared === 4) document.getElementById('next-s4').style.display = "block"; 
-                    }
-                    else { div.className = 'grid-item selected-clean'; triggerDamage('s4', `Chặn nhầm mã chi cục xịn "${item.text}". Làm nghẽn hàng thật!`); }
+                    if(item.fake) { correctSound(); s4Cleared++; s4BadClicked.push(item.text); if(s4Cleared === 4) document.getElementById('next-s4').style.display = "block"; syncS4(); }
+                    else { s4GoodClicked.push(item.text); triggerDamage('s4', { badClicked: s4BadClicked, goodClicked: s4GoodClicked, items: s4Scrambled.map(x=>x.text) }); syncS4(); }
                 };
                 grid.appendChild(div);
             });
+            broadcastState("Soi Hải quan (C4)", { badClicked: s4BadClicked, goodClicked: s4GoodClicked, items: s4Scrambled.map(x=>x.text) });
         }
 
         // CHẶNG 5
@@ -490,25 +567,15 @@
             { text: "Yêu cầu tải file manifest từ đại lý Maersk chính thống phục vụ đối chiếu dữ liệu hải quan", allow: true }
         ];
         let s5Idx = 0;
-        function initStage5() { nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; shuffleArray(s5Tasks); showS5Task(); }
+        function initStage5() { window.currentStageCode = "c5"; nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; shuffleArray(s5Tasks); showS5Task(); }
         function showS5Task() { 
-            if(s5Idx < s5Tasks.length) {
-                document.getElementById('account-task').innerHTML = s5Tasks[s5Idx].text; 
-                reportToProjector("🔑 Chặng 5: Access Control", `Đang thẩm định hành vi nội bộ: ${s5Tasks[s5Idx].text.substring(0,35)}...`);
-            } else { finishGame(); }
+            if(s5Idx < s5Tasks.length) { document.getElementById('account-task').innerHTML = s5Tasks[s5Idx].text; broadcastState("Thẩm định nội bộ (C5)", { taskText: s5Tasks[s5Idx].text }); } 
+            else { finishGame(); }
         }
-        function classifyAccount(allow) { 
-            if(allow === s5Tasks[s5Idx].allow) { correctSound(); s5Idx++; showS5Task(); } 
-            else { triggerDamage('s5', `Duyệt lệnh sai quy trình cho yêu cầu số ${s5Idx+1}. An ninh bị rò rỉ!`); } 
-        }
+        function classifyAccount(allow) { if(allow === s5Tasks[s5Idx].allow) { correctSound(); s5Idx++; showS5Task(); } else { triggerDamage('s5', { taskText: s5Tasks[s5Idx].text }); } }
 
         // FINISH
-        function finishGame() {
-            winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000); nextView('view-result');
-            document.getElementById('final-integrity').innerHTML = integrity + "%"; document.getElementById('res-team').innerHTML = teamName; document.getElementById('res-time').innerHTML = seconds;
-            document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; 
-            reportToProjector("🏆 HOÀN THÀNH XUẤT SẮC!", `Đã phá đảo thành công! Thời gian: ${seconds}s. Độ bảo mật: ${integrity}%`);
-        }
+        function finishGame() { window.currentStageCode = "win"; winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000); nextView('view-result'); document.getElementById('final-integrity').innerHTML = integrity + "%"; document.getElementById('res-team').innerHTML = teamName; document.getElementById('res-time').innerHTML = seconds; document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; broadcastState("Phá đảo!", {}); }
     </script>
 </body>
 </html>
