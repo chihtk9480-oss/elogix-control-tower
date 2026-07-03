@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V4.5 - Ultimate Mirror Control</title>
+    <title>E-Logix Cyber Shield V4.6 - Final Master HUD</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -60,6 +60,7 @@
         .view { display: none; }
         .view.active { display: flex; flex-direction: column; }
         .shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        
         @keyframes screen-shake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(3px, 0, 0); }
@@ -87,8 +88,8 @@
 
         /* PHÒNG ĐIỀU PHỐI MÁY CHIẾU GƯƠNG */
         .host-split-layout { display: flex; gap: 30px; margin-top: 20px; width: 100%; }
-        .host-left-side { flex: 1.1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .host-right-side { flex: 1; background: rgba(3, 5, 15, 0.95); border: 2px solid var(--neon-purple); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(176,38,255,0.2), inset 0 0 20px rgba(0,0,0,0.9); position: relative; }
+        .host-left-side { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 55%; }
+        .host-right-side { width: 45%; background: rgba(3, 5, 15, 0.95); border: 2px solid var(--neon-purple); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(176,38,255,0.2), inset 0 0 20px rgba(0,0,0,0.9); position: relative; }
         
         .host-card { background: rgba(12, 18, 44, 0.85); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s ease; }
         .host-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,240,255,0.2); transform: scale(1.02); }
@@ -141,7 +142,7 @@
         </div>
 
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V4.5</h1>
+            <h1>E-LOGIX SHIELD V4.6</h1>
             <div style="text-align:center; margin-bottom: 25px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
@@ -240,6 +241,7 @@
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
         
+        // KHỞI TẠO DASHBOARD MÁY CHIẾU
         function initHostDashboard() {
             document.getElementById("main-body").classList.add("host-mode-active");
             const container = document.getElementById("host-dashboard");
@@ -257,69 +259,59 @@
         function selectSpecTeam(id) {
             window.selectedSpecTeam = id;
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
-            document.getElementById(`card-team-${id}`).classList.add('spec-selected');
-            document.getElementById('spec-title').innerHTML = `📡 SCREEN MIRRORING: NHÓM ${id}`;
+            document.getElementById('card-team-' + id).classList.add('spec-selected');
+            document.getElementById('spec-title').innerHTML = "📡 SCREEN MIRRORING: NHÓM " + id;
             
             if (window.teamStates[id]) { mirrorPlayerScreen(window.teamStates[id]); } 
-            else { document.getElementById('mirror-viewport').innerHTML = `<div style="margin: auto; text-align:center; color:#475569;">Nhóm ${id} đang chờ lệnh kích hoạt từ điện thoại...</div>`; }
+            else { document.getElementById('mirror-viewport').innerHTML = "<div style='margin: auto; text-align:center; color:#475569;'>Nhóm " + id + " đang chờ lệnh kích hoạt từ điện thoại...</div>"; }
         }
 
         function mirrorPlayerScreen(payload) {
             const viewport = document.getElementById('mirror-viewport');
             if (!viewport) return;
 
-            let html = `
-                <div class="status-bar" style="font-size:0.85rem; padding:8px 12px; margin-bottom:10px;">
-                    <span>⚡ VIRTUAL SCREEN</span>
-                    <span style="color:var(--neon-green)">HP: ${payload.hp}%</span>
-                </div>
-                <div style="font-size:0.85rem; color:var(--neon-purple); font-family:monospace; margin-bottom:10px;">STAGE: ${payload.stage.toUpperCase()}</div>
-            `;
+            let html = "<div class='status-bar' style='font-size:0.85rem; padding:8px 12px; margin-bottom:10px;'><span>⚡ VIRTUAL SCREEN</span><span style='color:var(--neon-green)'>HP: " + payload.hp + "%</span></div><div style='font-size:0.85rem; color:var(--neon-purple); font-family:monospace; margin-bottom:10px;'>STAGE: " + payload.stage.toUpperCase() + "</div>";
 
             if (payload.stageCode === "c1") {
-                html += `<h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2><div class="mirror-grid">`;
+                html += "<h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2><div class='mirror-grid'>";
                 payload.extra.items.forEach(txt => {
                     let isBadSelected = payload.extra.badClicked.includes(txt);
                     let isGoodSelected = payload.extra.goodClicked.includes(txt);
                     let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
-                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
+                    html += "<div class='mirror-item " + cName + "'>" + txt + "</div>";
                 });
-                html += `</div><div style="font-size:0.8rem; margin-top:5px;">Tiến độ: ${payload.extra.found}/4</div>`;
+                html += "</div><div style='font-size:0.8rem; margin-top:5px;'>Tiến độ: " + payload.extra.found + "/4</div>";
             } else if (payload.stageCode === "c2") {
-                html += `<h2>CẤU TRÚC KHO BÃI WMS</h2><div class="mirror-grid">`;
+                html += "<h2>CẤU TRÚC KHO BÃI WMS</h2><div class='mirror-grid'>";
                 payload.extra.items.forEach(txt => {
                     let isDone = payload.extra.doneSteps.includes(txt);
-                    html += `<div class="mirror-item ${isDone ? 'm-good' : ''}">${txt}</div>`;
+                    html += "<div class='mirror-item " + (isDone ? "m-good" : "") + "'>" + txt + "</div>";
                 });
-                html += `</div>`;
+                html += "</div>";
             } else if (payload.stageCode === "c3") {
-                html += `<h2>ĐẤU TRÍ INCOTERMS</h2>
-                         <div style="background:#040714; padding:10px; border-radius:6px; font-size:0.9rem; margin-bottom:10px; border:1px solid #222d66;">${payload.extra.qText}</div>
-                         <div style="display: flex; flex-direction: column; gap: 8px;">`;
-                payload.extra.opts.forEach(o => { html += `<div class="mirror-item" style="text-align: left; padding: 10px;">${o}</div>`; });
-                html += `</div>`;
+                html += "<h2>ĐẤU TRÍ INCOTERMS</h2><div style='background:#040714; padding:10px; border-radius:6px; font-size:0.9rem; margin-bottom:10px; border:1px solid #222d66;'>" + payload.extra.qText + "</div><div style='display: flex; flex-direction: column; gap: 8px;'>";
+                payload.extra.opts.forEach(o => { html += "<div class='mirror-item' style='text-align: left; padding: 10px;'>" + o + "</div>"; });
+                html += "</div>";
             } else if (payload.stageCode === "c4") {
-                html += `<h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2><div class="mirror-grid">`;
+                html += "<h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2><div class='mirror-grid'>";
                 payload.extra.items.forEach(txt => {
                     let isBadSelected = payload.extra.badClicked.includes(txt);
                     let isGoodSelected = payload.extra.goodClicked.includes(txt);
                     let cName = isBadSelected ? "m-bad" : (isGoodSelected ? "m-good" : "");
-                    html += `<div class="mirror-item ${cName}">${txt}</div>`;
+                    html += "<div class='mirror-item " + cName + "'>" + txt + "</div>";
                 });
-                html += `</div>`;
+                html += "</div>";
             } else if (payload.stageCode === "c5") {
-                html += `<h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
-                         <div style="background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;">${payload.extra.taskText}</div>
-                         <div style="display:flex; gap:10px;"><div class="mirror-item" style="flex:1; border-color:var(--neon-green); color:var(--neon-green);">ALLOW</div><div class="mirror-item" style="flex:1; border-color:var(--neon-red); color:var(--neon-red);">BLOCK</div></div>`;
+                html += "<h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2><div style='background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;'>" + payload.extra.taskText + "</div><div style='display:flex; gap:10px;'><div class='mirror-item' style='flex:1; border-color:var(--neon-green); color:var(--neon-green);'>ALLOW</div><div class='mirror-item' style='flex:1; border-color:var(--neon-red); color:var(--neon-red);'>BLOCK</div></div>";
             } else if (payload.stageCode === "win") {
-                html += `<div style="text-align:center; margin:auto;"><h2 style="color:var(--neon-green); font-size:1.5rem;">🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style="font-size:1.1rem; margin-top:10px;">Hệ thống khôi phục: ${payload.hp}%</div><div style="font-size:0.9rem; color:#64748b;">Thời gian: ${payload.time}s</div></div>`;
-            } else { html += `<div style="text-align:center; margin:auto; color:#64748b;">Đang chuẩn bị nhận lệnh phòng tác chiến...</div>`; }
+                html += "<div style='text-align:center; margin:auto;'><h2 style='color:var(--neon-green); font-size:1.5rem;'>🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style='font-size:1.1rem; margin-top:10px;'>Hệ thống khôi phục: " + payload.hp + "%</div><div style='font-size:0.9rem; color:#64748b;'>Thời gian: " + payload.time + "s</div></div>";
+            } else { html += "<div style='text-align:center; margin:auto; color:#64748b;'>Đang chuẩn bị nhận lệnh phòng tác chiến...</div>"; }
 
             viewport.innerHTML = html;
         }
 
         function listenToPlayerUpdates() {
-            const source = new EventSource(`https://ntfy.sh/${NETWORK_TOPIC}/sse`);
+            const source = new EventSource("https://ntfy.sh/" + NETWORK_TOPIC + "/sse");
             source.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
@@ -327,15 +319,15 @@
                         const payload = JSON.parse(data.message);
                         if (payload && payload.team) {
                             window.teamStates[payload.team] = payload;
-                            let card = document.getElementById(`card-team-${payload.team}`);
+                            let card = document.getElementById("card-team-" + payload.team);
                             if(card) card.classList.add("active-card");
-                            let stageEl = document.getElementById(`host-stage-${payload.team}`);
+                            let stageEl = document.getElementById("host-stage-" + payload.team);
                             if(stageEl) stageEl.innerHTML = payload.stage;
-                            let timeEl = document.getElementById(`host-time-${payload.team}`);
+                            let timeEl = document.getElementById("host-time-" + payload.team);
                             if(timeEl) timeEl.innerHTML = payload.time + "s";
-                            let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
+                            let hpTxtEl = document.getElementById("host-hp-txt-" + payload.team);
                             if(hpTxtEl) hpTxtEl.innerHTML = payload.hp + "%";
-                            const fill = document.getElementById(`host-hp-fill-${payload.team}`);
+                            const fill = document.getElementById("host-hp-fill-" + payload.team);
                             if(fill) {
                                 fill.style.width = payload.hp + "%";
                                 if(payload.hp < 40) fill.style.background = "var(--neon-red)";
@@ -353,18 +345,10 @@
             if (isHost || !teamId) return;
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
             const payload = { team: teamId, stage: stageName, stageCode: window.currentStageCode || "login", hp: integrity, time: currentSeconds, extra: extraData };
-            fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
+            fetch("https://ntfy.sh/" + NETWORK_TOPIC, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
         }
 
-        if (isHost) {
-            document.getElementById("view-host").classList.add("active");
-            initHostDashboard();
-            listenToPlayerUpdates();
-        } else {
-            document.getElementById("view-login").classList.add("active");
-        }
-
-        // --- THUẬT TOÁN Fisher-Yates DÙNG BIẾN TEMP CỔ ĐIỂN CHỐNG LỖI TRÌNH DUYỆT MOBILE ---
+        // THUẬT TOÁN Fisher-Yates BẰNG BIẾN TEMP CỔ ĐIỂN (ĐÃ FIX CHỐNG LỖI MOBILE)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 let j = Math.floor(Math.random() * (i + 1));
@@ -375,7 +359,7 @@
             return array;
         }
 
-        // --- NHẠC nỀN SYNTH v2 MAXIMUM VOLUME (0.9) ---
+        // NHẠC NỀN ĐIỆP VIÊN MAX VOLUME
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
@@ -417,16 +401,16 @@
 
         function triggerDamage(stage, extraPayload = {}) {
             wrongSound(); integrity -= 6; if(integrity < 0) integrity = 0;
-            document.getElementById(`hp-${stage}`).innerHTML = `HỆ THỐNG: ${integrity}%`;
-            document.getElementById(`hp-${stage}`).style.color = integrity > 40 ? 'var(--neon-green)' : 'var(--neon-red)';
+            document.getElementById("hp-" + stage).innerHTML = "HỆ THỐNG: " + integrity + "%";
+            document.getElementById("hp-" + stage).style.color = integrity > 40 ? "var(--neon-green)" : "var(--neon-red)";
             let box = document.getElementById('console-box'); box.classList.add('shake');
             setTimeout(() => box.classList.remove('shake'), 300);
-            broadcastState(`⚠️ Lỗi chặng ${stage.toUpperCase()}`, extraPayload);
+            broadcastState("⚠️ Lỗi chặng " + stage.toUpperCase(), extraPayload);
         }
 
-        function nextView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
         function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
 
+        // --- GAMEPLAY LOGIC ---
         // CHẶNG 1
         const s1Data = [
             { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest.xml", bad: false },
@@ -464,7 +448,7 @@
         // CHẶNG 2
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
         let s2Idx = 0; let s2DoneSteps = []; let s2Scrambled = [];
-        function initStage2() { window.currentStageCode = "c2"; nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = `HỆ THỐNG: ${integrity}%`; renderStage2Grid(); }
+        function initStage2() { window.currentStageCode = "c2"; nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = "HỆ THỐNG: " + integrity + "%"; renderStage2Grid(); }
         function renderStage2Grid() {
             const grid = document.getElementById('grid-s2'); grid.innerHTML = "";
             s2Scrambled = shuffleArray([...s2Steps]);
@@ -475,7 +459,7 @@
                     if (step === s2Steps[s2Idx]) { 
                         correctSound(); s2Idx++; s2DoneSteps.push(step);
                         if(s2Idx === 4) { document.getElementById('target-s2').innerHTML = "✅ KHÔI PHỤC THÀNH CÔNG SƠ ĐỒ KHO BÃI!"; document.getElementById('next-s2').style.display = "block"; } 
-                        else { document.getElementById('target-s2').innerHTML = `GHI NHẬN THÀNH CÔNG BƯỚC ${s2Idx...}`; renderStage2Grid(); } 
+                        else { document.getElementById('target-s2').innerHTML = "GHI NHẬN THÀNH CÔNG BƯỚC " + s2Idx + "..."; renderStage2Grid(); } 
                         broadcastState("Cấu trúc kho (C2)", { doneSteps: s2DoneSteps, items: s2Steps });
                     } else { 
                         s2Idx = 0; s2DoneSteps = [];
@@ -488,19 +472,18 @@
             broadcastState("Cấu trúc kho (C2)", { doneSteps: s2DoneSteps, items: s2Steps });
         }
 
-        // CHẶNG 3 (ĐÃ TRỘN NGẪU NHIÊN 4 ĐÁP ÁN INCOTERMS)
+        // CHẶNG 3
         const s3Scenarios = [
             { text: "Tình huống 1: E-Logix nhập khẩu hàng từ Hàn Quốc theo điều kiện FOB Busan. Hàng xếp lên tàu Maersk an toàn nhưng bị bão đánh rơi xuống biển ngoài khơi. Bên nào phải gánh chịu rủi ro tổn thất này?", opts: ["A. Đối tác người bán Hàn Quốc gánh chịu", "B. Công ty bên mình (E-Logix Buyer) gánh chịu", "C. Chi cục Hải quan cảng đến gánh chịu", "D. Hãng tàu Maersk tự bồi thường bắt buộc"], ans: 1 },
             { text: "Tình huống 2: E-Logix xuất khẩu hàng sang Hà Lan theo điều kiện CIF Rotterdam. Hệ thống định vị tàu Maersk sập làm chậm tàu và hư hỏng hàng chặng biển. Bên nào có trách nhiệm mua bảo hiểm hàng hóa?", opts: ["A. Công ty bên mình (E-Logix Seller) phải mua", "B. Đối tác mua hàng Hà Lan tự lo mua", "C. Cơ quan hải quan hai đầu cảng cùng chia đôi", "D. Không cần mua bảo hiểm vì hàng luồng Xanh"], ans: 0 },
             { text: "Tình huống 3: Đối tác bắt bên mình tự điều xe đến kho nước ngoài của họ lấy hàng, tự lo mọi thủ tục hải quan và chi phí đầu xuất lẫn đầu nhập từ A-Z. Ta nên chọn điều kiện thương mại nào đúng luật?", opts: ["A. Lựa chọn điều kiện thương mại FOB", "B. Lựa chọn điều kiện thương mại CIF", "C. Lựa chọn điều kiện thương mại DDP", "D. Lựa chọn điều kiện thương mại EXW (Tại xưởng)"], ans: 3 }
         ];
         let s3RoundIdx = 0;
-        function initStage3() { window.currentStageCode = "c3"; nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = `HỆ THỐNG: ${integrity}%`; showS3Question(); }
+        function initStage3() { window.currentStageCode = "c3"; nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = "HỆ THỐNG: " + integrity + "%"; showS3Question(); }
         function showS3Question() {
             if(s3RoundIdx < s3Scenarios.length) {
                 let q = s3Scenarios[s3RoundIdx]; document.getElementById('text-s3').innerHTML = q.text; let optDiv = document.getElementById('options-s3'); optDiv.innerHTML = "";
                 
-                // Gói mảng đáp án kèm trạng thái đúng/sai rồi đem đi đảo lộn ma trận vị trí nút bấm
                 let mappedOpts = q.opts.map((o, idx) => { return { text: o, isCorrect: idx === q.ans }; });
                 shuffleArray(mappedOpts);
 
@@ -521,7 +504,7 @@
             { text: "TK: 88512 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 12053 / CH-HACKER / 02D7", fake: true }
         ];
         let s4Cleared = 0; let s4BadClicked = []; let s4GoodClicked = []; let s4Scrambled = [];
-        function initStage4() { window.currentStageCode = "c4"; nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = `HỆ THỐNG: ${integrity}%`; s4Scrambled = shuffleArray([...s4Data]); syncS4(); }
+        function initStage4() { window.currentStageCode = "c4"; nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = "HỆ THỐNG: " + integrity + "%"; s4Scrambled = shuffleArray([...s4Data]); syncS4(); }
         function syncS4() {
             const grid = document.getElementById('grid-s4'); grid.innerHTML = "";
             s4Scrambled.forEach(item => {
@@ -546,15 +529,23 @@
             { text: "Yêu cầu tải file manifest từ đại lý Maersk chính thống phục vụ đối chiếu dữ liệu hải quan", allow: true }
         ];
         let s5Idx = 0;
-        function initStage5() { window.currentStageCode = "c5"; nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; shuffleArray(s5Tasks); showS5Task(); }
+        function initStage5() { window.currentStageCode = "c5"; nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = "HỆ THỐNG: " + integrity + "%"; shuffleArray(s5Tasks); showS5Task(); }
         function showS5Task() { 
             if(s5Idx < s5Tasks.length) { document.getElementById('account-task').innerHTML = s5Tasks[s5Idx].text; broadcastState("Thẩm định nội bộ (C5)", { taskText: s5Tasks[s5Idx].text }); } 
             else { finishGame(); }
         }
         function classifyAccount(allow) { if(allow === s5Tasks[s5Idx].allow) { correctSound(); s5Idx++; showS5Task(); } else { triggerDamage('s5', { taskText: s5Tasks[s5Idx].text }); } }
 
-        // FINISH
         function finishGame() { window.currentStageCode = "win"; winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000); nextView('view-result'); document.getElementById('final-integrity').innerHTML = integrity + "%"; document.getElementById('res-team').innerHTML = teamName; document.getElementById('res-time').innerHTML = seconds; document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; broadcastState("Phá đảo!", {}); }
+
+        // --- ĐIỀU HƯỚNG VÀ ROUTING KÍCH HOẠT BAN ĐẦU ---
+        if (isHost) {
+            document.getElementById("view-host").classList.add("active");
+            initHostDashboard();
+            listenToPlayerUpdates();
+        } else {
+            document.getElementById("view-login").classList.add("active");
+        }
     </script>
 </body>
 </html>
