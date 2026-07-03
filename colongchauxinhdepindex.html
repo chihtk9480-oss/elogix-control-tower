@@ -2,191 +2,374 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>E-Logix Control Tower Multiplayer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tích hợp sẵn CDN Firebase không cần cài đặt Node.js -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <title>E-Logix Cyber Shield Simulator</title>
     <style>
-        :root { --bg: #0d0e15; --panel: #161925; --neon: #00ffcc; --pink: #ff0055; }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .view-panel { display: none; width: 100%; max-width: 600px; background: var(--panel); border: 2px solid #23283d; border-radius: 12px; padding: 20px; box-sizing: border-box; text-align: center; }
-        .timer { font-size: 3rem; color: var(--pink); margin: 10px 0; font-weight: bold; }
-        .btn { background: #1f2336; color: white; border: 1px solid #3a4163; padding: 15px 20px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px; font-weight: bold; }
-        .btn:hover { border-color: var(--neon); }
-        .btn-spin { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
-        .team-row { display: flex; justify-content: space-between; background: #1c2032; padding: 12px; margin-bottom: 8px; border-radius: 6px; }
-        .target { background: #330816; border: 1px solid var(--pink); }
-    </style>
+        :root {
+            --bg-color: #0a0b10;
+            --panel-bg: #121420;
+            --neon-green: #00ffcc;
+            --neon-red: #ff0055;
+            --neon-purple: #9900ff;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .game-wrapper {
+            width: 100%;
+            max-width: 450px;
+            background: var(--panel-bg);
+            border: 2px solid #1f2438;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view { display: none; }
+        .view.active { display: flex; flex-direction: column; }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            margin-top: 0;
+        }
+
+        .alert-banner {
+            background: rgba(255, 0, 85, 0.1);
+            border: 1px solid var(--neon-red);
+            padding: 10px;
+            border-radius: 6px;
+            color: var(--neon-red);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 15px;
+            animation: blink 1s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 0.6; box-shadow: 0 0 5px var(--neon-red); }
+            to { opacity: 1; box-shadow: 0 0 15px var(--neon-red); }
+        }
+
+        .btn {
+            background: #1a1d30;
+            color: white;
+            border: 1px solid #353b5e;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .btn-action {
+            background: var(--neon-purple);
+            border: none;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        /* Stage Styling */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .grid-item {
+            background: #171a29;
+            border: 1px solid #2c3254;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .grid-item.selected-malware {
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+            background: #2e0d16;
+        }
+
+        .grid-item.selected-clean {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            background: #0d2e26;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: #171a29;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .terminal-text {
+            background: #06070a;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #8b9bb4;
+            height: 60px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--neon-purple);
+        }
+    </script>
 </head>
 <body>
 
-    <!-- MÀN HÌNH HOÀN TOÀN TỰ ĐỘNG DỰA TRÊN ĐƯỜNG LINK URL -->
-    
-    <!-- 1. GIAO DIỆN HOST (VY MỞ TRÊN LAPTOP CHIẾU LÊN BẢNG) -->
-    <div id="hostView" class="view-panel">
-        <h2 style="color: var(--neon);">LIVE CONTROL TOWER DASHBOARD</h2>
-        <button class="btn btn-spin" onclick="hostSpin()">PHÁT TÁN MÃ ĐỘC (SPIN)</button>
-        <div class="timer" id="hostTimer">--</div>
-        <div id="hostLog" style="margin: 15px 0; color: #8b9bb4;">Hệ thống đang trực chiến...</div>
-        <h3>BẢNG ĐIỂM REALTIME</h3>
-        <div id="hostLeaderboard"></div>
-    </div>
-
-    <!-- 2. GIAO DIỆN PLAYER (7 NHÓM DƯỚI LỚP QUÉT QR TRÊN ĐIỆN THOẠI) -->
-    <div id="playerView" class="view-panel">
-        <div id="setupZone">
-            <h3>BẠN LÀ NHÓM CỔ ĐÔNG MẤY?</h3>
-            <select id="teamSelect" class="btn" style="background: #1c2032;">
-                <option value="1">Nhóm 1</option><option value="2">Nhóm 2</option>
-                <option value="3">Nhóm 3</option><option value="4">Nhóm 4</option>
-                <option value="5">Nhóm 5</option><option value="6">Nhóm 6</option>
-                <option value="7">Nhóm 7</option>
+    <div class="game-wrapper">
+        <div id="view-login" class="view active">
+            <h1>E-LOGIX SHIELD</h1>
+            <div style="text-align:center; margin-bottom: 20px; color: #8b9bb4;">Hệ Thống Phòng Thủ CT Khẩn Cấp</div>
+            <label style="margin-bottom: 8px; font-size: 0.9rem;">CHỌN MÃ NHÓM CỔ ĐÔNG:</label>
+            <select id="team-id" class="btn" style="background: #171a29; text-align: left;">
+                <option value="1">Nhóm Cổ Đông 1</option>
+                <option value="2">Nhóm Cổ Đông 2</option>
+                <option value="3">Nhóm Cổ Đông 3</option>
+                <option value="4">Nhóm Cổ Đông 4</option>
+                <option value="5">Nhóm Cổ Đông 5</option>
+                <option value="6">Nhóm Cổ Đông 6</option>
+                <option value="7">Nhóm Cổ Đông 7</option>
             </select>
-            <button class="btn btn-spin" onclick="joinGame()">VÀO PHÒNG TÁC CHIẾN</button>
+            <button class="btn btn-action" style="margin-top: 25px;" onclick="nextView('view-intro')">KÍCH HOẠT PHÒNG TÁC CHIẾN</button>
         </div>
 
-        <div id="gameZone" style="display: none;">
-            <h2 id="playerTeamHeader" style="color: var(--neon);">NHÓM CỦA BẠN</h2>
-            <div class="timer" id="playerTimer">--</div>
-            <div id="playerStatus" style="margin-bottom: 20px;">Đang chờ lệnh từ hệ thống...</div>
-            <div id="playerActions" style="display: none;">
-                <button class="btn" style="color: #00ffcc; border-color: #00ffcc;" onclick="playerAction('cyber')">Cybersecurity (Gỡ bom)</button>
-                <button class="btn" style="color: #ff9900; border-color: #ff9900;" onclick="playerAction('access')">Access Control (Đá bom)</button>
-                <button class="btn" style="color: #ff0055; border-color: #ff0055;" onclick="playerAction('backup')">Cloud Backup (Cướp điểm)</button>
+        <div id="view-intro" class="view">
+            <div class="alert-banner">🚨 MÃ ĐỘC NOTPETYA TẤN CÔNG REALTIME 🚨</div>
+            <h3 style="margin-top: 0; text-align: center; color: var(--neon-red);">HỆ THỐNG ĐANG BỊ ĐÓNG BĂNG</h3>
+            <p style="font-size: 0.85rem; line-height: 1.5; color: #b4c2dc;">
+                Y hệt cuộc tấn công Maersk 2017, E-Logix đang bị sập toàn bộ cổng dữ liệu. 45,000 máy tính tê liệt, thông tin đơn hàng đang bốc hơi. 
+                <br><br>
+                Hội đồng cổ đông hãy kích hoạt 3 tầng bảo mật của Tháp điều khiển để cứu lấy doanh nghiệp triệu đô!
+            </p>
+            <button class="btn btn-action" onclick="startSimulation()">BẮT ĐẦU GIẢI CỨU (SPEED-RUN)</button>
+        </div>
+
+        <div id="view-stage1" class="view">
+            <h2>TẦNG 1: CYBERSECURITY</h2>
+            <div class="terminal-text" id="log-s1">> Phát hiện 3 mã độc đang cải trang dữ liệu bẩn trong hệ thống. Hãy nhấn tìm và cô lập chúng!</div>
+            <div class="grid-container" id="grid-s1">
+                </div>
+            <div style="font-size: 0.85rem;">Tiến độ cô lập:</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
+            <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">VÀO TẦNG SAO LƯU</button>
+        </div>
+
+        <div id="view-stage2" class="view">
+            <h2>TẦNG 2: CLOUD BACKUP</h2>
+            <div class="terminal-text" id="log-s2">> Dữ liệu chặng rời rạc! Hãy kích hoạt sao lưu đám mây theo đúng quy trình chuỗi cung ứng!</div>
+            <div style="text-align: center; font-size: 0.85rem; margin-bottom: 10px; color: var(--neon-purple);" id="target-s2">Đang chờ quy trình...</div>
+            <div class="grid-container" id="grid-s2">
+                </div>
+            <button class="btn btn-action" id="next-s2" style="display:none;" onclick="initStage3()">VÀO TẦNG PHÂN QUYỀN</button>
+        </div>
+
+        <div id="view-stage3" class="view">
+            <h2>TẦNG 3: ACCESS CONTROL</h2>
+            <div class="terminal-text" id="log-s3">> Tài khoản nội bộ đang có hành vi gian lận sửa xóa dữ liệu. Hãy phân loại khẩn cấp!</div>
+            <div style="background: #171a29; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
+                <div style="font-size: 0.8rem; color: #8b9bb4;">HÀNH VI PHÁT HIỆN:</div>
+                <div id="account-task" style="font-weight: bold; margin-top: 5px; color: var(--neon-green);">Đang quét...</div>
             </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1; border-color: var(--neon-green); color: var(--neon-green);" onclick="classifyAccount(true)">CHO PHÉP (ALLOW)</button>
+                <button class="btn" style="flex:1; border-color: var(--neon-red); color: var(--neon-red);" onclick="classifyAccount(false)">CHẶN (BLOCK)</button>
+            </div>
+        </div>
+
+        <div id="view-result" class="view">
+            <h2 style="color: var(--neon-green);">HỆ THỐNG ĐÃ KHÔI PHỤC</h2>
+            <div style="text-align: center; font-size: 3rem; margin: 15px 0;" id="final-integrity">0%</div>
+            <div style="text-align: center; color: #8b9bb4; font-size: 0.9rem; margin-bottom: 20px;">DỮ LIỆU ĐƯỢC CỨU NGUY VỮNG CHẮC</div>
+            
+            <div style="background: #06070a; padding: 15px; border-radius: 8px; font-size: 0.85rem; line-height: 1.8;">
+                <div>⚡ <span id="res-team">Nhóm 1</span></div>
+                <div>⏱️ Thời gian tác chiến: <span id="res-time">0</span> giây</div>
+                <div>🔑 Mã chứng nhận: <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">---</span></div>
+            </div>
+            <div style="text-align: center; font-size: 0.8rem; color: #525c7a; margin-top: 15px;">Hãy giơ màn hình này lên để MC Chi xác nhận năng lực cổ đông!</div>
         </div>
     </div>
 
     <script>
-        // =========================================================
-        // DÁN CONFIG FIREBASE FREE CỦA BẠN VÀO ĐÂY ĐỂ CHẠY MULTIPLAYER
-        // =========================================================
-        const firebaseConfig = {
-            apiKey: "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY",
-            authDomain: "TÊN_APP_CỦA_BẠN.firebaseapp.com",
-            databaseURL: "https://TÊN_APP_CỦA_BẠN-default-rtdb.firebaseio.com",
-            projectId: "TÊN_APP_CỦA_BẠN",
-            storageBucket: "TÊN_APP_CỦA_BẠN.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        let teamName = "";
+        let startTime = 0;
+        let totalSeconds = 0;
+        let integrity = 100;
 
-        let myTeamId = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        const isHost = urlParams.get('role') === 'host';
-
-        // Phân tuyến giao diện tự động dựa vào đường link URL
-        if (isHost) {
-            document.getElementById("hostView").style.display = "block";
-            initHostDatabase();
-        } else {
-            document.getElementById("playerView").style.display = "block";
-        }
-
-        // Khởi tạo tầng đáy dữ liệu điểm số đồng bộ tự động lên Cloud
-        function initHostDatabase() {
-            db.ref("gameState").set({ targetTeam: 0, timer: "--", log: "Hệ thống sẵn sàng." });
-            let startPoints = {};
-            for(let i=1; i<=7; i++) startPoints[i] = 100;
-            db.ref("scores").set(startPoints);
-        }
-
-        // Lắng nghe dữ liệu thay đổi realtime từ Cloud để cập nhật giao diện máy chiếu
-        db.ref("scores").on("value", snapshot => {
-            const scores = snapshot.val();
-            if (!scores) return;
-            let sorted = Object.keys(scores).map(key => ({id: key, score: scores[key]})).sort((a,b) => b.score - a.score);
-            
-            db.ref("gameState/targetTeam").once("value", targetSnap => {
-                let target = targetSnap.val();
-                if (isHost) {
-                    let container = document.getElementById("hostLeaderboard");
-                    container.innerHTML = sorted.map(t => `
-                        <div class="team-row ${target == t.id ? 'target' : ''}">
-                            <span>Nhóm cổ đông ${t.id}</span><span>${t.score}đ</span>
-                        </div>
-                    `).join("");
-                }
-            });
-        });
-
-        db.ref("gameState").on("value", snapshot => {
-            const state = snapshot.val();
-            if (!state) return;
-            if (isHost) {
-                document.getElementById("hostTimer").innerHTML = state.timer;
-                document.getElementById("hostLog").innerHTML = state.log;
-            } else if (myTeamId) {
-                document.getElementById("playerTimer").innerHTML = state.timer;
-                if (state.targetTeam == myTeamId && state.timer !== "--") {
-                    document.getElementById("playerStatus").innerHTML = "⚠️ BẠN ĐANG BỊ HACKER KHÓA MỤC TIÊU! LẬT THẺ GẤP!";
-                    document.getElementById("playerActions").style.display = "block";
-                } else {
-                    document.getElementById("playerStatus").innerHTML = state.log;
-                    document.getElementById("playerActions").style.display = "none";
-                }
+        function nextView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if(viewId === 'view-login') {
+                teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
             }
-        });
+        }
 
-        // Vy bấm nút quay số dính mã độc trên laptop
-        function hostSpin() {
-            let target = Math.floor(Math.random() * 7) + 1;
-            db.ref("gameState").set({ targetTeam: target, timer: "5s", log: `⚠️ Mã độc NotPetya đã khóa mục tiêu vào Nhóm ${target}!` });
-            
-            let timeLeft = 5;
-            let interval = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    db.ref("gameState/timer").once("value", tSnap => {
-                        if (tSnap.val() !== "--") {
-                            db.ref(`scores/${target}`).once("value", sSnap => {
-                                db.ref(`scores/${target}`).set(sSnap.val() - 40);
-                                db.ref("gameState").set({ targetTeam: 0, timer: "--", log: `💥 BOOM! Nhóm ${target} dính bom NotPetya (-40đ)!` });
-                            });
+        function startSimulation() {
+            teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
+            startTime = Date.now();
+            nextView('view-stage1');
+            initStage1();
+        }
+
+        // --- STAGE 1: CYBERSECURITY ---
+        const s1Data = [
+            { text: "Dữ liệu bẩn: NotPetya.exe", isMalware: true },
+            { text: "OMS_Database_2026", isMalware: false },
+            { text: "Mật khẩu: admin123", isMalware: true },
+            { text: "WMS_Inventory_Data", isMalware: false },
+            { text: "Cổng truy cập lậu: 8080", isMalware: true },
+            { text: "TMS_Route_Backup", isMalware: false }
+        ];
+        let s1Found = 0;
+
+        function initStage1() {
+            const grid = document.getElementById('grid-s1');
+            grid.innerHTML = "";
+            s1Data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                div.innerHTML = item.text;
+                div.onclick = () => {
+                    if (item.isMalware) {
+                        div.className = 'grid-item selected-malware';
+                        s1Found++;
+                        document.getElementById('log-s1').innerHTML = `> Đã cách ly lỗ hổng thành công!`;
+                        document.getElementById('progress-s1').style.width = (s1Found / 3) * 100 + "%";
+                        if (s1Found === 3) {
+                            document.getElementById('log-s1').innerHTML = `> Lá chắn bảo mật hoàn tất! Nhấn tiếp tục gấp.`;
+                            document.getElementById('next-s1').style.style.display = "block";
                         }
-                    });
-                } else {
-                    db.ref("gameState/timer").set(timeLeft + "s");
-                }
-            }, 1000);
-        }
-
-        // Sinh viên chọn nhóm và bấm vào phòng thi từ điện thoại của họ
-        function joinGame() {
-            myTeamId = document.getElementById("teamSelect").value;
-            document.getElementById("setupZone").style.display = "none";
-            document.getElementById("gameZone").style.display = "block";
-            document.getElementById("playerTeamHeader").innerHTML = `NHÓM CỔ ĐÔNG ${myTeamId}`;
-        }
-
-        // Sinh viên tự tay bấm lật thẻ gỡ bom / cướp điểm trên màn hình điện thoại
-        function playerAction(type) {
-            db.ref("gameState").set({ targetTeam: 0, timer: "--", log: "Đang xử lý lệnh phòng thủ..." });
-            db.ref(`scores/${myTeamId}`).once("value", snapshot => {
-                let currentScore = snapshot.val();
-                if (type === 'cyber') {
-                    db.ref("gameState").set({ targetTeam: 0, timer: "--", log: `🛡️ Nhóm ${myTeamId} lật Cybersecurity gỡ bom thành công!` });
-                } else if (type === 'access') {
-                    let victim = myTeamId == 7 ? 1 : parseInt(myTeamId) + 1; // Mặc định đá bom sang nhóm liền kề
-                    db.ref(`scores/${victim}`).once("value", vSnap => {
-                        db.ref(`scores/${victim}`).set(vSnap.val() - 40);
-                        db.ref("gameState").set({ targetTeam: 0, timer: "--", log: `🎭 Nhóm ${myTeamId} lật Access Control, đá bom sang Nhóm ${victim} gánh hộ (-40đ)!` });
-                    });
-                } else if (type === 'backup') {
-                    db.ref("scores").once("value", allScoresSnap => {
-                        let allScores = allScoresSnap.val();
-                        let topTeamId = Object.keys(allScores).reduce((a, b) => allScores[a] > allScores[b] ? a : b);
-                        db.ref(`scores/${topTeamId}`).set(allScores[topTeamId] - 30);
-                        db.ref(`scores/${myTeamId}`).set(currentScore + 30);
-                        db.ref("gameState").set({ targetTeam: 0, timer: "--", log: `🚀 Cloud Backup! Nhóm ${myTeamId} cướp thẳng 30đ từ nhóm top 1 (Nhóm ${topTeamId})!` });
-                    });
-                }
+                    } else {
+                        div.className = 'grid-item selected-clean';
+                        integrity -= 10;
+                        document.getElementById('log-s1').innerHTML = `> ❌ NHẦM RỒI! Xóa nhầm dữ liệu sạch! Hệ thống bị tổn hại!`;
+                    }
+                };
+                grid.appendChild(div);
             });
+        }
+
+        // --- STAGE 2: CLOUD BACKUP ---
+        const s2Steps = ["1. Tạo đơn (OMS)", "2. Kiểm kho (WMS)", "3. Điểu tải (TMS)", "4. Sao lưu Cloud"];
+        let s2CurrentIdx = 0;
+
+        function initStage2() {
+            nextView('view-stage2');
+            document.getElementById('target-s2').innerHTML = `HÃY NHẤN BƯỚC: ${s2Steps[s2CurrentIdx]}`;
+            const grid = document.getElementById('grid-s2');
+            grid.innerHTML = "";
+            
+            // Xáo trộn mảng để tăng độ khó tính mắt
+            let shuffled = [...s2Steps].sort(() => Math.random() - 0.5);
+            shuffled.forEach(step => {
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                div.innerHTML = step;
+                div.onclick = () => {
+                    if (step === s2Steps[s2CurrentIdx]) {
+                        div.className = 'grid-item selected-clean';
+                        s2CurrentIdx++;
+                        if (s2CurrentIdx === 4) {
+                            document.getElementById('target-s2').innerHTML = "✅ KHÔI PHỤC ĐƯỜNG TRUYỀN THÀNH CÔNG!";
+                            document.getElementById('log-s2').innerHTML = `> Mạch máu dữ liệu đã thông suốt lên mây. Tiến vào chặng cuối.`;
+                            document.getElementById('next-s2').style.style.display = "block";
+                        } else {
+                            document.getElementById('target-s2').innerHTML = `HÃY NHẤN BƯỚC: ${s2Steps[s2CurrentIdx]}`;
+                        }
+                    } else {
+                        integrity -= 10;
+                        document.getElementById('log-s2').innerHTML = `> ❌ SAI QUY TRÌNH! Nghẽn mạch dữ liệu, Cloud Backup bị lỗi!`;
+                    }
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        // --- STAGE 3: ACCESS CONTROL ---
+        const s3Tasks = [
+            { text: "Tài khoản lạ cố truy cập hệ thống đầu não", allow: false },
+            { text: "Giám đốc vận hành kiểm tra Dashboard", allow: true },
+            { text: "Shipper cố tình xóa lịch sử nhận đơn iPhone", allow: false },
+            { text: "Kế toán xuất hóa đơn vận tải tự động", allow: true }
+        ];
+        let s3CurrentIdx = 0;
+
+        function initStage3() {
+            nextView('view-stage3');
+            showS3Task();
+        }
+
+        function showS3Task() {
+            if (s3CurrentIdx < s3Tasks.length) {
+                document.getElementById('account-task').innerHTML = s3Tasks[s3CurrentIdx].text;
+            } else {
+                finishGame();
+            }
+        }
+
+        function classifyAccount(chooseAllow) {
+            let currentTask = s3Tasks[s3CurrentIdx];
+            if (chooseAllow === currentTask.allow) {
+                document.getElementById('log-s3').innerHTML = `> Phân quyền chuẩn xác! Hệ thống an toàn.`;
+            } else {
+                integrity -= 15;
+                document.getElementById('log-s3').innerHTML = `> ❌ SAI LẦM! Lộ lỗ hổng phân quyền, nội bộ bị hacker trục lợi!`;
+            }
+            s3CurrentIdx++;
+            showS3Task();
+        }
+
+        // --- FINISH GAME ---
+        function finishGame() {
+            totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+            if (integrity < 0) integrity = 0;
+            nextView('view-result');
+            
+            document.getElementById('final-integrity').innerHTML = integrity + "%";
+            document.getElementById('res-team').innerHTML = teamName;
+            document.getElementById('res-time').innerHTML = totalSeconds;
+            
+            // Tạo mã chứng nhận ngẫu nhiên nhìn cho nguy hiểm để chống gian lận điểm số
+            let certCode = "ELG-" + Math.floor(Math.random() * 9000 + 1000) + "-" + integrity + "PT";
+            document.getElementById('res-code').innerHTML = certCode;
         }
     </script>
 </body>
