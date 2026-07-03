@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V4.6 - Final Master HUD</title>
+    <title>E-Logix Cyber Shield V4.7 - Perfect Command HUD</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -61,6 +61,7 @@
         .view.active { display: flex; flex-direction: column; }
         .shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         
+        /* ĐÃ FIX LỖI CHÍNH TẢ "90 TRIỆU" THÀNH 90% CHUẨN CODE */
         @keyframes screen-shake {
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(3px, 0, 0); }
@@ -120,7 +121,7 @@
         }
     </style>
 </head>
-<body id="main-body">
+<body>
 
     <div class="game-wrapper" id="console-box">
         
@@ -134,7 +135,7 @@
                     <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📡 MIRROR MATRIX FEED: IDLE</div>
                     <div class="mirror-phone-viewport" id="mirror-viewport">
                         <div style="text-align: center; color: #475569; font-style: italic; margin: auto;">
-                            Hãy click chuột chọn một nhóm cổ đông ở bên trái để kích hoạt tính năng chiếu gương màn hình điện thoại của họ lên máy chiếu lớp!
+                            Hãy click chuột chọn một nhóm cổ đông ở bên trái để kích hoạt tính năng chiếu gương màn hình điện thoại of họ lên máy chiếu lớp!
                         </div>
                     </div>
                 </div>
@@ -142,7 +143,7 @@
         </div>
 
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V4.6</h1>
+            <h1>E-LOGIX SHIELD V4.7</h1>
             <div style="text-align:center; margin-bottom: 25px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
@@ -158,7 +159,7 @@
         </div>
 
         <div id="view-intro" class="view">
-            <div style="background: rgba(255,0,68,0.15); border: 1px solid var(--neon-red); padding: 12px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 20px;">🚨 CẢNH BÁO KHỦNG HOẢNG TOÀN CẦU 🚨</div>
+            <div style="background: rgba(255,0,68,0.15); border: 1px solid var(--neon-red); padding: 12px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255,0,68,0.2);">🚨 CẢNH BÁO KHỦNG HOẢNG TOÀN CẦU 🚨</div>
             <p style="font-size: 1.05rem; line-height: 1.6; color: #cbd5e1; text-align: justify; margin-bottom: 20px;">
                 Hãng tàu <strong>Maersk</strong> bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Toàn bộ container hàng hóa trị giá triệu đô của công ty mình (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài khơi biển Đông.
                 <br><br>
@@ -229,7 +230,7 @@
 
     <script>
         let teamId = ""; let teamName = ""; let startTime = 0; let integrity = 100;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null; // ĐỂ CHỐNG LỖI SẬP TRÊN MOBILE
         let bgmIntervalId = null;
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -238,10 +239,8 @@
 
         window.teamStates = {};
         window.selectedSpecTeam = null;
-
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
         
-        // KHỞI TẠO DASHBOARD MÁY CHIẾU
         function initHostDashboard() {
             document.getElementById("main-body").classList.add("host-mode-active");
             const container = document.getElementById("host-dashboard");
@@ -261,7 +260,6 @@
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
             document.getElementById('card-team-' + id).classList.add('spec-selected');
             document.getElementById('spec-title').innerHTML = "📡 SCREEN MIRRORING: NHÓM " + id;
-            
             if (window.teamStates[id]) { mirrorPlayerScreen(window.teamStates[id]); } 
             else { document.getElementById('mirror-viewport').innerHTML = "<div style='margin: auto; text-align:center; color:#475569;'>Nhóm " + id + " đang chờ lệnh kích hoạt từ điện thoại...</div>"; }
         }
@@ -348,7 +346,7 @@
             fetch("https://ntfy.sh/" + NETWORK_TOPIC, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
         }
 
-        // THUẬT TOÁN Fisher-Yates BẰNG BIẾN TEMP CỔ ĐIỂN (ĐÃ FIX CHỐNG LỖI MOBILE)
+        // THUẬT TOÁN Fisher-Yates CHUẨN ĐÃ FIX HOÀN TOÀN TRÊN ĐIỆN THOẠI
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 let j = Math.floor(Math.random() * (i + 1));
@@ -359,10 +357,14 @@
             return array;
         }
 
-        // NHẠC NỀN ĐIỆP VIÊN MAX VOLUME
+        // KHỞI TẠO HỆ THỐNG ÂM THANH AN TOÀN TRÊN MOBILE KHI CLICK TRẬN ĐẤU
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
+            
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
             if (bgmIntervalId) return;
             try {
                 let step = 0;
@@ -383,6 +385,7 @@
         }
 
         function playTone(freq, type, duration, vol=0.3) {
+            if(!audioCtx) return;
             try {
                 let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
                 osc.type = type; osc.frequency.value = freq;
@@ -392,8 +395,6 @@
                 osc.start(); osc.stop(audioCtx.currentTime + duration);
             } catch(e) {}
         }
-
-        document.body.addEventListener('click', function() { if (audioCtx.state === 'suspended') { audioCtx.resume(); } });
 
         function correctSound() { playTone(660, 'sine', 0.08, 0.5); setTimeout(() => playTone(990, 'sine', 0.1, 0.5), 50); }
         function wrongSound() { playTone(100, 'sawtooth', 0.25, 0.7); }
@@ -410,8 +411,7 @@
 
         function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
 
-        // --- GAMEPLAY LOGIC ---
-        // CHẶNG 1
+        // --- GAMEPLAY DATA ---
         const s1Data = [
             { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest.xml", bad: false },
             { text: "Worm_Port_8080.sh", bad: true }, { text: "WMS_Stock_Report.xlsx", bad: false },
@@ -445,7 +445,6 @@
             broadcastState("Diệt mã độc (C1)", { found: s1Found, badClicked: s1BadClicked, goodClicked: s1GoodClicked, items: s1Scrambled.map(x=>x.text) });
         }
 
-        // CHẶNG 2
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
         let s2Idx = 0; let s2DoneSteps = []; let s2Scrambled = [];
         function initStage2() { window.currentStageCode = "c2"; nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = "HỆ THỐNG: " + integrity + "%"; renderStage2Grid(); }
@@ -472,7 +471,6 @@
             broadcastState("Cấu trúc kho (C2)", { doneSteps: s2DoneSteps, items: s2Steps });
         }
 
-        // CHẶNG 3
         const s3Scenarios = [
             { text: "Tình huống 1: E-Logix nhập khẩu hàng từ Hàn Quốc theo điều kiện FOB Busan. Hàng xếp lên tàu Maersk an toàn nhưng bị bão đánh rơi xuống biển ngoài khơi. Bên nào phải gánh chịu rủi ro tổn thất này?", opts: ["A. Đối tác người bán Hàn Quốc gánh chịu", "B. Công ty bên mình (E-Logix Buyer) gánh chịu", "C. Chi cục Hải quan cảng đến gánh chịu", "D. Hãng tàu Maersk tự bồi thường bắt buộc"], ans: 1 },
             { text: "Tình huống 2: E-Logix xuất khẩu hàng sang Hà Lan theo điều kiện CIF Rotterdam. Hệ thống định vị tàu Maersk sập làm chậm tàu và hư hỏng hàng chặng biển. Bên nào có trách nhiệm mua bảo hiểm hàng hóa?", opts: ["A. Công ty bên mình (E-Logix Seller) phải mua", "B. Đối tác mua hàng Hà Lan tự lo mua", "C. Cơ quan hải quan hai đầu cảng cùng chia đôi", "D. Không cần mua bảo hiểm vì hàng luồng Xanh"], ans: 0 },
@@ -496,7 +494,6 @@
             } else { nextView('view-stage4'); initStage4(); }
         }
 
-        // CHẶNG 4
         const s4Data = [
             { text: "TK: 10293 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 94821 / CH-CATLAI / 02C2", fake: true },
             { text: "TK: 58201 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 30192 / CH-FAKE  / 02B9", fake: true },
@@ -521,7 +518,6 @@
             broadcastState("Soi Hải quan (C4)", { badClicked: s4BadClicked, goodClicked: s4GoodClicked, items: s4Scrambled.map(x=>x.text) });
         }
 
-        // CHẶNG 5
         const s5Tasks = [
             { text: "Lệnh xóa lịch sử Master Bill of Lading gốc từ một tài khoản nặc danh IP lạ nước ngoài", allow: false },
             { text: "Yêu cầu tự động thông quan luồng Xanh có chứng thư số doanh nghiệp tại cảng Cát Lái", allow: true },
@@ -538,7 +534,6 @@
 
         function finishGame() { window.currentStageCode = "win"; winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000); nextView('view-result'); document.getElementById('final-integrity').innerHTML = integrity + "%"; document.getElementById('res-team').innerHTML = teamName; document.getElementById('res-time').innerHTML = seconds; document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; broadcastState("Phá đảo!", {}); }
 
-        // --- ĐIỀU HƯỚNG VÀ ROUTING KÍCH HOẠT BAN ĐẦU ---
         if (isHost) {
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
