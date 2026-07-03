@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V4.0 - Cinematic Edition</title>
+    <title>E-Logix Cyber Shield V4.1 - Realtime Cinematic HUD</title>
     <style>
         :root {
             --bg-color: #020308;
-            --panel-bg: rgba(6, 11, 30, 0.85);
+            --panel-bg: rgba(6, 11, 30, 0.88);
             --neon-green: #00ff66;
             --neon-red: #ff0044;
             --neon-blue: #00f0ff;
@@ -16,7 +16,7 @@
             --text-sub: #475569;
         }
 
-        /* NỀN LƯỚI MA TRẬN NEON ĐA CHIỀU */
+        /* NỀN LƯỚI MA TRẬN PHÒNG TÁC CHIẾN CHÌM */
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
@@ -34,29 +34,24 @@
             box-sizing: border-box;
         }
 
-        /* KHUNG KÍNH MỜ GLASSMORPHISM SIÊU CẤP */
+        /* KHUNG KÍNH MỜ GLASSMORPHISM CAO CẤP */
         .game-wrapper {
             width: 100%;
-            max-width: 740px;
+            max-width: 760px;
             background: var(--panel-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 2px solid rgba(0, 240, 255, 0.3);
+            border: 2px solid rgba(0, 240, 255, 0.35);
             border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.05);
+            padding: 35px;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.2), inset 0 0 25px rgba(0, 240, 255, 0.05);
             box-sizing: border-box;
             position: relative;
-            overflow: hidden;
         }
 
-        /* GÓC CẮT RADA ĐỊNH VỊ SCI-FI */
-        .game-wrapper::before {
-            content: ""; position: absolute; top: 15px; left: 15px; width: 20px; height: 20px; border-top: 3px solid var(--neon-blue); border-left: 3px solid var(--neon-blue); pointer-events: none;
-        }
-        .game-wrapper::after {
-            content: ""; position: absolute; top: 15px; right: 15px; width: 20px; height: 20px; border-top: 3px solid var(--neon-blue); border-right: 3px solid var(--neon-blue); pointer-events: none;
-        }
+        /*bracket ĐỊNH VỊ SCI-FI TẠI CÁC GÓC */
+        .game-wrapper::before { content: ""; position: absolute; top: 15px; left: 15px; width: 22px; height: 22px; border-top: 3px solid var(--neon-blue); border-left: 3px solid var(--neon-blue); pointer-events: none; }
+        .game-wrapper::after { content: ""; position: absolute; top: 15px; right: 15px; width: 22px; height: 22px; border-top: 3px solid var(--neon-blue); border-right: 3px solid var(--neon-blue); pointer-events: none; }
 
         .view { display: none; }
         .view.active { display: flex; flex-direction: column; }
@@ -68,40 +63,34 @@
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        h1 { text-align: center; color: var(--neon-blue); text-shadow: 0 0 20px rgba(0, 240, 255, 0.6); font-size: 2.6rem; margin-top: 0; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
-        h2 { text-align: center; color: var(--neon-purple); text-shadow: 0 0 12px rgba(189, 0, 255, 0.5); margin-top: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: 1px; }
+        h1 { text-align: center; color: var(--neon-blue); text-shadow: 0 0 20px rgba(0, 240, 255, 0.6); font-size: 2.5rem; margin-top: 0; font-weight: 900; letter-spacing: 2px; }
+        h2 { text-align: center; color: var(--neon-purple); text-shadow: 0 0 12px rgba(189, 0, 255, 0.5); margin-top: 0; font-size: 1.7rem; font-weight: 800; }
 
-        /* NÚT BẤM HIỆU ỨNG GLOW NEON */
-        .btn { background: rgba(16, 22, 56, 0.6); color: #e2e8f0; border: 1px solid rgba(0, 240, 255, 0.4); padding: 18px; font-size: 1.15rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; font-family: inherit; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .btn { background: rgba(16, 22, 56, 0.6); color: #e2e8f0; border: 1px solid rgba(0, 240, 255, 0.4); padding: 18px; font-size: 1.15rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .btn:hover { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 25px rgba(0,255,102,0.4); transform: translateY(-2px); background: rgba(0,255,102,0.05); }
-        .btn-action { background: linear-gradient(135deg, var(--neon-purple), #4900c2); color: white; border: none; box-shadow: 0 0 25px rgba(189,0,255,0.6); font-size: 1.25rem; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-action:hover { box-shadow: 0 0 35px var(--neon-purple); border-color: transparent; color: white; }
+        .btn-action { background: linear-gradient(135deg, var(--neon-purple), #4900c2); color: white; border: none; box-shadow: 0 0 25px rgba(189,0,255,0.6); font-size: 1.25rem; letter-spacing: 1px; }
 
         .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 15px 0; }
-        
-        /* Ô ĐÁP ÁN HUD ĐA TẦNG */
-        .grid-item { background: rgba(13, 20, 52, 0.5); border: 1px solid rgba(34, 45, 99, 0.8); padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; }
+        .grid-item { background: rgba(13, 20, 52, 0.5); border: 1px solid rgba(34, 45, 99, 0.8); padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .grid-item:hover { border-color: var(--neon-blue); background: rgba(0, 240, 255, 0.05); box-shadow: 0 0 15px rgba(0,240,255,0.2); }
-        .grid-item.selected-malware { border-color: var(--neon-red) !important; color: var(--neon-red); background: rgba(255,0,68,0.2) !important; box-shadow: 0 0 25px var(--neon-red) !important; text-shadow: 0 0 5px var(--neon-red); }
-        .grid-item.selected-clean { border-color: var(--neon-green) !important; color: var(--neon-green); background: rgba(0,255,102,0.18) !important; box-shadow: 0 0 25px var(--neon-green) !important; text-shadow: 0 0 5px var(--neon-green); }
+        .grid-item.selected-malware { border-color: var(--neon-red) !important; color: var(--neon-red); background: rgba(255,0,68,0.2) !important; box-shadow: 0 0 25px var(--neon-red) !important; }
+        .grid-item.selected-clean { border-color: var(--neon-green) !important; color: var(--neon-green); background: rgba(0,255,102,0.18) !important; box-shadow: 0 0 25px var(--neon-green) !important; }
 
-        /* HỘP TERMINAL ĐEN TUYỀN PHẢN CHIẾU */
         .terminal-text { background: #03050f; padding: 18px; border-radius: 12px; font-size: 1.05rem; color: #cbd5e1; min-height: 55px; margin-bottom: 15px; border-left: 5px solid var(--neon-purple); line-height: 1.6; box-shadow: inset 0 2px 8px rgba(0,0,0,0.9); text-align: justify; }
-        .status-bar { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 18px; background: rgba(3, 5, 15, 0.8); padding: 12px 18px; border-radius: 10px; border-left: 5px solid var(--neon-blue); box-shadow: inset 0 1px 3px rgba(255,255,255,0.05); }
+        .status-bar { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 18px; background: rgba(3, 5, 15, 0.8); padding: 12px 18px; border-radius: 10px; border-left: 5px solid var(--neon-blue); }
         
-        /* LÕI LỌC NĂNG LƯỢNG PLASMA ANIMATION */
         .progress-bar { width: 100%; background: #03050f; height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid rgba(0,240,255,0.2); margin-top: 5px; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #00ff66, #00ffcc); width: 0%; transition: width 0.2s; box-shadow: 0 0 10px var(--neon-green); }
 
-        /* MONITOR DASHBOARD CHO VY */
-        .host-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; margin-top: 15px; }
+        /* GIAO DIỆN LƯỚI GIÁM SÁT MÁY CHIẾU LUNG LINH KHÔNG PHÈN */
+        .host-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; margin-top: 20px; }
         @media(max-width: 600px) { .host-grid { grid-template-columns: 1fr; } }
-        .host-card { background: rgba(12, 18, 44, 0.8); border: 1px solid rgba(32, 43, 94, 0.7); border-radius: 12px; padding: 18px; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .host-card.active-card { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(0,255,102,0.15); }
-        .host-team-name { font-size: 1.25rem; font-weight: bold; color: var(--neon-blue); display: flex; justify-content: space-between; }
-        .host-team-stage { font-size: 0.95rem; color: #94a3b8; margin: 8px 0; font-family: monospace; }
-        .host-hp-bar { width: 100%; background: #02040a; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        .host-hp-fill { height: 100%; width: 100%; background: var(--neon-green); transition: all 0.3s; }
+        .host-card { background: rgba(12, 18, 44, 0.85); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 14px; padding: 20px; position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.6); transition: all 0.3s; }
+        .host-card.active-card { border-color: var(--neon-green); box-shadow: 0 0 25px rgba(0,255,102,0.25), inset 0 0 10px rgba(0,255,102,0.1); }
+        .host-team-name { font-size: 1.3rem; font-weight: bold; color: var(--neon-blue); display: flex; justify-content: space-between; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        .host-team-stage { font-size: 0.95rem; color: #cbd5e1; margin: 12px 0; font-family: monospace; background: #02040a; padding: 6px 10px; border-radius: 6px; border-left: 3px solid var(--neon-purple); }
+        .host-hp-bar { width: 100%; background: #02040a; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .host-hp-fill { height: 100%; width: 100%; background: var(--neon-green); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 8px var(--neon-green); }
     </style>
 </head>
 <body>
@@ -110,13 +99,14 @@
         
         <div id="view-host" class="view">
             <h1>CO-LOGIX WAR ROOM MONITOR</h1>
-            <div style="text-align: center; color: var(--neon-purple); font-weight: bold; font-size: 1.05rem; margin-bottom: 15px;">[ TIẾN ĐỘ THỜI GIAN THỰC CỦA ĐẠI HỘI CỔ ĐÔNG ]</div>
-            <div class="host-grid" id="host-dashboard"></div>
+            <div style="text-align: center; color: var(--neon-purple); font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 1px; text-shadow: 0 0 8px var(--neon-purple);">[ TIẾN ĐỘ THỜI GIAN THỰC CỦA ĐẠI HỘI CỔ ĐÔNG ]</div>
+            <div class="host-grid" id="host-dashboard">
+                </div>
         </div>
 
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V4.0</h1>
-            <div style="text-align:center; margin-bottom: 25px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
+            <h1>E-LOGIX SHIELD V4.1</h1>
+            <div style="text-align:center; margin-bottom: 25px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ ĐẤU TRƯỜNG GIẢI CỨU CHUỖI CUNG ỨNG REAL-TIME ]</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
                 <option value="1">Nhóm Cổ Đông 1</option>
@@ -127,13 +117,13 @@
                 <option value="7">Nhóm Cổ Đông 7</option>
                 <option value="8">Nhóm Cổ Đông 8</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
+            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); nextView('view-intro')">KÍCH HOẠT KẾT NỐI MẠNG MÁY CHIẾU</button>
         </div>
 
         <div id="view-intro" class="view">
             <div style="background: rgba(255,0,68,0.15); border: 1px solid var(--neon-red); padding: 12px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255,0,68,0.2);">🚨 CẢNH BÁO KHỦNG HOẢNG TOÀN CẦU 🚨</div>
             <p style="font-size: 1.1rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 20px;">
-                Hãng tàu <strong>Maersk</strong> bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Toàn bộ container hàng hóa trị giá triệu đô của công ty chúng ta (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài khơi biển Đông.
+                Hãng tàu <strong>Maersk</strong> bị tấn công mạng làm đóng băng chuỗi cung ứng toàn cầu. Toàn bộ container hàng hóa trị giá triệu đô của công ty mình (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài khơi biển Đông.
                 <br><br>
                 Hội đồng cổ đông hãy vượt qua 5 tầng bảo mật để tự cứu lấy dữ liệu vận tải doanh nghiệp. Nhấn sai hệ thống sẽ tự động thiết lập lại từ đầu màn chơi!
             </p>
@@ -209,22 +199,17 @@
         const isHost = urlParams.get('role') === 'host';
         const NETWORK_TOPIC = "elogix_warroom_realtime_stream_2026";
 
-        if (isHost) {
-            document.getElementById("view-host").classList.add("active");
-            initHostDashboard();
-            listenToPlayerUpdates();
-        } else {
-            document.getElementById("view-login").classList.add("active");
-        }
-
+        // --- ĐỊNH NGHĨA ĐẦY ĐỦ CÁC HÀM MẠNG CHO MÁY CHIẾU (ĐÃ FIX LỖI) ---
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
+        
         function initHostDashboard() {
             const container = document.getElementById("host-dashboard");
+            if (!container) return;
             container.innerHTML = activeTeams.map(id => `
                 <div class="host-card" id="card-team-${id}">
                     <div class="host-team-name"><span>Nhóm Cổ Đông ${id}</span> <span id="host-time-${id}">0s</span></div>
                     <div class="host-team-stage" id="host-stage-${id}">Đang chờ kết nối...</div>
-                    <div style="font-size:0.85rem; display:flex; justify-content:space-between;"><span>An ninh:</span><span id="host-hp-txt-${id}">100%</span></div>
+                    <div style="font-size:0.85rem; display:flex; justify-content:space-between; margin-top:5px;"><span>Toàn vẹn hệ thống:</span><span id="host-hp-txt-${id}">100%</span></div>
                     <div class="host-hp-bar"><div class="host-hp-fill" id="host-hp-fill-${id}"></div></div>
                 </div>
             `).join("");
@@ -238,14 +223,25 @@
                     if (data.event === "message") {
                         const payload = JSON.parse(data.message);
                         if (payload && payload.team) {
-                            document.getElementById(`card-team-${payload.team}`).classList.add("active-card");
-                            document.getElementById(`host-stage-${payload.team}`).innerHTML = payload.stage;
-                            document.getElementById(`host-time-${payload.team}`).innerHTML = payload.time + "s";
-                            document.getElementById(`host-hp-txt-${payload.team}`).innerHTML = payload.hp + "%";
+                            let card = document.getElementById(`card-team-${payload.team}`);
+                            if(card) card.classList.add("active-card");
+                            
+                            let stageEl = document.getElementById(`host-stage-${payload.team}`);
+                            if(stageEl) stageEl.innerHTML = payload.stage;
+                            
+                            let timeEl = document.getElementById(`host-time-${payload.team}`);
+                            if(timeEl) timeEl.innerHTML = payload.time + "s";
+                            
+                            let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
+                            if(hpTxtEl) hpTxtEl.innerHTML = payload.hp + "%";
+                            
                             const fill = document.getElementById(`host-hp-fill-${payload.team}`);
-                            fill.style.width = payload.hp + "%";
-                            if(payload.hp < 40) fill.style.background = "var(--neon-red)";
-                            else if(payload.hp < 75) fill.style.background = "orange";
+                            if(fill) {
+                                fill.style.width = payload.hp + "%";
+                                if(payload.hp < 40) fill.style.background = "var(--neon-red)";
+                                else if(payload.hp < 75) fill.style.background = "orange";
+                                else fill.style.background = "var(--neon-green)";
+                            }
                         }
                     }
                 } catch(e) {}
@@ -256,9 +252,22 @@
             if (isHost || !teamId) return;
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
             const payload = { team: teamId, stage: stageName, hp: integrity, time: currentSeconds };
-            fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
+            fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { 
+                method: 'POST', 
+                body: JSON.stringify(payload) 
+            }).catch(e => {});
         }
 
+        // ĐIỀU HƯỚNG ROUTING BAN ĐẦU
+        if (isHost) {
+            document.getElementById("view-host").classList.add("active");
+            initHostDashboard();
+            listenToPlayerUpdates();
+        } else {
+            document.getElementById("view-login").classList.add("active");
+        }
+
+        // --- HỆ THỐNG NHẠC CYBER SPY MAX VOLUME (VOL = 0.9) ---
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
@@ -355,9 +364,9 @@
 
         // CHẶNG 3
         const s3Scenarios = [
-            { text: "Câu 1: E-Logix nhập khẩu hàng từ Hàn Quốc theo điều kiện FOB Busan. Hàng xếp lên tàu Maersk an toàn nhưng bị bão đánh rơi xuống biển ngoài khơi. Bên nào phải gánh chịu rủi ro tổn thất này?", opts: ["A. Đối tác người bán Hàn Quốc gánh chịu", "B. Công ty bên mình (E-Logix Buyer) gánh chịu", "C. Chi cục Hải quan cảng đến gánh chịu", "D. Hãng tàu Maersk tự bồi thường bắt buộc"], ans: 1 },
-            { text: "Câu 2: E-Logix xuất khẩu hàng sang Hà Lan theo điều kiện CIF Rotterdam. Hệ thống định vị tàu Maersk sập làm chậm tàu và hư hỏng hàng chặng biển. Bên nào có trách nhiệm mua bảo hiểm hàng hóa?", opts: ["A. Công ty bên mình (E-Logix Seller) phải mua", "B. Đối tác mua hàng Hà Lan tự lo mua", "C. Cơ quan hải quan hai đầu cảng cùng chia đôi", "D. Không cần mua bảo hiểm vì hàng luồng Xanh"], ans: 0 },
-            { text: "Câu 3: Đối tác bắt bên mình tự điều xe đến kho nước ngoài của họ lấy hàng, tự lo mọi thủ tục hải quan và chi phí đầu xuất lẫn đầu nhập từ A-Z. Ta nên chọn điều kiện thương mại nào đúng luật?", opts: ["A. Lựa chọn điều kiện thương mại FOB", "B. Lựa chọn điều kiện thương mại CIF", "C. Lựa chọn điều kiện thương mại DDP", "D. Lựa chọn điều kiện thương mại EXW (Tại xưởng)"], ans: 3 }
+            { text: "Tình huống 1: E-Logix nhập khẩu hàng từ Hàn Quốc theo điều kiện FOB Busan. Hàng xếp lên tàu Maersk an toàn nhưng bị bão đánh rơi xuống biển ngoài khơi. Bên nào phải gánh chịu rủi ro tổn thất này?", opts: ["A. Đối tác người bán Hàn Quốc gánh chịu", "B. Công ty bên mình (E-Logix Buyer) gánh chịu", "C. Chi cục Hải quan cảng đến gánh chịu", "D. Hãng tàu Maersk tự bồi thường bắt buộc"], ans: 1 },
+            { text: "Tình huống 2: E-Logix xuất khẩu hàng sang Hà Lan theo điều kiện CIF Rotterdam. Hệ thống định vị tàu Maersk sập làm chậm tàu và hư hỏng hàng chặng biển. Bên nào có trách nhiệm mua bảo hiểm hàng hóa?", opts: ["A. Công ty bên mình (E-Logix Seller) phải mua", "B. Đối tác mua hàng Hà Lan tự lo mua", "C. Cơ quan hải quan hai đầu cảng cùng chia đôi", "D. Không cần mua bảo hiểm vì hàng luồng Xanh"], ans: 0 },
+            { text: "Tình huống 3: Đối tác bắt bên mình tự điều xe đến kho nước ngoài của họ lấy hàng, tự lo mọi thủ tục hải quan và chi phí đầu xuất lẫn đầu nhập từ A-Z. Ta nên chọn điều kiện thương mại nào đúng luật?", opts: ["A. Lựa chọn điều kiện thương mại FOB", "B. Lựa chọn điều kiện thương mại CIF", "C. Lựa chọn điều kiện thương mại DDP", "D. Lựa chọn điều kiện thương mại EXW (Tại xưởng)"], ans: 3 }
         ];
         let s3RoundIdx = 0;
         function initStage3() { nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = `HỆ THỐNG: ${integrity}%`; reportToProjector("🛳️ Đang đấu trí Incoterms (C3)"); showS3Question(); }
