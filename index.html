@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V3.2 - Premium Edition</title>
+    <title>E-Logix Cyber Shield V3.3 - Đại Hội Cổ Đông Toàn Diện</title>
     <style>
         :root {
-            --bg-color: #02040a;
-            --panel-bg: #070c20;
+            --bg-color: #020409;
+            --panel-bg: #070b1e;
             --neon-green: #39ff14;
             --neon-red: #ff0055;
             --neon-blue: #00d2ff;
@@ -21,7 +21,7 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 10px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,9 +33,9 @@
             width: 100%;
             max-width: 760px;
             background: var(--panel-bg);
-            border: 3px solid #1a244c;
+            border: 3px solid #182249;
             border-radius: 20px;
-            padding: 35px;
+            padding: 40px;
             box-shadow: 0 0 50px rgba(0, 210, 255, 0.25), inset 0 0 25px rgba(0,0,0,0.6);
             box-sizing: border-box;
             position: relative;
@@ -57,34 +57,34 @@
         .view.active { display: flex; flex-direction: column; }
         .shake { animation: screen-shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes screen-shake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            10%, 90 Triệu { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(3px, 0, 0); }
             30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        h1 { text-align: center; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); font-size: 2.4rem; margin-top: 0; font-weight: 800; letter-spacing: 1px; }
-        h2 { text-align: center; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); margin-top: 0; font-size: 1.7rem; font-weight: 700; }
+        h1 { text-align: center; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); font-size: 2.5rem; margin-top: 0; font-weight: 800; letter-spacing: 2px; }
+        h2 { text-align: center; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); margin-top: 0; font-size: 1.8rem; font-weight: 700; text-transform: uppercase; }
 
-        .btn { background: #101638; color: #cbd5e1; border: 2px solid #202b61; padding: 18px; font-size: 1.15rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .btn:hover { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.4); transform: translateY(-1px); }
-        .btn-action { background: linear-gradient(135deg, var(--neon-purple), #5600a3); color: white; border: none; box-shadow: 0 0 25px rgba(176,38,255,0.5); font-size: 1.25rem; }
+        .btn { background: #0f1535; color: #cbd5e1; border: 2px solid #1f2a5c; padding: 18px; font-size: 1.15rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .btn:hover { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.3); transform: translateY(-2px); }
+        .btn-action { background: linear-gradient(135deg, var(--neon-purple), #5600a3); color: white; border: none; box-shadow: 0 0 25px rgba(176,38,255,0.5); font-size: 1.25rem; letter-spacing: 1px; }
 
         .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 15px 0; }
-        .grid-item { background: #0c1230; border: 2px solid #1c2657; padding: 24px 15px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.15s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        .grid-item.selected-malware { border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.25) !important; box-shadow: 0 0 15px var(--neon-red); }
-        .grid-item.selected-clean { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.2) !important; box-shadow: 0 0 15px var(--neon-green); }
+        .grid-item { background: #0a0f2b; border: 2px solid #182152; padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; min-height: 60px; display: flex; justify-content: center; align-items: center; transition: all 0.15s; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .grid-item.selected-malware { border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.25) !important; box-shadow: 0 0 20px var(--neon-red); }
+        .grid-item.selected-clean { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.2) !important; box-shadow: 0 0 20px var(--neon-green); }
 
-        .terminal-text { background: #010206; padding: 18px; border-radius: 10px; font-size: 1.05rem; color: #a0aec0; height: 90px; overflow-y: auto; margin-bottom: 20px; border-left: 5px solid var(--neon-purple); line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); }
-        .status-bar { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px; background: #020308; padding: 12px 18px; border-radius: 8px; border-left: 5px solid var(--neon-blue); }
+        .terminal-text { background: #010205; padding: 20px; border-radius: 10px; font-size: 1.1rem; color: #cbd5e1; height: 110px; overflow-y: auto; margin-bottom: 20px; border-left: 5px solid var(--neon-purple); line-height: 1.6; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8); text-align: justify; }
+        .status-bar { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px; background: #020307; padding: 12px 18px; border-radius: 8px; border-left: 5px solid var(--neon-blue); }
         
-        .progress-bar { width: 100%; background: #010206; height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid #1c2654; margin-top: 5px; }
+        .progress-bar { width: 100%; background: #010205; height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid #1c2654; margin-top: 5px; }
         .progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: width 0.2s; }
 
-        /* HOST MONITOR VIEW STYLING */
+        /* HOST VIEW MONITOR STYLING */
         .host-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; margin-top: 20px; }
         @media(max-width: 600px) { .host-grid { grid-template-columns: 1fr; } }
-        .host-card { background: #0a0e28; border: 2px solid #1d265c; border-radius: 12px; padding: 18px; box-shadow: inset 0 0 15px rgba(0,0,0,0.6); position: relative; }
+        .host-card { background: #090d26; border: 2px solid #1a2354; border-radius: 12px; padding: 18px; box-shadow: inset 0 0 15px rgba(0,0,0,0.6); position: relative; }
         .host-card.active-card { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.2); }
         .host-team-name { font-size: 1.25rem; font-weight: bold; color: var(--neon-blue); display: flex; justify-content: space-between; }
         .host-team-stage { font-size: 0.95rem; color: #94a3b8; margin: 10px 0; font-family: monospace; }
@@ -103,7 +103,7 @@
         </div>
 
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V3.2</h1>
+            <h1>E-LOGIX SHIELD V3.3</h1>
             <div style="text-align:center; margin-bottom: 30px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ ĐẤU TRƯỜNG GIẢI CỨU CHUỖI CUNG ỨNG REAL-TIME ]</div>
             <label style="margin-bottom: 10px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
@@ -119,19 +119,19 @@
         </div>
 
         <div id="view-intro" class="view">
-            <div style="background: rgba(255,0,85,0.12); border: 2px solid var(--neon-red); padding: 14px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 25px;">🚨 PHÒNG TÁC CHIẾN KHÔI PHỤC HỆ THỐNG E-LOGIX 🚨</div>
+            <div style="background: rgba(255,0,85,0.12); border: 2px solid var(--neon-red); padding: 14px; border-radius: 10px; color: var(--neon-red); font-weight: bold; text-align: center; margin-bottom: 25px;">🚨 THÔNG BÁO KHỦNG HOẢNG TỪ BAN ĐIỀU HÀNH THÁP ĐIỀU KHIỂN 🚨</div>
             <p style="font-size: 1.1rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 25px;">
-                Hãng tàu <strong>Maersk</strong> bị hack đóng băng toàn bộ hệ thống dữ liệu, kéo theo tất cả container hàng trị giá triệu đô của công ty mình (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngắc ngoài biển khơi!
+                Hệ thống máy chủ trung tâm của hãng tàu đối tác <strong>Maersk</strong> đã bị virus tống tiền tàn phá hoàn toàn, làm đóng băng mạng lưới logistics toàn cầu. Vì công ty chúng ta (<strong>E-Logix</strong>) đang gửi hàng loạt container hàng hóa giá trị cao trên các đội tàu của họ, hệ thống điều hành nội bộ của chúng ta cũng đang bị ảnh hưởng dây chuyền cực kỳ nghiêm trọng.
                 <br><br>
-                Hội đồng cổ đông hãy vượt qua 5 tầng bảo mật khẩn cấp không trợ giúp để tự cứu dữ liệu doanh nghiệp mình. Ấn sai hệ thống xung nhịp sẽ lập tức tự phát nổ reset màn hình!
+                Hội đồng cổ đông hãy ngay lập tức hợp lực vượt qua 5 phòng tuyến an ninh mạng dưới đây để cô lập mã độc, khôi phục luồng vận hành và giải cứu chuỗi cung ứng của doanh nghiệp trước khi chịu tổn thất triệu đô. Mọi quyết định sai lầm đều sẽ khiến hệ thống phòng thủ sập nguồn hoàn toàn!
             </p>
-            <button class="btn btn-action" onclick="enterStage1()">BẮT ĐẦU SPEED-RUN GIẢI CỨU</button>
+            <button class="btn btn-action" onclick="enterStage1()">BẮT ĐẦU CHIẾN DỊCH GIẢI CỨU TỐC ĐỘ</button>
         </div>
 
         <div id="view-stage1" class="view">
             <div class="status-bar"><span>🔒 CHẶNG 1: CYBERSECURITY</span><span id="hp-s1" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
-            <div class="terminal-text" id="log-s1">> LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy tìm và click bóc tách đúng 4 file mã độc hại!</div>
+            <div class="terminal-text" id="log-s1">> BÁO ĐỘNG HỆ THỐNG GIAO DIỆN LÕI: Mã độc tống tiền Ransomware đang xâm nhập sâu vào cơ sở dữ liệu vận đơn đường biển, cố tình xóa và che giấu các thông tin đơn hàng sạch. Các cổ đông hãy dùng kỹ năng nghiệp vụ để tìm kiếm, nhấp chuột chọn chính xác 4 tệp tin chứa virus đang giả dạng để tiến hành cách ly khẩn cấp ra khỏi hệ thống!</div>
             <div class="grid-container" id="grid-s1"></div>
             <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">TIẾN VÀO TẦNG SAO LƯU KHO</button>
@@ -140,8 +140,8 @@
         <div id="view-stage2" class="view">
             <div class="status-bar"><span>💾 CHẶNG 2: CLOUD BACKUP</span><span id="hp-s2" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>CẤU TRÚC ĐỊNH VỊ KHO BÃI</h2>
-            <div class="terminal-text" id="log-s2">> LỖI: Sập sơ đồ kho WMS. Hãy xếp lại sơ đồ định vị phân tầng logistics chuẩn từ RỘNG NHẤT đến HẸP NHẤT để khôi phục định vị định tọa độ hàng hóa kẹt cảng!</div>
-            <div style="text-align: center; font-size: 1.1rem; margin-bottom: 15px; color: var(--neon-blue); font-weight: bold;" id="target-s2">[ TỰ NHỚ - BẮT ĐẦU TỪ BLOCK ]</div>
+            <div class="terminal-text" id="log-s2">> PHÒNG TUYẾN RE-BOOT KHO HÀNG (WMS): Sau đợt quét virus, toàn bộ hệ thống tọa độ phân tầng lưu kho của E-Logix đã bị xóa sạch thông tin mặt bằng, khiến xe tải ngoài cảng không thể định vị lấy hàng. Hãy thiết lập lại sơ đồ vị trí lưu trữ trong kho bãi theo đúng nguyên lý Logistics chuẩn (quy trình đi từ khu vực bao quát nhất đến vị trí tầng kệ hẹp nhất). Lưu ý: Nếu chọn sai, hệ thống sẽ tự động xáo trộn lại các nút để chống bấm lụi!</div>
+            <div style="text-align: center; font-size: 1.1rem; margin-bottom: 15px; color: var(--neon-blue); font-weight: bold;" id="target-s2">[ TỰ LỤC LẠI KIẾN THỨC NỀN KHO BÃI ]</div>
             <div class="grid-container" id="grid-s2"></div>
             <button class="btn btn-action" id="next-s2" style="display:none;" onclick="initStage3()">TIẾN VÀO TẦNG QUẢN LÝ RỦI RO</button>
         </div>
@@ -149,15 +149,15 @@
         <div id="view-stage3" class="view">
             <div class="status-bar"><span>🛳️ CHẶNG 3: INCOTERMS STRATEGY</span><span id="hp-s3" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>ĐẤU TRÍ TRANH CHẤP RỦI RO</h2>
-            <div class="terminal-text" id="log-s3">> LỖI: Hàng trễ do tàu Maersk dừng hoạt động gây tổn thất chuỗi cung ứng. Hãy phân tích xử lý nhanh bài toán Incoterms sau:</div>
-            <div style="background: #04060f; padding: 20px; border-radius: 10px; font-size: 1.1rem; border: 1px solid #1e295d; margin-bottom: 15px; line-height: 1.6; font-weight: bold;" id="text-s3">Tình huống...</div>
+            <div class="terminal-text" id="log-s3">> THẨM ĐỊNH PHÁP LÝ CHẶNG BIỂN: Việc tàu Maersk dừng hoạt động đột ngột đã làm trễ lịch tàu và phát sinh tranh chấp bảo hiểm hàng hóa nghiêm trọng. Hội đồng cổ đông hãy tiến hành giải quyết nhanh các bài toán Incoterms thực tế sau đây để thông suốt luồng chứng từ vận tải:</div>
+            <div style="background: #04060f; padding: 20px; border-radius: 10px; font-size: 1.1rem; border: 1px solid #1e295d; margin-bottom: 15px; line-height: 1.6; font-weight: bold; text-align: justify;" id="text-s3">Tình huống...</div>
             <div id="options-s3" style="display: flex; flex-direction: column; gap: 12px;"></div>
         </div>
 
         <div id="view-stage4" class="view">
             <div class="status-bar"><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2>
-            <div class="terminal-text" id="log-s4">> LỖI: Cổng thông quan một cửa quốc gia đang bị chèn ép hàng loạt tờ khai lậu. Dựa vào kiến thức nghiệp vụ cửa khẩu của nhóm, hãy dùng mắt thần quét tìm và click chặn đứng đúng 4 tờ khai có Mã Chi cục Hải quan Cát Lái bị làm giả!</div>
+            <div class="terminal-text" id="log-s4">> PHÒNG KIỂM SOÁT TỜ KHAI HẢI QUAN (CUSTOMS AUDIT): Lợi dụng lúc hệ thống quản lý một cửa quốc gia đang gặp sự cố dây chuyền, tin tặc đang cố tình chèn hàng loạt chứng từ gian lận để thông quan hàng lậu ra vào cảng. Bằng kiến thức nghiệp vụ chuyên ngành về mã hóa chi cục của cửa khẩu Cát Lái xịn, hãy dùng mắt thần quét tìm và nhấp chuột chặn đứng chính xác 4 tờ khai sử dụng mã chi cục bị làm giả!</div>
             <div class="grid-container" id="grid-s4"></div>
             <button class="btn btn-action" id="next-s4" style="display:none;" onclick="initStage5()">TIẾN VÀO KHÓA TRUY CẬP CUỐI</button>
         </div>
@@ -165,9 +165,9 @@
         <div id="view-stage5" class="view">
             <div class="status-bar"><span>🔑 CHẶNG 5: ACCESS CONTROL</span><span id="hp-s5" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>TƯỜNG LỬA CHẶNG CUỐI REALTIME</h2>
-            <div class="terminal-text" id="log-s5">> TÁC VỤ: Gián điệp hệ thống cố tình xâm nhập sửa lệnh xóa dữ liệu vận đơn gốc Master Bill. Hãy phân tích tính chất công việc: Nếu nhận thấy hành vi phá hoại gian lận dữ liệu nội bộ ➔ Chọn BLOCK. Nếu thấy đây là tác vụ làm việc đúng thẩm quyền quy trình của nhân sự ➔ Chọn ALLOW.</div>
+            <div class="terminal-text" id="log-s5">> PHÒNG GIÁM SÁT TRUY CẬP AN NINH (ACCESS CONTROL): Gián điệp công nghệ đang cố tình sử dụng các tài khoản nhân sự nội bộ để lén lút sửa đổi dữ liệu cốt lõi của doanh nghiệp. Hãy phân tích thật kỹ nội dung yêu cầu hiển thị trên màn hình: Nếu nhận thấy đây là hành vi gây nguy hiểm phá hoại dữ liệu ➔ Hãy bấm BLOCK (Chặn đứng). Nếu đây là tác vụ công việc hợp pháp của nhân sự vận hành đúng quy trình ➔ Hãy bấm ALLOW (Cho phép).</div>
             <div style="background: #04060f; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 25px; border: 1px solid #1e295d;">
-                <div style="font-size: 0.9rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px;">Hành vi nhân sự thực hiện:</div>
+                <div style="font-size: 0.9rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px;">Yêu cầu hệ thống phát hiện:</div>
                 <div id="account-task" style="font-weight: bold; color: #ffffff; font-size: 1.15rem; line-height: 1.6;">Đang quét...</div>
             </div>
             <div style="display: flex; gap: 20px;">
@@ -248,7 +248,7 @@
             fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
         }
 
-        // --- HỆ THỐNG NHẠC MỚI CYBER SPY v2 - BƠM ÂM LƯỢNG MAX BỐC (VOL = 0.8) ---
+        // --- HỆ THỐNG NHẠC MỚI CYBER SPY v2 - BƠM ÂM LƯỢNG TỐI ĐA SIÊU BỐC (VOL = 0.9) ---
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
@@ -264,8 +264,8 @@
                     let currentFreq = spyMelody[step % spyMelody.length];
                     
                     osc.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
-                    // BƠM ÂM LƯỢNG LÊN MỨC ĐỈNH ĐIỂM (0.8) ĐẢM BẢO TO RÕ HẾT CỠ CHẠY XUYÊN SUỐT
-                    gain.gain.setValueAtTime(0.8, audioCtx.currentTime); 
+                    // BƠM ÂM LƯỢNG LÊN MỨC CỰC ĐẠI (0.9) ĐẢM BẢO QUẨY BÙNG NỔ TRONG PHÒNG HỌC
+                    gain.gain.setValueAtTime(0.9, audioCtx.currentTime); 
                     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
                     
                     osc.connect(gain); gain.connect(audioCtx.destination);
@@ -344,7 +344,7 @@
             });
         }
 
-        // CHẶNG 2: CLOUD BACKUP (1 VÒNG DUY NHẤT)
+        // CHẶNG 2: CLOUD BACKUP (1 VÒNG KHO LOGISTICS)
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
         let s2Idx = 0;
         function initStage2() {
@@ -377,21 +377,36 @@
             });
         }
 
-        // CHẶNG 3: INCOTERMS STRATEGY (ĐẦY ĐỦ 4 ĐÁP ÁN A,B,C,D + SCENARIOS CHI TIẾT)
+        // CHẶNG 3: INCOTERMS STRATEGY (4 ĐÁP ÁN ĐẦY ĐỦ PHÂN HÓA CAO)
         const s3Scenarios = [
             {
-                text: "Câu 1: E-Logix nhập khẩu linh kiện từ đối tác Hàn Quốc theo điều kiện FOB Busan. Hàng xếp lên tàu Maersk an toàn. Khi vận chuyển trên biển gặp bão lớn làm container rơi xuống biển hỏng sạch. Ai chịu rủi ro tổn thất này?",
-                opts: ["A. Đối tác người bán Hàn Quốc gánh chịu", "B. Công ty bên mình (E-Logix - Người mua) gánh chịu", "C. Chi cục hải quan cảng đến chịu trách nhiệm bồi thường", "D. Hãng tàu Maersk chịu hoàn toàn chi phí bảo hiểm"],
+                text: "Tình huống 1: Công ty E-Logix của chúng ta tiến hành mua một lô hàng linh kiện điện tử từ đối tác nước ngoài theo điều kiện FOB cảng Busan. Khi tàu chở container của hãng Maersk đang di chuyển trên biển thì gặp thiên tai lớn, khiến toàn bộ số hàng bị rơi xuống biển tổn thất hoàn toàn. Theo quy tắc thương mại Incoterms, bên nào sẽ phải gánh chịu rủi ro và tổn thất tài chính này?",
+                opts: [
+                    "A. Đối tác người bán Hàn Quốc phải gánh chịu rủi ro", 
+                    "B. Công ty bên mình (E-Logix - Người mua) gánh chịu rủi ro",
+                    "C. Chi cục Hải quan cảng đến chịu trách nhiệm đền bù",
+                    "D. Hãng tàu Maersk bắt buộc gánh chịu mọi chi phí bồi thường"
+                ],
                 ans: 1
             },
             {
-                text: "Câu 2: E-Logix xuất khẩu lô hàng dệt may sang Rotterdam theo điều kiện CIF Rotterdam. Trên đường đi biển, hệ thống định vị tàu Maersk sập làm tàu đi sai tuyến, chậm hàng và phát sinh hỏng hóc. Ai có nghĩa vụ mua bảo hiểm chặng này?",
-                opts: ["A. Công ty bên mình (E-Logix - Người bán) gánh nghĩa vụ mua", "B. Đối tác mua hàng Hà Lan tự lo bảo hiểm", "C. Cơ quan hải quan hai đầu cảng cùng mua", "D. Không bên nào cần mua vì hàng thuộc luồng Xanh"],
+                text: "Tình huống 2: E-Logix xuất khẩu một lô hàng nông sản sang Hà Lan theo điều kiện CIF cảng Rotterdam. Trong quá trình vận tải chặng biển, hệ thống tàu gặp sự cố gián đoạn khiến hàng bị chậm trễ và hư hỏng nghiêm trọng. Theo nghĩa vụ hợp đồng, bên nào có trách nhiệm bắt buộc phải đứng ra mua bảo hiểm cho chặng vận chuyển đường biển này?",
+                opts: [
+                    "A. Công ty bên mình (E-Logix - Người bán) gánh nghĩa vụ mua", 
+                    "B. Đối tác mua hàng Hà Lan có trách nhiệm tự mua",
+                    "C. Cơ quan hải quan hai đầu cảng cùng chia đôi chi phí mua",
+                    "D. Không bên nào cần mua bảo hiểm vì hàng thuộc luồng Xanh"
+                ],
                 ans: 0
             },
             {
-                text: "Câu 3: Đối tác nước ngoài yêu cầu bên mình phải tự đưa xe đến tận kho nhà máy của họ để bốc hàng, tự lo hết mọi thủ tục hải quan đầu xuất lẫn đầu nhập từ A-Z. Chúng ta nên áp dụng điều kiện Incoterms nào cho đúng luật?",
-                opts: ["A. Áp dụng điều kiện FOB", "B. Áp dụng điều kiện CIF", "C. Áp dụng điều kiện DDP", "D. Áp dụng điều kiện EXW (Giao tại xưởng)"],
+                text: "Tình huống 3: Khách hàng quốc tế yêu cầu E-Logix phải tự điều phối phương tiện đến tận kho nhà máy của họ ở nước ngoài để nhận hàng, đồng thời công ty chúng ta phải tự gánh vác toàn bộ các thủ tục hải quan, chi phí ở cả đầu xuất khẩu lẫn đầu nhập khẩu. Nhóm nên lựa chọn điều kiện Incoterms nào sau đây để khớp với yêu cầu này?",
+                opts: [
+                    "A. Lựa chọn điều kiện thương mại quốc tế FOB", 
+                    "B. Lựa chọn điều kiện thương mại quốc tế CIF",
+                    "C. Lựa chọn điều kiện thương mại quốc tế DDP",
+                    "D. Lựa chọn điều kiện thương mại quốc tế EXW (Giao tại xưởng)"
+                ],
                 ans: 3
             }
         ];
@@ -412,7 +427,7 @@
             } else { nextView('view-stage4'); initStage4(); }
         }
 
-        // CHẶNG 4: CUSTOMS AUDIT (XÁO TRỘN ĐÁP ÁN HOÀN TOÀN NGẪU NHIÊN)
+        // CHẶNG 4: CUSTOMS AUDIT (BỎ CHỮ 02CI TRONG ĐỀ, TRỘN LỘN XỘN)
         const s4Data = [
             { text: "TK: 10293 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 94821 / CH-CATLAI / 02C2", fake: true },
             { text: "TK: 58201 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 30192 / CH-FAKE  / 02B9", fake: true },
@@ -422,10 +437,11 @@
         let s4Cleared = 0;
         function initStage4() {
             nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = `HỆ THỐNG: ${integrity}%`;
+            document.getElementById('hp-s4').style.color = 'var(--neon-green)';
             reportToProjector("🛂 Đang kiểm hải quan (C4)");
             const grid = document.getElementById('grid-s4'); grid.innerHTML = "";
             
-            // XÁO TRỘN HOÀN TOÀN TẤT CẢ VỊ TRÍ TRƯỚC KHI IN RA GIAO DIỆN
+            // XÁO TRỘN NGẪU NHIÊN TOÀN BỘ MA TRẬN ĐÁP ÁN ĐỂ KHÔNG BỊ XẾP THÀNH HÀNG DỌC
             let scrambled = shuffleArray([...s4Data]);
             
             scrambled.forEach(item => {
@@ -445,10 +461,10 @@
 
         // CHẶNG 5: ACCESS CONTROL
         const s5Tasks = [
-            { text: "Yêu cầu xóa toàn bộ lịch sử tệp tin Master Bill of Lading từ một tài khoản vô danh có IP lạ từ nước ngoài", allow: false },
-            { text: "Yêu cầu thông quan tự động luồng Xanh có hồ sơ gốc mã cảng Cát Lái chuẩn quy trình", allow: true },
-            { text: "Lệnh can thiệp ghi đè cấu trúc đảo ngược hệ thống vị trí kho hàng thành Tier-Line-Row-Block từ máy nhân sự thực tập", allow: false },
-            { text: "Yêu cầu kết nối tải file manifest của đại lý hãng tàu Maersk chính thống phục vụ thanh tra hải quan", allow: true }
+            { text: "Yêu cầu thực hiện lệnh xóa vĩnh viễn toàn bộ lịch sử tệp tin Master Bill of Lading gốc từ một tài khoản nặc danh sử dụng IP lạ từ nước ngoài", allow: false },
+            { text: "Yêu cầu đồng bộ tự động dữ liệu tờ khai điện tử Luồng Xanh có chứng thư số doanh nghiệp hợp lệ qua Hải quan cảng Cát Lái", allow: true },
+            { text: "Lệnh can thiệp ghi đè đảo ngược cấu trúc dữ liệu hệ thống quản lý vị trí kho hàng thành Tier-Line-Row-Block từ máy trạm nhân sự thực tập", allow: false },
+            { text: "Yêu cầu trích xuất hồ sơ manifest gốc của đại lý hãng tàu Maersk phục vụ đối chiếu dữ liệu thanh tra hải quan cửa khẩu nhập", allow: true }
         ];
         let s5Idx = 0;
         function initStage5() { nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; reportToProjector("🔑 Thẩm định nhân sự (C5)"); shuffleArray(s5Tasks); showS5Task(); }
