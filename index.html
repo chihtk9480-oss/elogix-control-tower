@@ -1117,6 +1117,107 @@
         .host-card.live-playing { box-shadow:0 0 28px rgba(0,255,102,0.32), inset 0 0 20px rgba(0,255,102,0.05); border-color:var(--neon-green)!important; }
         @media (max-width: 900px) { .mirror-phone-viewport { min-height:520px; } .live-phone-shell { min-height:480px; padding:14px; } }
 
+    
+
+        /* V7.5 REAL SCREEN MODE: không mô phỏng màn chơi, nhận stream màn hình thật qua WebRTC */
+        .real-share-panel {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 9999;
+            width: min(330px, calc(100vw - 36px));
+            border: 1px solid rgba(0, 240, 255, 0.55);
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(2,5,18,.94), rgba(13,20,52,.88));
+            box-shadow: 0 0 30px rgba(0,210,255,.22), inset 0 0 22px rgba(176,38,255,.08);
+            padding: 12px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .real-share-panel .real-share-title { font-size:.78rem; color:#7dd3fc; font-weight:1000; letter-spacing:1.4px; margin-bottom:8px; }
+        .real-share-panel .real-share-btn {
+            width: 100%;
+            border: 1px solid rgba(0,255,102,.6);
+            border-radius: 12px;
+            padding: 11px 12px;
+            background: linear-gradient(135deg, rgba(0,255,102,.18), rgba(0,210,255,.1));
+            color: #eafff3;
+            font-weight: 1000;
+            letter-spacing: .8px;
+            cursor: pointer;
+            font-family: inherit;
+            text-shadow: 0 0 10px rgba(0,255,102,.35);
+            box-shadow: 0 0 20px rgba(0,255,102,.15);
+        }
+        .real-share-panel .real-share-btn.stop { border-color: rgba(255,0,68,.65); background: rgba(255,0,68,.13); color:#ffd6df; }
+        .real-share-panel .real-share-note { margin-top:8px; font-size:.75rem; color:#94a3b8; line-height:1.45; }
+        .real-mirror-shell {
+            min-height: 610px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+        }
+        .real-mirror-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            border:1px solid rgba(0,240,255,.3);
+            background:linear-gradient(90deg, rgba(0,210,255,.12), rgba(176,38,255,.08));
+            border-radius:16px;
+            padding:12px 16px;
+            box-shadow:inset 0 0 18px rgba(0,0,0,.65);
+            font-weight:1000;
+            letter-spacing:.8px;
+        }
+        .real-mirror-status-grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px; }
+        .real-status-card {
+            border:1px solid rgba(148,163,184,.18);
+            background:rgba(3,5,15,.62);
+            border-radius:14px;
+            padding:10px 12px;
+            min-height:56px;
+            box-shadow:inset 0 0 16px rgba(0,0,0,.55);
+        }
+        .real-status-label { font-size:.68rem; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; font-weight:900; }
+        .real-status-value { font-size:.95rem; color:#f8fafc; font-weight:1000; line-height:1.35; }
+        .real-video-frame {
+            flex: 1;
+            min-height: 420px;
+            border-radius: 22px;
+            border: 2px solid rgba(0,255,102,.42);
+            background: radial-gradient(circle at 50% 35%, rgba(0,210,255,.12), rgba(3,5,15,.98) 58%);
+            overflow: hidden;
+            position: relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow: 0 0 35px rgba(0,255,102,.12), inset 0 0 45px rgba(0,0,0,.72);
+        }
+        .real-video-frame video {
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            background:#020308;
+        }
+        .real-no-stream {
+            text-align:center;
+            max-width:620px;
+            padding:34px;
+            color:#cbd5e1;
+            line-height:1.65;
+            font-weight:800;
+        }
+        .real-no-stream .big { font-size:1.25rem; color:var(--neon-blue); text-shadow:0 0 15px rgba(0,210,255,.4); margin-bottom:10px; font-weight:1000; }
+        .real-live-badge { color:var(--neon-green); text-shadow:0 0 12px rgba(0,255,102,.55); }
+        .real-warn-badge { color:orange; text-shadow:0 0 12px rgba(255,165,0,.35); }
+        .real-dead-badge { color:var(--neon-red); text-shadow:0 0 12px rgba(255,0,68,.45); }
+        .host-card.offline-card { opacity:.55; filter:grayscale(.45); border-color:rgba(148,163,184,.18)!important; }
+        .host-card.real-playing-card { border-color: var(--neon-green)!important; box-shadow:0 0 32px rgba(0,255,102,.3), inset 0 0 20px rgba(0,255,102,.06)!important; }
+        .host-card.real-sharing-card { border-color: var(--neon-blue)!important; box-shadow:0 0 30px rgba(0,210,255,.28), inset 0 0 20px rgba(0,210,255,.06)!important; }
+        @media (max-width: 900px) { .real-mirror-status-grid { grid-template-columns:1fr; } .real-video-frame { min-height:320px; } .real-share-panel { left:12px; right:12px; bottom:12px; width:auto; } }
+
     </style>
 </head>
 <body id="main-body">
@@ -1183,7 +1284,7 @@
                 <option value="7">Nhóm Cổ Đông 7</option>
                 <option value="8">Nhóm Cổ Đông 8</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); window.currentStageCode='intro'; broadcastState('🚨 Tầng mở đầu · Khủng hoảng Maersk', { text: 'Đang đọc bối cảnh khủng hoảng...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
+            <button class="btn btn-action" style="margin-top: 30px;" onclick="startAudioEngine(); requestTrueScreenShare(); window.currentStageCode='intro'; broadcastState('🚨 Tầng mở đầu · Khủng hoảng Maersk', { text: 'Đang đọc bối cảnh khủng hoảng...' }); nextView('view-intro')">KÍCH HOẠT HỆ THỐNG MẠNG</button>
         </div>
 
         <!-- TẦNG 2: CỐT TRUYỆN -->
@@ -1370,13 +1471,316 @@
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
         const NETWORK_TOPIC = "elogix_warroom_realtime_stream_2026";
+        const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_real_screen_webrtc";
+        const RTC_CONFIG = { iceServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:global.stun.twilio.com:3478" }
+        ]};
+        window.trueActualMirrorOnly = true;
+        window.realScreenStreams = {};
+        window.hostRtcPeers = {};
+        window.hostRtcSessions = {};
+        window.pendingHostCandidates = {};
+        window.trueScreenShareStatus = "off";
+        window.trueScreenSessionId = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        window.trueScreenStream = null;
+        window.trueScreenPc = null;
+        window.playerRtcSource = null;
+        window.hostRtcSource = null;
+        window.lastPlayerActivityAt = Date.now();
+
 
         window.teamStates = {};
         window.selectedSpecTeam = null;
         window.hostAutoFollow = true;
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
-        
+
+        function markPlayerActivity() {
+            if (!isHost) window.lastPlayerActivityAt = Date.now();
+        }
+        if (!isHost) {
+            ['pointerdown','touchstart','keydown','click'].forEach(evt => document.addEventListener(evt, markPlayerActivity, {passive:true}));
+        }
+
+        function safeRtcJson(event) {
+            try {
+                const data = JSON.parse(event.data);
+                if (!data || data.event !== 'message' || !data.message) return null;
+                const msg = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
+                if (!msg || msg.game !== 'elogix-real-screen-v75') return null;
+                return msg;
+            } catch(e) { return null; }
+        }
+
+        function sendRtcSignal(msg) {
+            return fetch(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}`, {
+                method: 'POST',
+                body: JSON.stringify(Object.assign({ game:'elogix-real-screen-v75', ts:Date.now() }, msg))
+            }).catch(() => {});
+        }
+
+        function installPlayerSharePanel() {
+            if (isHost || document.getElementById('real-share-panel')) return;
+            const panel = document.createElement('div');
+            panel.id = 'real-share-panel';
+            panel.className = 'real-share-panel';
+            panel.innerHTML = `
+                <div class="real-share-title">📺 TRUE REALTIME SCREEN SHARE</div>
+                <button id="real-share-btn" class="real-share-btn" onclick="requestTrueScreenShare()">BẬT LIVE MÀN HÌNH THẬT</button>
+                <div id="real-share-note" class="real-share-note">Máy chiếu chỉ thấy màn hình thật khi nhóm bấm nút này và chọn chia sẻ tab/màn hình hiện tại.</div>
+            `;
+            document.body.appendChild(panel);
+            updatePlayerSharePanel();
+        }
+
+        function updatePlayerSharePanel() {
+            const btn = document.getElementById('real-share-btn');
+            const note = document.getElementById('real-share-note');
+            if (!btn || !note) return;
+            const st = window.trueScreenShareStatus || 'off';
+            btn.classList.toggle('stop', st === 'live');
+            if (st === 'live') {
+                btn.innerHTML = '🔴 ĐANG LIVE MÀN HÌNH THẬT — BẤM ĐỂ TẮT';
+                note.innerHTML = 'Host đang nhận trực tiếp màn hình thật của nhóm. Đừng chuyển tab chứa thông tin riêng tư.';
+                btn.onclick = stopTrueScreenShare;
+            } else if (st === 'requesting') {
+                btn.innerHTML = '⏳ ĐANG XIN QUYỀN CHIA SẺ...';
+                note.innerHTML = 'Hãy chọn tab game hoặc màn hình cần chiếu trong hộp thoại của trình duyệt.';
+                btn.onclick = requestTrueScreenShare;
+            } else if (st === 'error') {
+                btn.innerHTML = '⚠️ BẬT LẠI LIVE MÀN HÌNH THẬT';
+                note.innerHTML = 'Vừa bị từ chối hoặc trình duyệt không hỗ trợ. Thử lại và chọn “This tab/Screen”.';
+                btn.onclick = requestTrueScreenShare;
+            } else {
+                btn.innerHTML = 'BẬT LIVE MÀN HÌNH THẬT';
+                note.innerHTML = 'Máy chiếu chỉ thấy màn hình thật khi nhóm bấm nút này và chọn chia sẻ tab/màn hình hiện tại.';
+                btn.onclick = requestTrueScreenShare;
+            }
+        }
+
+        function ensurePlayerRtcListener() {
+            if (isHost || window.playerRtcSource || !teamId) return;
+            window.playerRtcSource = new EventSource(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}/sse`);
+            window.playerRtcSource.onmessage = async (event) => {
+                const msg = safeRtcJson(event);
+                if (!msg || msg.to !== 'player' || String(msg.team) !== String(teamId)) return;
+                if (msg.sessionId && msg.sessionId !== window.trueScreenSessionId) return;
+                try {
+                    if (msg.type === 'answer' && window.trueScreenPc) {
+                        await window.trueScreenPc.setRemoteDescription({ type:'answer', sdp: msg.sdp });
+                    } else if (msg.type === 'candidate' && window.trueScreenPc && msg.candidate) {
+                        await window.trueScreenPc.addIceCandidate(msg.candidate);
+                    } else if (msg.type === 'watch' && window.trueScreenStream) {
+                        await createPlayerScreenOffer();
+                    }
+                } catch(e) {}
+            };
+        }
+
+        async function requestTrueScreenShare() {
+            if (isHost) return;
+            installPlayerSharePanel();
+            if (!teamId) return;
+            markPlayerActivity();
+            ensurePlayerRtcListener();
+            if (window.trueScreenShareStatus === 'live' && window.trueScreenStream) return;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                window.trueScreenShareStatus = 'error';
+                updatePlayerSharePanel();
+                alert('Trình duyệt này chưa hỗ trợ chia sẻ màn hình thật. Hãy mở bằng Chrome/Edge trên máy tính hoặc Android Chrome.');
+                broadcastState(lastStageName, lastExtraData);
+                return;
+            }
+            try {
+                window.trueScreenShareStatus = 'requesting';
+                updatePlayerSharePanel();
+                broadcastState(lastStageName, lastExtraData);
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { frameRate: { ideal: 18, max: 24 }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: false
+                });
+                window.trueScreenStream = stream;
+                window.trueScreenShareStatus = 'live';
+                updatePlayerSharePanel();
+                stream.getVideoTracks().forEach(track => track.onended = stopTrueScreenShare);
+                await createPlayerScreenOffer();
+                broadcastState(lastStageName, lastExtraData);
+            } catch(e) {
+                window.trueScreenShareStatus = 'error';
+                updatePlayerSharePanel();
+                broadcastState(lastStageName, lastExtraData);
+            }
+        }
+
+        async function createPlayerScreenOffer() {
+            if (!window.trueScreenStream || !teamId) return;
+            try { if (window.trueScreenPc) window.trueScreenPc.close(); } catch(e) {}
+            const pc = new RTCPeerConnection(RTC_CONFIG);
+            window.trueScreenPc = pc;
+            window.trueScreenStream.getTracks().forEach(track => pc.addTrack(track, window.trueScreenStream));
+            pc.onicecandidate = (event) => {
+                if (event.candidate) sendRtcSignal({ from:'player', to:'host', team:teamId, sessionId:window.trueScreenSessionId, type:'candidate', candidate:event.candidate });
+            };
+            pc.onconnectionstatechange = () => {
+                if (['failed','disconnected','closed'].includes(pc.connectionState) && window.trueScreenShareStatus === 'live') {
+                    // Nếu host reload/mất kết nối, gửi offer mới sau một nhịp.
+                    setTimeout(() => { if (window.trueScreenStream) createPlayerScreenOffer(); }, 1500);
+                }
+            };
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            await sendRtcSignal({ from:'player', to:'host', team:teamId, sessionId:window.trueScreenSessionId, type:'offer', sdp:offer.sdp });
+        }
+
+        function stopTrueScreenShare() {
+            try { if (window.trueScreenStream) window.trueScreenStream.getTracks().forEach(t => t.stop()); } catch(e) {}
+            try { if (window.trueScreenPc) window.trueScreenPc.close(); } catch(e) {}
+            window.trueScreenStream = null;
+            window.trueScreenPc = null;
+            window.trueScreenShareStatus = 'off';
+            updatePlayerSharePanel();
+            broadcastState(lastStageName, lastExtraData);
+        }
+
+        function startHostRtcListener() {
+            if (!isHost || window.hostRtcSource) return;
+            window.hostRtcSource = new EventSource(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}/sse`);
+            window.hostRtcSource.onmessage = async (event) => {
+                const msg = safeRtcJson(event);
+                if (!msg || msg.to !== 'host' || msg.from !== 'player' || !msg.team) return;
+                if (msg.type === 'offer') await handleHostScreenOffer(msg);
+                else if (msg.type === 'candidate') await handleHostScreenCandidate(msg);
+            };
+        }
+
+        async function handleHostScreenOffer(msg) {
+            const team = String(msg.team);
+            try { if (window.hostRtcPeers[team]) window.hostRtcPeers[team].close(); } catch(e) {}
+            const pc = new RTCPeerConnection(RTC_CONFIG);
+            window.hostRtcPeers[team] = pc;
+            window.hostRtcSessions[team] = msg.sessionId;
+            pc.ontrack = (event) => {
+                const stream = event.streams && event.streams[0];
+                if (!stream) return;
+                window.realScreenStreams[team] = stream;
+                const card = document.getElementById(`card-team-${team}`);
+                if (card) card.classList.add('real-sharing-card');
+                if (window.selectedSpecTeam === team || window.hostAutoFollow) {
+                    window.selectedSpecTeam = team;
+                    if (window.teamStates[team]) mirrorPlayerScreen(window.teamStates[team]);
+                    else renderActualMirror({ team, stage:'Đang nhận màn hình thật', stageCode:'screen', hp:100, time:0, _receivedAt:Date.now(), screenShareStatus:'live' });
+                }
+            };
+            pc.onicecandidate = (event) => {
+                if (event.candidate) sendRtcSignal({ from:'host', to:'player', team, sessionId:msg.sessionId, type:'candidate', candidate:event.candidate });
+            };
+            pc.onconnectionstatechange = () => {
+                if (['failed','disconnected','closed'].includes(pc.connectionState)) {
+                    delete window.realScreenStreams[team];
+                    const card = document.getElementById(`card-team-${team}`);
+                    if (card) card.classList.remove('real-sharing-card');
+                    if (window.selectedSpecTeam === team && window.teamStates[team]) mirrorPlayerScreen(window.teamStates[team]);
+                }
+            };
+            await pc.setRemoteDescription({ type:'offer', sdp: msg.sdp });
+            const pending = window.pendingHostCandidates[team] || [];
+            for (const c of pending) { try { await pc.addIceCandidate(c); } catch(e) {} }
+            window.pendingHostCandidates[team] = [];
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            await sendRtcSignal({ from:'host', to:'player', team, sessionId:msg.sessionId, type:'answer', sdp:answer.sdp });
+        }
+
+        async function handleHostScreenCandidate(msg) {
+            const team = String(msg.team);
+            const pc = window.hostRtcPeers[team];
+            if (!pc || !msg.candidate) {
+                (window.pendingHostCandidates[team] ||= []).push(msg.candidate);
+                return;
+            }
+            try { await pc.addIceCandidate(msg.candidate); } catch(e) {}
+        }
+
+        function requestScreenFromTeam(team) {
+            if (!isHost || !team) return;
+            sendRtcSignal({ from:'host', to:'player', team:String(team), type:'watch' });
+        }
+
+        function getTruePresence(payload) {
+            const now = Date.now();
+            const recvAge = payload?._receivedAt ? now - payload._receivedAt : Infinity;
+            const activityAge = payload?.activityAt ? now - Number(payload.activityAt) : Infinity;
+            const isOnline = recvAge < 9000;
+            const stageCode = payload?.stageCode || 'login';
+            const isGameStage = ['c1','c2','c3','c4','c5'].includes(stageCode);
+            const isPlaying = isOnline && isGameStage && activityAge < 7000;
+            const isFinished = stageCode === 'win';
+            return { isOnline, isPlaying, isFinished, recvAge, activityAge };
+        }
+
+        function renderActualMirror(payload) {
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport || !payload) return;
+            const team = String(payload.team);
+            const stream = window.realScreenStreams[team];
+            const presence = getTruePresence(payload);
+            const shareStatus = payload.screenShareStatus || payload.extra?.shareStatus || (stream ? 'live' : 'off');
+            const hp = Number(payload.hp ?? 100);
+            const time = Number(payload.time || 0);
+            const onlineText = presence.isPlaying ? '<span class="real-live-badge">🟢 ĐANG CHƠI THẬT</span>' : presence.isOnline ? '<span class="real-warn-badge">🟡 ONLINE / ĐANG NGHỈ</span>' : '<span class="real-dead-badge">⚫ MẤT TÍN HIỆU</span>';
+            const shareText = stream ? '<span class="real-live-badge">🔴 ĐANG STREAM MÀN HÌNH THẬT</span>' : (shareStatus === 'live' ? '<span class="real-warn-badge">🟡 ĐANG KẾT NỐI STREAM...</span>' : '<span class="real-warn-badge">CHƯA BẬT CHIA SẺ MÀN HÌNH</span>');
+            viewport.innerHTML = `
+                <div class="real-mirror-shell">
+                    <div class="real-mirror-header">
+                        <span>📡 REAL SCREEN MIRROR: NHÓM ${esc(team)}</span>
+                        <span>${shareText}</span>
+                    </div>
+                    <div class="real-mirror-status-grid">
+                        <div class="real-status-card"><div class="real-status-label">Trạng thái thật</div><div class="real-status-value">${onlineText}</div></div>
+                        <div class="real-status-card"><div class="real-status-label">Tầng / thời gian</div><div class="real-status-value">${esc(payload.stage || 'Đang đồng bộ')} · ${time}s</div></div>
+                        <div class="real-status-card"><div class="real-status-label">Độ toàn vẹn</div><div class="real-status-value" style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">${hp}%</div></div>
+                    </div>
+                    <div class="real-video-frame">
+                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">CHƯA CÓ MÀN HÌNH THẬT TỪ NHÓM ${esc(team)}</div><div>Host đang theo dõi trạng thái thật: nhóm có online/chơi/idle qua heartbeat. Nhưng để thấy <b>màn hình thật</b>, điện thoại hoặc laptop của nhóm phải bấm <b>“BẬT LIVE MÀN HÌNH THẬT”</b> và chọn chia sẻ tab/màn hình trong hộp thoại trình duyệt. Web không được phép tự quay màn hình nếu người chơi chưa cấp quyền.</div></div>`}
+                    </div>
+                </div>`;
+            if (stream) {
+                const video = document.getElementById(`actual-screen-video-${team}`);
+                if (video) {
+                    video.srcObject = stream;
+                    video.play().catch(()=>{});
+                }
+            }
+            const title = document.getElementById('spec-title');
+            if (title) title.innerHTML = `📺 REAL LIVE SCREEN: NHÓM ${esc(team)}`;
+            updateAutoFollowButton();
+        }
+
+        function refreshHostPresenceCards() {
+            if (!isHost) return;
+            activeTeams.forEach(id => {
+                const payload = window.teamStates[id];
+                const card = document.getElementById(`card-team-${id}`);
+                if (!card) return;
+                card.classList.remove('offline-card','real-playing-card');
+                if (!payload) return;
+                const p = getTruePresence(payload);
+                if (!p.isOnline) card.classList.add('offline-card');
+                if (p.isPlaying) card.classList.add('real-playing-card');
+                const stageEl = document.getElementById(`host-stage-${id}`);
+                if (stageEl) {
+                    const label = p.isPlaying ? '🟢 ĐANG CHƠI THẬT' : p.isOnline ? (payload.stageCode === 'win' ? '🏁 ĐÃ XONG' : '🟡 ONLINE/ĐANG NGHỈ') : '⚫ MẤT TÍN HIỆU';
+                    stageEl.innerHTML = `${label} · ${payload.stage || 'Đang đồng bộ...'}`;
+                }
+            });
+            if (window.selectedSpecTeam && window.teamStates[window.selectedSpecTeam]) {
+                const current = window.teamStates[window.selectedSpecTeam];
+                // chỉ refresh text khi không có video để tránh nhấp nháy video
+                if (!window.realScreenStreams[String(window.selectedSpecTeam)]) renderActualMirror(current);
+            }
+        }
+
         function initHostDashboard() {
             document.getElementById("main-body").classList.add("host-mode-active");
             const container = document.getElementById("host-dashboard");
@@ -1496,6 +1900,7 @@
                 const title = document.getElementById('spec-title');
                 if (title) title.innerHTML = `📡 TRUE LIVE SCREEN: NHÓM ${window.selectedSpecTeam}`;
                 mirrorPlayerScreen(candidates[0]);
+                requestScreenFromTeam(candidates[0].team);
             }
             updateAutoFollowButton();
         }
@@ -1507,10 +1912,11 @@
             document.getElementById(`card-team-${id}`).classList.add('spec-selected');
             document.getElementById('spec-title').innerHTML = `📌 PIN SCREEN: NHÓM ${id}`;
             updateAutoFollowButton();
+            requestScreenFromTeam(id);
             if (window.teamStates[id]) {
                 mirrorPlayerScreen(window.teamStates[id]);
             } else {
-                document.getElementById('mirror-viewport').innerHTML = `<div class="live-phone-shell"><div class="live-waiting">Nhóm ${id} đang chờ kích hoạt từ điện thoại...</div></div>`;
+                document.getElementById('mirror-viewport').innerHTML = `<div class="real-mirror-shell"><div class="real-no-stream" style="margin:auto;"><div class="big">NHÓM ${id} CHƯA CÓ TÍN HIỆU THẬT</div><div>Chưa có heartbeat từ thiết bị người chơi. Khi nhóm bấm kích hoạt trên điện thoại/laptop, host sẽ hiện online/chơi/idle và nếu nhóm bật chia sẻ màn hình thì sẽ hiện video thật.</div></div></div>`;
             }
         }
 
@@ -1541,6 +1947,7 @@
         function mirrorPlayerScreen(payload) {
             const viewport = document.getElementById('mirror-viewport');
             if (!viewport || !payload) return;
+            if (window.trueActualMirrorOnly) { renderActualMirror(payload); return; }
             const extra = payload.extra || {};
             const hp = Number(payload.hp ?? 100);
             let body = '';
@@ -1656,8 +2063,9 @@
                 if (autoCard) autoCard.classList.add('spec-selected');
             }
 
-            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
+            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); requestScreenFromTeam(payload.team); }
             updateAutoFollowButton();
+            refreshHostPresenceCards();
             renderLeaderboard();
         }
 
@@ -1716,7 +2124,11 @@
         function sendCurrentPlayerPayload() {
             if (isHost || !teamId) return;
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
-            const payload = { team: teamId, stage: lastStageName, stageCode: window.currentStageCode || "login", hp: integrity, time: currentSeconds, sentAt: Date.now(), extra: lastExtraData || {} };
+            const now = Date.now();
+            const code = window.currentStageCode || "login";
+            const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
+            const isPlaying = isGameStage && (now - (window.lastPlayerActivityAt || now) < 7000);
+            const payload = { team: teamId, stage: lastStageName, stageCode: code, hp: integrity, time: currentSeconds, sentAt: now, activityAt: window.lastPlayerActivityAt || now, isPlaying, online: true, screenShareStatus: window.trueScreenShareStatus || 'off', extra: lastExtraData || {} };
             fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
         }
 
@@ -1733,6 +2145,8 @@
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
             listenToPlayerUpdates();
+            startHostRtcListener();
+            setInterval(refreshHostPresenceCards, 1000);
         } else {
             document.getElementById("view-login").classList.add("active");
         }
@@ -1744,6 +2158,8 @@
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
+            installPlayerSharePanel();
+            ensurePlayerRtcListener();
             try { if (audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {}
             if (bgmIntervalId) return;
             originalAudioStarted = true;
