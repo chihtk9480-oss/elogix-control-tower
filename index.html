@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V7.3 - Supreme UI with V4.4 Audio</title>
+    <title>E-Logix Cyber Shield V7.7 - Auto Realtime Host Mirror</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1119,7 +1119,7 @@
 
     
 
-        /* V7.6 PERFECT LIVE MIRROR: ưu tiên WebRTC screen share; mobile fallback bằng live tab capture */
+        /* V7.7 AUTO REALTIME HOST MIRROR: ưu tiên WebRTC screen share; mobile fallback bằng live tab capture */
         .real-share-panel {
             position: fixed;
             right: 18px;
@@ -1480,7 +1480,7 @@
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:global.stun.twilio.com:3478" }
         ]};
-        window.trueActualMirrorOnly = true;
+        window.trueActualMirrorOnly = false; // V7.7: host luôn hiện màn chơi realtime bằng dữ liệu game; screen share thật chỉ là tùy chọn
         window.realScreenStreams = {};
         window.hostRtcPeers = {};
         window.hostRtcSessions = {};
@@ -1534,9 +1534,9 @@
             panel.id = 'real-share-panel';
             panel.className = 'real-share-panel';
             panel.innerHTML = `
-                <div class="real-share-title">📺 TRUE REALTIME LIVE MIRROR</div>
-                <button id="real-share-btn" class="real-share-btn" onclick="requestTrueScreenShare()">BẬT LIVE MÀN HÌNH</button>
-                <div id="real-share-note" class="real-share-note">Máy tính: chia sẻ tab/màn hình thật. Điện thoại: tự bật LIVE TAB để máy chiếu thấy màn chơi hiện tại.</div>
+                <div class="real-share-title">📡 HOST ĐANG THEO DÕI REALTIME</div>
+                <button id="real-share-btn" class="real-share-btn" onclick="requestTrueScreenShare()">TÙY CHỌN: CHIA SẺ MÀN HÌNH THẬT</button>
+                <div id="real-share-note" class="real-share-note">Không cần bấm nút này host vẫn thấy màn chơi realtime. Nút này chỉ dùng khi mở bằng máy tính Chrome/Edge để stream màn hình thật.</div>
             `;
             document.body.appendChild(panel);
             updatePlayerSharePanel();
@@ -1565,8 +1565,8 @@
                 note.innerHTML = 'Không tạo được live stream trên trình duyệt này. Thử mở bằng Chrome/Edge, hoặc tải lại trang rồi bấm lại.';
                 btn.onclick = requestTrueScreenShare;
             } else {
-                btn.innerHTML = 'BẬT LIVE MÀN HÌNH';
-                note.innerHTML = 'Máy tính dùng screen share thật. Điện thoại/in-app browser tự dùng LIVE TAB để host vẫn thấy màn chơi realtime.';
+                btn.innerHTML = 'TÙY CHỌN: CHIA SẺ MÀN HÌNH THẬT';
+                note.innerHTML = 'Host đã tự nhận trạng thái và màn chơi realtime qua hệ thống game. Chỉ bấm nút này nếu dùng máy tính Chrome/Edge và muốn stream màn hình thật.';
                 btn.onclick = requestTrueScreenShare;
             }
         }
@@ -1873,7 +1873,7 @@
                 }
             }
             const title = document.getElementById('spec-title');
-            if (title) title.innerHTML = `📺 REAL LIVE SCREEN: NHÓM ${esc(team)}`;
+            if (title) title.innerHTML = `📺 REALTIME GAME MIRROR: NHÓM ${esc(team)}`;
             updateAutoFollowButton();
         }
 
@@ -2018,7 +2018,7 @@
                 const autoCard = document.getElementById(`card-team-${window.selectedSpecTeam}`);
                 if (autoCard) autoCard.classList.add('spec-selected');
                 const title = document.getElementById('spec-title');
-                if (title) title.innerHTML = `📡 TRUE LIVE SCREEN: NHÓM ${window.selectedSpecTeam}`;
+                if (title) title.innerHTML = `📡 REALTIME GAME MIRROR: NHÓM ${window.selectedSpecTeam}`;
                 mirrorPlayerScreen(candidates[0]);
                 requestScreenFromTeam(candidates[0].team);
             }
@@ -2136,7 +2136,7 @@
 
             viewport.innerHTML = `<div class="live-phone-shell">${body}</div>`;
             const title = document.getElementById('spec-title');
-            if (title && window.hostAutoFollow) title.innerHTML = `📡 TRUE LIVE SCREEN: NHÓM ${esc(payload.team)}`;
+            if (title && window.hostAutoFollow) title.innerHTML = `📡 REALTIME GAME MIRROR: NHÓM ${esc(payload.team)}`;
             updateAutoFollowButton();
         }
 
