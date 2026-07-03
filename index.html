@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>E-Logix Cyber Shield Simulator GAME</title>
+    <title>E-Logix Cyber Shield Simulator GAME</title>
     <style>
         :root {
             --bg-color: #0a0b10;
@@ -150,11 +150,12 @@
             margin-bottom: 15px;
             border-left: 3px solid var(--neon-purple);
         }
-    </script>
+    </style>
 </head>
 <body>
 
     <div class="game-wrapper">
+        <!-- SCREEN 1: LOGIN NHÓM -->
         <div id="view-login" class="view active">
             <h1>E-LOGIX SHIELD</h1>
             <div style="text-align:center; margin-bottom: 20px; color: #8b9bb4;">Hệ Thống Phòng Thủ CT Khẩn Cấp</div>
@@ -168,9 +169,10 @@
                 <option value="6">Nhóm Cổ Đông 6</option>
                 <option value="7">Nhóm Cổ Đông 7</option>
             </select>
-            <button class="btn btn-action" style="margin-top: 25px;" onclick="nextView('view-intro')">KÍCH HOẠT PHÒNG TÁC CHIẾN</button>
+            <button class="btn btn-action" style="margin-top: 25px;" onclick="startSimulation()">KÍCH HOẠT PHÒNG TÁC CHIẾN</button>
         </div>
 
+        <!-- SCREEN 2: BÁO ĐỘNG KHỦNG HOẢNG MAERSK -->
         <div id="view-intro" class="view">
             <div class="alert-banner">🚨 MÃ ĐỘC NOTPETYA TẤN CÔNG REALTIME 🚨</div>
             <h3 style="margin-top: 0; text-align: center; color: var(--neon-red);">HỆ THỐNG ĐANG BỊ ĐÓNG BĂNG</h3>
@@ -179,28 +181,33 @@
                 <br><br>
                 Hội đồng cổ đông hãy kích hoạt 3 tầng bảo mật của Tháp điều khiển để cứu lấy doanh nghiệp triệu đô!
             </p>
-            <button class="btn btn-action" onclick="startSimulation()">BẮT ĐẦU GIẢI CỨU (SPEED-RUN)</button>
+            <button class="btn btn-action" onclick="enterStage1()">BẮT ĐẦU GIẢI CỨU (SPEED-RUN)</button>
         </div>
 
+        <!-- SCREEN 3: TẦNG 1 - CYBERSECURITY (DIỆT LỖ HỔNG) -->
         <div id="view-stage1" class="view">
             <h2>TẦNG 1: CYBERSECURITY</h2>
             <div class="terminal-text" id="log-s1">> Phát hiện 3 mã độc đang cải trang dữ liệu bẩn trong hệ thống. Hãy nhấn tìm và cô lập chúng!</div>
             <div class="grid-container" id="grid-s1">
-                </div>
+                <!-- Render từ JS -->
+            </div>
             <div style="font-size: 0.85rem;">Tiến độ cô lập:</div>
             <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">VÀO TẦNG SAO LƯU</button>
         </div>
 
+        <!-- SCREEN 4: TẦNG 2 - CLOUD BACKUP (NỐI MẠCH MÁU) -->
         <div id="view-stage2" class="view">
             <h2>TẦNG 2: CLOUD BACKUP</h2>
             <div class="terminal-text" id="log-s2">> Dữ liệu chặng rời rạc! Hãy kích hoạt sao lưu đám mây theo đúng quy trình chuỗi cung ứng!</div>
             <div style="text-align: center; font-size: 0.85rem; margin-bottom: 10px; color: var(--neon-purple);" id="target-s2">Đang chờ quy trình...</div>
             <div class="grid-container" id="grid-s2">
-                </div>
+                <!-- Render từ JS -->
+            </div>
             <button class="btn btn-action" id="next-s2" style="display:none;" onclick="initStage3()">VÀO TẦNG PHÂN QUYỀN</button>
         </div>
 
+        <!-- SCREEN 5: TẦNG 3 - ACCESS CONTROL (CHẶNG CUỐI) -->
         <div id="view-stage3" class="view">
             <h2>TẦNG 3: ACCESS CONTROL</h2>
             <div class="terminal-text" id="log-s3">> Tài khoản nội bộ đang có hành vi gian lận sửa xóa dữ liệu. Hãy phân loại khẩn cấp!</div>
@@ -214,6 +221,7 @@
             </div>
         </div>
 
+        <!-- SCREEN 6: KẾT QUẢ & CHỨNG NHẬN SỐNG SÓT -->
         <div id="view-result" class="view">
             <h2 style="color: var(--neon-green);">HỆ THỐNG ĐÃ KHÔI PHỤC</h2>
             <div style="text-align: center; font-size: 3rem; margin: 15px 0;" id="final-integrity">0%</div>
@@ -237,13 +245,14 @@
         function nextView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            if(viewId === 'view-login') {
-                teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
-            }
         }
 
         function startSimulation() {
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
+            nextView('view-intro');
+        }
+
+        function enterStage1() {
             startTime = Date.now();
             nextView('view-stage1');
             initStage1();
@@ -268,6 +277,7 @@
                 div.className = 'grid-item';
                 div.innerHTML = item.text;
                 div.onclick = () => {
+                    if (div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
                     if (item.isMalware) {
                         div.className = 'grid-item selected-malware';
                         s1Found++;
@@ -275,10 +285,10 @@
                         document.getElementById('progress-s1').style.width = (s1Found / 3) * 100 + "%";
                         if (s1Found === 3) {
                             document.getElementById('log-s1').innerHTML = `> Lá chắn bảo mật hoàn tất! Nhấn tiếp tục gấp.`;
-                            document.getElementById('next-s1').style.style.display = "block";
+                            document.getElementById('next-s1').style.display = "block";
                         }
                     } else {
-                        div.className = 'grid-item selected-clean';
+                        div.className = 'grid-item pointer selected-clean';
                         integrity -= 10;
                         document.getElementById('log-s1').innerHTML = `> ❌ NHẦM RỒI! Xóa nhầm dữ liệu sạch! Hệ thống bị tổn hại!`;
                     }
@@ -288,7 +298,7 @@
         }
 
         // --- STAGE 2: CLOUD BACKUP ---
-        const s2Steps = ["1. Tạo đơn (OMS)", "2. Kiểm kho (WMS)", "3. Điểu tải (TMS)", "4. Sao lưu Cloud"];
+        const s2Steps = ["1. Tạo đơn (OMS)", "2. Kiểm kho (WMS)", "3. Điều tải (TMS)", "4. Sao lưu Cloud"];
         let s2CurrentIdx = 0;
 
         function initStage2() {
@@ -297,22 +307,22 @@
             const grid = document.getElementById('grid-s2');
             grid.innerHTML = "";
             
-            // Xáo trộn mảng để tăng độ khó tính mắt
             let shuffled = [...s2Steps].sort(() => Math.random() - 0.5);
             shuffled.forEach(step => {
                 const div = document.createElement('div');
                 div.className = 'grid-item';
                 div.innerHTML = step;
                 div.onclick = () => {
+                    if (div.classList.contains('selected-clean')) return;
                     if (step === s2Steps[s2CurrentIdx]) {
                         div.className = 'grid-item selected-clean';
                         s2CurrentIdx++;
                         if (s2CurrentIdx === 4) {
                             document.getElementById('target-s2').innerHTML = "✅ KHÔI PHỤC ĐƯỜNG TRUYỀN THÀNH CÔNG!";
                             document.getElementById('log-s2').innerHTML = `> Mạch máu dữ liệu đã thông suốt lên mây. Tiến vào chặng cuối.`;
-                            document.getElementById('next-s2').style.style.display = "block";
+                            document.getElementById('next-s2').style.display = "block";
                         } else {
-                            document.getElementById('target-s2').innerHTML = `HÃY NHẤN BƯỚC: ${s2Steps[s2CurrentIdx]}`;
+                            document.getElementById('target-s2').innerHTML = `HÃY NHẤN BƯỚG: ${s2Steps[s2CurrentIdx]}`;
                         }
                     } else {
                         integrity -= 10;
@@ -367,7 +377,6 @@
             document.getElementById('res-team').innerHTML = teamName;
             document.getElementById('res-time').innerHTML = totalSeconds;
             
-            // Tạo mã chứng nhận ngẫu nhiên nhìn cho nguy hiểm để chống gian lận điểm số
             let certCode = "ELG-" + Math.floor(Math.random() * 9000 + 1000) + "-" + integrity + "PT";
             document.getElementById('res-code').innerHTML = certCode;
         }
