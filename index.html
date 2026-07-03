@@ -58,7 +58,7 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
             z-index: 10;
             background-size: 100% 4px;
             pointer-events: none;
@@ -169,18 +169,20 @@
             min-height: 60px;
         }
 
+        /* Khi bấm trúng mục tiêu độc hại */
         .grid-item.selected-malware {
             border-color: var(--neon-red);
             color: var(--neon-red);
-            background: rgba(255, 0, 85, 0.15);
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+            background: rgba(255, 0, 85, 0.25) !important;
+            box-shadow: 0 0 15px var(--neon-red);
         }
 
+        /* Khi bấm vào mục tiêu sạch */
         .grid-item.selected-clean {
             border-color: var(--neon-green);
             color: var(--neon-green);
-            background: rgba(57, 255, 20, 0.15);
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+            background: rgba(57, 255, 20, 0.2) !important;
+            box-shadow: 0 0 15px var(--neon-green);
         }
 
         .progress-bar {
@@ -272,7 +274,7 @@
         <div id="view-stage4" class="view">
             <div class="status-bar"><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2>
-            <div class="terminal-text" id="log-s4">> LỖI: Hệ thống một cửa bị chèn tờ khai thông quan lậu. Hãy dùng mắt thần click tìm và chặn đứng 4 lệnh có Mã Chi cục Hải quan Cát Lái bị LÀM GIẢ (Mã xịn chuẩn phải là 02CI)!</div>
+            <div class="terminal-text" id="log-s4">> LỖI: Cổng thông quan một cửa quốc gia bị tin tặc chèn tờ khai lậu. Hãy dùng mắt thần click tìm và chặn đứng 4 lệnh có Mã Chi cục Hải quan Cát Lái bị LÀM GIẢ (Mã xịn chuẩn phải là 02CI)!</div>
             <div class="grid-container" id="grid-s4"></div>
             <button class="btn btn-action" id="next-s4" style="display:none;" onclick="initStage5()">TIẾN VÀO KHÓA TRUY CẬP CUỐI</button>
         </div>
@@ -280,21 +282,21 @@
         <div id="view-stage5" class="view">
             <div class="status-bar"><span>🔑 CHẶNG 5: ACCESS CONTROL</span><span id="hp-s5" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
-            <div class="terminal-text" id="log-s5">> HƯỚNG DẪN: Hacker đang giả danh nhân viên để sửa đổi dữ liệu hệ thống. Hãy đọc kỹ hành vi bên dưới: Nếu phát hiện nguy hiểm ➔ Bấm BLOCK (Chặn đứng). Nếu là hành vụ làm việc hợp pháp ➔ Bấm ALLOW (Cho phép)!</div>
+            <div class="terminal-text" id="log-s5">> HƯỚNG DẪN: Hacker đang giả danh nhân viên nội bộ để phá hoại. Hãy đọc kỹ hành vi bên dưới và tiến hành phân loại khẩn cấp: Nếu phát hiện nguy hiểm ➔ Bấm BLOCK (Chặn đứng). Nếu là hành vụ làm việc hợp pháp ➔ Bấm ALLOW (Cho phép)!</div>
             <div style="background: #04060f; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 25px; border: 1px solid #1e295d;">
                 <div style="font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Yêu cầu hệ thống phát hiện:</div>
                 <div id="account-task" style="font-weight: bold; color: #ffffff; font-size: 1.15rem; line-height: 1.5;">Đang quét...</div>
             </div>
             <div style="display: flex; gap: 20px;">
                 <button class="btn" style="flex:1; border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.03); padding: 20px;" onclick="classifyAccount(true)">ALLOW (HỢP PHÁP)</button>
-                <button class="btn" style="flex:1; border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.03); padding: 20px;" onclick="classifyAccount(false)">BLOCK (HACKER/NGUY HIỂM)</button>
+                <button class="btn" style="flex:1; border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.03); padding: 20px;" onclick="classifyAccount(false)">BLOCK (NGUY HIỂM)</button>
             </div>
         </div>
 
         <div id="view-result" class="view">
-            <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); font-size: 1.9rem;">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
-            <div style="text-align: center; font-size: 4.5rem; font-weight: bold; margin: 15px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(57,255,20,0.4);" id="final-integrity">0%</div>
-            <div style="background: #020308; padding: 25px; border-radius: 12px; font-size: 1.05rem; line-height: 2; border: 1px solid #1e295d;">
+            <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); font-size: 1.8rem;">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
+            <div style="text-align: center; font-size: 4.2rem; font-weight: bold; margin: 15px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(57,255,20,0.4);" id="final-integrity">0%</div>
+            <div style="background: #020308; padding: 25px; border-radius: 12px; font-size: 1rem; line-height: 2; border: 1px solid #1e295d;">
                 <div>💎 <span style="color: var(--text-sub);">Lực lượng cứu nguy:</span> <span id="res-team" style="font-weight: bold; color: white;">-</span></div>
                 <div>⏱️ <span style="color: var(--text-sub);">Thời gian phá đảo:</span> <span id="res-time" style="font-weight: bold; color:var(--neon-blue)">0</span> giây</div>
                 <div>🔐 <span style="color: var(--text-sub);">Mã Chứng Nhận Gốc:</span> <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">-</span></div>
@@ -308,7 +310,7 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmIntervalId = null;
 
-        // --- HỆ THỐNG ÂM NHẠC CYBER SPY ĐIỆP VIÊN - CỐ ĐỊNH, DỄ CHỊU VÀ SANG TRỌNG ---
+        // --- HỆ THỐNG NHẠC NỀN CYBER SPY ĐIỆP VIÊN - ÂM LƯỢNG LỚN, HUYỀN BÍ ---
         function startAudioEngine() {
             if (bgmIntervalId) return;
             try {
@@ -317,19 +319,20 @@
                     let osc = audioCtx.createOscillator();
                     let gain = audioCtx.createGain();
                     
-                    // Đi nốt âm hưởng điệp viên bằng sóng Triangle êm dịu, không nhức đầu
                     osc.type = 'triangle';
-                    let melody = [110, 110, 130, 110, 146, 146, 130, 164];
+                    // Tạo vòng giai điệu điệp viên trầm hùng (BASSLINE GROOVE)
+                    let melody = [110, 110, 138, 110, 165, 165, 138, 196];
                     let currentFreq = melody[step % melody.length];
                     
                     osc.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime); 
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+                    // Bơm gain bự lên gấp 4 lần bản cũ (từ 0.06 lên 0.24) nghe cực kì rõ nét
+                    gain.gain.setValueAtTime(0.24, audioCtx.currentTime); 
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.32);
                     
                     osc.connect(gain); gain.connect(audioCtx.destination);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.35);
                     step++;
-                }, 350); // Nhịp điệu thong thả, giữ không khí chuyên nghiệp công sở
+                }, 380); 
             } catch(e) {}
         }
 
@@ -344,12 +347,12 @@
             } catch(e) {}
         }
 
-        function correctSound() { playTone(660, 'sine', 0.08, 0.15); setTimeout(() => playTone(990, 'sine', 0.1, 0.15), 50); }
-        function wrongSound() { playTone(100, 'triangle', 0.2, 0.25); }
+        function correctSound() { playTone(784, 'sine', 0.1, 0.3); setTimeout(() => playTone(1174, 'sine', 0.12, 0.3), 60); }
+        function wrongSound() { playTone(110, 'sawtooth', 0.25, 0.4); }
         function winSound() { 
             if(bgmIntervalId) clearInterval(bgmIntervalId); 
             let arr = [523, 659, 784, 1046, 1318]; 
-            arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.15), i*80)); 
+            arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.3), i*90)); 
         }
 
         function triggerDamage(stage) {
@@ -367,7 +370,16 @@
 
         function enterStage1() { startTime = Date.now(); nextView('view-stage1'); initStage1(); }
 
-        // CHẶNG 1: MỞ RỘNG 4 MÃ ĐỘC TRÊN 8 FILES
+        // --- HÀM XÁO TRỘN ĐÁP ÁN ĐỈNH CAO CHỐNG NHÌN VỊ TRÍ ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // CHẶNG 1: CYBERSECURITY
         const s1Data = [
             { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest.xml", bad: false },
             { text: "Worm_Port_8080.sh", bad: true }, { text: "WMS_Stock_Report.xlsx", bad: false },
@@ -377,7 +389,9 @@
         let s1Found = 0;
         function initStage1() {
             const grid = document.getElementById('grid-s1'); grid.innerHTML = "";
-            s1Data.forEach(item => {
+            // Xáo trộn vị trí tệp tin
+            let shuffledS1 = shuffleArray([...s1Data]);
+            shuffledS1.forEach(item => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = item.text;
                 div.onclick = () => {
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
@@ -393,7 +407,7 @@
             });
         }
 
-        // CHẶNG 2: MỞ RỘNG 2 VÒNG CHUỖI KHO (XUẤT KHẨU -> NHẬP KHẨU)
+        // CHẶNG 2: CLOUD BACKUP
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
         let s2Idx = 0; let s2Round = 1;
         function initStage2() {
@@ -402,7 +416,7 @@
         }
         function renderStage2Grid() {
             const grid = document.getElementById('grid-s2'); grid.innerHTML = "";
-            let shuffled = [...s2Steps].sort(() => Math.random() - 0.5);
+            let shuffled = shuffleArray([...s2Steps]);
             shuffled.forEach(step => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = step.split(' ')[1];
                 div.onclick = () => {
@@ -432,20 +446,20 @@
             });
         }
 
-        // CHẶNG 3: MỞ RỘNG 3 CÂU HỎI INCOTERMS
+        // CHẶNG 3: INCOTERMS STRATEGY
         const s3Scenarios = [
             {
-                text: "Câu 1: E-Logix mua hàng theo điều kiện FOB Cát Lái. Hàng hóa bị sóng đánh rơi xuống biển khi tàu đang lênh đênh ngoài khơi. Theo luật Incoterms, ai là bên phải gánh chịu rủi ro tổn thất tiền bạc này?",
+                text: "Câu 1: E-Logix mua một lô hàng từ đối tác nước ngoài theo điều kiện FOB Cát Lái. Khi tàu đang lênh đênh ngoài đại dương thì gặp bão lớn khiến container hàng bị rơi xuống biển hỏng sạch. Theo quy tắc Incoterms, bên nào phải gánh chịu rủi ro tổn thất tiền bạc này?",
                 opts: ["A. Người bán nước ngoài gánh rủi ro", "B. Công ty bên mình (E-Logix - Buyer) gánh rủi ro", "C. Chi cục hải quan cảng gánh rủi ro"],
                 ans: 1
             },
             {
-                text: "Câu 2: E-Logix xuất khẩu lô hàng theo điều kiện CIF Rotterdam. Hệ thống Maersk sập làm hàng bị trễ, cháy nổ khi đang nằm trên tàu chặng biển. Ai là người có trách nhiệm bắt buộc phải mua bảo hiểm cho chặng vận tải biển này?",
-                opts: ["A. Bên mình (E-Logix - Người bán) bắt buộc phải mua", "B. Người mua nước ngoài tự mua", "C. Hãng tàu Maersk tự tặng bảo hiểm miễn phí"],
+                text: "Câu 2: E-Logix xuất khẩu lô hàng logistics sang châu Âu theo điều kiện CIF Rotterdam. Trên đường đi biển, tàu bất ngờ bị bốc cháy hư hại hàng hóa. Ai là người có nghĩa vụ bắt buộc phải đứng ra mua bảo hiểm cho chặng vận tải biển này?",
+                opts: ["A. Bên mình (E-Logix - Người bán) bắt buộc phải mua", "B. Đối tác mua hàng nước ngoài tự mua", "C. Hãng tàu Maersk tự bồi thường không cần bảo hiểm"],
                 ans: 0
             },
             {
-                text: "Câu 3: Công ty đối tác muốn bên mình tự đến tận kho của họ ở nước ngoài để bốc hàng, tự lo từ A-Z mọi thủ tục hải quan xuất khẩu lẫn nhập khẩu. Ta nên chọn điều kiện Incoterms nào cho đúng?",
+                text: "Câu 3: Công ty đối tác yêu cầu bên mình phải tự đến tận xưởng của họ ở nước ngoài để bốc hàng, tự làm hết mọi thủ tục hải quan đầu xuất lẫn đầu nhập từ A-Z. Nhóm mình nên chọn điều kiện thương mại nào tối ưu nhất?",
                 opts: ["A. Chọn điều kiện FOB", "B. Chọn điều kiện CIF", "C. Chọn điều kiện EXW (Giao tại xưởng)"],
                 ans: 2
             }
@@ -472,7 +486,7 @@
             }
         }
 
-        // CHẶNG 4: MỞ RỘNG 4 MÃ HẢI QUAN FAKE TRÊN 8 LỆNH
+        // CHẶNG 4: CUSTOMS AUDIT (XÁO TRỘN LỘN XỘN ĐÁP ÁN)
         const s4Data = [
             { text: "TK: 10293 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 94821 / CH-CATLAI / 02C2", fake: true },
             { text: "TK: 58201 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 30192 / CH-FAKE  / 02B9", fake: true },
@@ -483,7 +497,11 @@
         function initStage4() {
             nextView('view-stage4'); document.getElementById('hp-s4').innerHTML = `HỆ THỐNG: ${integrity}%`;
             const grid = document.getElementById('grid-s4'); grid.innerHTML = "";
-            s4Data.forEach(item => {
+            
+            // Xáo trộn ngẫu nhiên toàn bộ danh sách tờ khai bẩn và sạch lẫn lộn
+            let scrambledS4 = shuffleArray([...s4Data]);
+            
+            scrambledS4.forEach(item => {
                 const div = document.createElement('div'); div.className = 'grid-item'; div.innerHTML = item.text;
                 div.onclick = () => {
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
@@ -498,15 +516,20 @@
             });
         }
 
-        // CHẶNG 5: MỞ RỘNG 4 TÌNH HUỐNG THẨM ĐỊNH NỘI BỘ RÕ RÀNG
+        // CHẶNG 5: ACCESS CONTROL
         const s5Tasks = [
-            { text: "[Yêu cầu xóa khẩn cấp] Toàn bộ lịch sử tệp tin Master Bill of Lading từ một tài khoản nặc danh IP lạ", allow: false },
-            { text: "[Yêu cầu thông quan] Hệ thống tự động đẩy dữ liệu Luồng Xanh hợp lệ qua Hải quan Cát Lái mã xịn 02CI", allow: true },
-            { text: "[Yêu cầu can thiệp] Lệnh ghi đè cấu trúc hệ thống kho thành Tier-Line-Row-Block từ nhân viên thực tập", allow: false },
-            { text: "[Yêu cầu trích xuất] Giám đốc Chuỗi cung ứng yêu cầu tải file dữ liệu manifest của đại lý hãng tàu Maersk để đối chiếu bảo hiểm", allow: true }
+            { text: "[Yêu cầu hệ thống] Xóa khẩn cấp toàn bộ dữ liệu lịch sử của Master Bill of Lading từ một tài khoản vô danh có IP lạ từ nước ngoài", allow: false },
+            { text: "[Yêu cầu hải quan] Hệ thống tự động thông quan truyền dữ liệu Luồng Xanh qua Chi cục Hải quan Cát Lái mã chuẩn xịn 02CI", allow: true },
+            { text: "[Yêu cầu vận hành] Lệnh ghi đè cấu trúc đảo ngược hệ thống quản lý vị trí kho thành Tier-Line-Row-Block từ máy của nhân viên thực tập", allow: false },
+            { text: "[Yêu cầu đối chiếu] Giám đốc Chuỗi cung ứng yêu cầu kết nối cơ sở dữ liệu tải file manifest của đại lý hãng tàu Maersk để đối chiếu đền bù rủi ro", allow: true }
         ];
         let s5Idx = 0;
-        function initStage5() { nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; showS5Task(); }
+        function initStage5() { 
+            nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; 
+            // Xáo trộn danh sách tình huống nội bộ luôn cho kịch tính
+            shuffleArray(s5Tasks);
+            showS5Task(); 
+        }
         function showS5Task() {
             if(s5Idx < s5Tasks.length) document.getElementById('account-task').innerHTML = s5Tasks[s5Idx].text;
             else finishGame();
@@ -516,7 +539,7 @@
             else { triggerDamage('s5'); }
         }
 
-        // KẾT THÚC
+        // FINISH
         function finishGame() {
             winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000);
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
