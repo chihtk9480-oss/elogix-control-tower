@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V4.4 - Multi-Device Cinematic HUD</title>
+    <title>E-Logix Cyber Shield V4.6 - Stage 5 IP + 100% Fastest Leaderboard</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -111,6 +111,94 @@
         .mirror-item.m-good { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,102,0.1); }
         .mirror-incoterm-btn { background: #111738; color: #cbd5e1; border: 1px solid #222d66; padding: 12px; margin-top: 8px; border-radius: 6px; text-align: left; font-size: 0.9rem; font-weight: bold; }
 
+        /* BẢNG XẾP HẠNG: TIÊU CHÍ 100% + THỜI GIAN NHANH NHẤT */
+        .winner-strip {
+            margin: 18px 0 0;
+            background: linear-gradient(90deg, rgba(0,255,102,0.12), rgba(0,210,255,0.08));
+            border: 1px solid rgba(0,255,102,0.45);
+            border-radius: 14px;
+            padding: 14px 18px;
+            text-align: center;
+            font-weight: 900;
+            color: var(--neon-green);
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 22px rgba(0,255,102,0.12);
+        }
+
+        .leaderboard-panel {
+            margin-top: 15px;
+            background: rgba(3, 5, 15, 0.78);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .leaderboard-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--neon-blue);
+            font-weight: 900;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-rule {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .leaderboard-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .leader-row {
+            display: grid;
+            grid-template-columns: 42px 1fr auto;
+            gap: 10px;
+            align-items: center;
+            background: rgba(12, 18, 44, 0.75);
+            border: 1px solid rgba(34, 45, 99, 0.95);
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 800;
+        }
+
+        .leader-row.perfect {
+            border-color: rgba(0,255,102,0.65);
+            box-shadow: 0 0 14px rgba(0,255,102,0.08);
+        }
+
+        .leader-row.not-perfect {
+            opacity: 0.72;
+        }
+
+        .rank-badge {
+            background: rgba(0,210,255,0.12);
+            border: 1px solid rgba(0,210,255,0.35);
+            color: var(--neon-blue);
+            border-radius: 8px;
+            padding: 6px 0;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .leader-meta {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            margin-top: 2px;
+            font-weight: 700;
+        }
+
+        .winner-card {
+            border-color: var(--neon-green) !important;
+            box-shadow: 0 0 28px rgba(0,255,102,0.35) !important;
+            background: rgba(0,255,102,0.07) !important;
+        }
+
         /* ======================================================= */
         /* TRUNG TÂM BẢO TRÌ BỘ KHUNG ĐỒ HỌA RESPONSIVE CHO MOBILE */
         /* ======================================================= */
@@ -131,6 +219,9 @@
                 border-radius: 8px;
             }
             .btn { padding: 14px; font-size: 1rem; border-radius: 8px; }
+            .leaderboard-list { grid-template-columns: 1fr; }
+            .winner-strip { font-size: 0.88rem; padding: 12px; }
+            .leaderboard-title { flex-direction: column; gap: 4px; align-items: flex-start; }
         }
     </style>
 </head>
@@ -231,6 +322,7 @@
             <div class="terminal-text" id="log-s5">> HƯỚNG DẪN: Gián điệp giả danh nhân viên nội bộ để phá hoại vận đơn gốc. Hãy phân tích: Nếu phát hiện hành vi phá hoại dữ liệu ➔ BLOCK. Nếu là tác vụ công việc hợp pháp ➔ ALLOW.</div>
             <div style="background: #03050f; padding: 18px; border-radius: 10px; text-align: center; margin-bottom: 15px; border: 1px solid rgba(0,240,255,0.2);">
                 <div style="font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px;">Yêu cầu hệ thống phát hiện:</div>
+                <div id="account-ip" style="display:inline-block; margin: 4px 0 12px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0,210,255,0.35); background: rgba(0,210,255,0.08); color: var(--neon-blue); font-family: monospace; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px;">IP nguồn: Đang quét...</div>
                 <div id="account-task" style="font-weight: bold; color: #ffffff; font-size: 1.1rem; line-height: 1.5;">Đang quét...</div>
             </div>
             <div style="display: flex; gap: 15px;">
@@ -241,7 +333,7 @@
 
         <!-- CHẶNG 8: KẾT QUẢ -->
         <div id="view-result" class="view">
-            <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green);">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
+            <h2 id="result-title" style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green);">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
             <div style="text-align: center; font-size: 4.8rem; font-weight: bold; margin: 12px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(0,255,102,0.4);" id="final-integrity">0%</div>
             <div style="background: rgba(3,5,15,0.8); padding: 20px; border-radius: 12px; font-size: 1.05rem; line-height: 2; border: 1px solid rgba(0,240,255,0.2);">
                 <div>💎 <span style="color: #94a3b8;">Lực lượng giải cứu:</span> <span id="res-team" style="font-weight: bold; color: white;">-</span></div>
@@ -278,6 +370,63 @@
                     <div class="host-hp-bar"><div class="host-hp-fill" id="host-hp-fill-${id}"></div></div>
                 </div>
             `).join("");
+        }
+
+
+        function renderLeaderboard() {
+            const list = document.getElementById("leaderboard-list");
+            const strip = document.getElementById("winner-strip");
+            if (!list || !strip) return;
+
+            document.querySelectorAll(".host-card").forEach(card => card.classList.remove("winner-card"));
+
+            const finished = activeTeams
+                .map(id => window.teamStates[id])
+                .filter(s => s && s.stageCode === "win")
+                .sort((a, b) => {
+                    const aPerfect = Number(a.hp) === 100 ? 1 : 0;
+                    const bPerfect = Number(b.hp) === 100 ? 1 : 0;
+                    if (bPerfect !== aPerfect) return bPerfect - aPerfect;
+                    if (Number(b.hp) !== Number(a.hp)) return Number(b.hp) - Number(a.hp);
+                    return Number(a.time) - Number(b.time);
+                });
+
+            const perfectFinishers = finished.filter(s => Number(s.hp) === 100)
+                                           .sort((a, b) => Number(a.time) - Number(b.time));
+
+            if (!finished.length) {
+                list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ các nhóm phá đảo...</div>`;
+                strip.innerHTML = "🏁 CHƯA CÓ NHÓM NÀO HOÀN THÀNH 100%";
+                return;
+            }
+
+            if (perfectFinishers.length) {
+                const winner = perfectFinishers[0];
+                strip.innerHTML = `🏆 TẠM DẪN ĐẦU: NHÓM CỔ ĐÔNG ${winner.team} — KHÔI PHỤC 100% TRONG ${winner.time} GIÂY`;
+                const winnerCard = document.getElementById(`card-team-${winner.team}`);
+                if (winnerCard) winnerCard.classList.add("winner-card");
+            } else {
+                strip.innerHTML = "⚠️ ĐÃ CÓ NHÓM HOÀN THÀNH, NHƯNG CHƯA CÓ NHÓM NÀO ĐẠT 100%";
+            }
+
+            list.innerHTML = finished.map((s, i) => {
+                const perfect = Number(s.hp) === 100;
+                const rankLabel = perfect ? `#${perfectFinishers.findIndex(x => x.team === s.team) + 1}` : "—";
+                const status = perfect ? "Đủ điều kiện tranh hạng" : "Hoàn thành nhưng không đạt 100%";
+                return `
+                    <div class="leader-row ${perfect ? "perfect" : "not-perfect"}">
+                        <div class="rank-badge">${rankLabel}</div>
+                        <div>
+                            <div>Nhóm Cổ Đông ${s.team}</div>
+                            <div class="leader-meta">${status}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="color:${perfect ? "var(--neon-green)" : "orange"}">${s.hp}%</div>
+                            <div class="leader-meta">${s.time}s</div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
         }
 
         function selectSpecTeam(id) {
@@ -339,8 +488,13 @@
                 });
                 html += `</div>`;
             } else if (payload.stageCode === "c5") {
+                const mirrorTaskText = payload.extra.taskText || payload.extra.text || "Đang quét...";
+                const mirrorTaskIp = payload.extra.taskIp || payload.extra.ip || "Đang quét...";
                 html += `<h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
-                         <div style="background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;">${payload.extra.text}</div>
+                         <div style="background:#040714; padding:12px; border-radius:8px; font-size:0.9rem; border:1px solid #222d66; margin-bottom:12px;">
+                            <div style="display:inline-block; margin-bottom:8px; padding:5px 10px; border-radius:999px; border:1px solid rgba(0,210,255,0.35); background:rgba(0,210,255,0.08); color:var(--neon-blue); font-family:monospace; font-weight:800;">IP NGUỒN: ${mirrorTaskIp}</div>
+                            <div style="line-height:1.45; font-weight:bold; color:#f8fafc;">${mirrorTaskText}</div>
+                         </div>
                          <div style="display:flex; gap:10px;"><div class="mirror-item" style="flex:1; border-color:var(--neon-green); color:var(--neon-green);">ALLOW</div><div class="mirror-item" style="flex:1; border-color:var(--neon-red); color:var(--neon-red);">BLOCK</div></div>`;
             } else if (payload.stageCode === "win") {
                 html += `<div style="text-align:center; margin:auto;"><h2 style="color:var(--neon-green); font-size:1.5rem;">🏆 HOÀN THÀNH XUẤT SẮC!</h2><div style="font-size:1.1rem; margin-top:10px;">Hệ thống khôi phục: ${payload.hp}%</div><div style="font-size:0.9rem; color:#64748b;">Thời gian: ${payload.time}s</div></div>`;
@@ -376,6 +530,7 @@
                                 else fill.style.background = "var(--neon-green)";
                             }
                             if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
+                            renderLeaderboard();
                         }
                     }
                 } catch(e) {}
@@ -561,21 +716,48 @@
 
         // CHẶNG 5
         const s5Tasks = [
-            { text: "Lệnh xóa lịch sử Master Bill of Lading gốc từ một tài khoản nặc danh IP lạ nước ngoài", allow: false },
-            { text: "Yêu cầu tự động thông quan luồng Xanh có chứng thư số doanh nghiệp tại cảng Cát Lái", allow: true },
-            { text: "Lệnh can thiệp ghi đè đảo cấu trúc hệ thống kho thành Tier-Line-Row-Block từ nhân sự thực tập", allow: false },
-            { text: "Yêu cầu tải file manifest từ đại lý Maersk chính thống phục vụ đối chiếu dữ liệu hải quan", allow: true }
+            { ip: "185.220.101.44 / TOR-EXIT-DE", text: "Lệnh xóa lịch sử Master Bill of Lading gốc từ một tài khoản nặc danh IP lạ nước ngoài", allow: false },
+            { ip: "10.24.6.12 / VNACCS-CATLAI-AUTH", text: "Yêu cầu tự động thông quan luồng Xanh có chứng thư số doanh nghiệp tại cảng Cát Lái", allow: true },
+            { ip: "45.155.205.233 / PROXY-RU", text: "Lệnh can thiệp ghi đè đảo cấu trúc hệ thống kho thành Tier-Line-Row-Block từ nhân sự thực tập", allow: false },
+            { ip: "203.113.174.22 / MAERSK-VN-AGENT", text: "Yêu cầu tải file manifest từ đại lý Maersk chính thống phục vụ đối chiếu dữ liệu hải quan", allow: true }
         ];
         let s5Idx = 0;
         function initStage5() { window.currentStageCode = "c5"; nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; shuffleArray(s5Tasks); showS5Task(); }
         function showS5Task() { 
-            if(s5Idx < s5Tasks.length) { document.getElementById('account-task').innerHTML = s5Tasks[s5Idx].text; broadcastState("Thẩm định nội bộ (C5)", { taskText: s5Tasks[s5Idx].text }); } 
+            if(s5Idx < s5Tasks.length) {
+                const task = s5Tasks[s5Idx];
+                document.getElementById('account-ip').innerHTML = `IP nguồn: ${task.ip}`;
+                document.getElementById('account-task').innerHTML = task.text;
+                broadcastState("Thẩm định nội bộ (C5)", { taskText: task.text, taskIp: task.ip });
+            } 
             else { finishGame(); }
         }
-        function classifyAccount(allow) { if(allow === s5Tasks[s5Idx].allow) { correctSound(); s5Idx++; showS5Task(); } else { triggerDamage('s5', { taskText: s5Tasks[s5Idx].text }); } }
+        function classifyAccount(allow) {
+            const task = s5Tasks[s5Idx];
+            if(allow === task.allow) { correctSound(); s5Idx++; showS5Task(); }
+            else { triggerDamage('s5', { taskText: task.text, taskIp: task.ip }); }
+        }
 
         // FINISH
-        function finishGame() { window.currentStageCode = "win"; winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000); nextView('view-result'); document.getElementById('final-integrity').innerHTML = integrity + "%"; document.getElementById('res-team').innerHTML = teamName; document.getElementById('res-time').innerHTML = seconds; document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; broadcastState("Phá đảo!", {}); }
+        function finishGame() { 
+            window.currentStageCode = "win"; 
+            winSound(); 
+            let seconds = Math.floor((Date.now() - startTime) / 1000); 
+            nextView('view-result'); 
+            document.getElementById('final-integrity').innerHTML = integrity + "%"; 
+            document.getElementById('res-team').innerHTML = teamName; 
+            document.getElementById('res-time').innerHTML = seconds; 
+            document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; 
+            const title = document.getElementById('result-title');
+            if (integrity === 100) {
+                title.innerHTML = "KHÔI PHỤC 100% — ĐỦ ĐIỀU KIỆN TRANH HẠNG";
+                title.style.color = "var(--neon-green)";
+            } else {
+                title.innerHTML = "HOÀN THÀNH NHIỆM VỤ — CHƯA ĐẠT MỐC 100%";
+                title.style.color = "orange";
+            }
+            broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds }); 
+        }
     </script>
 </body>
 </html>
