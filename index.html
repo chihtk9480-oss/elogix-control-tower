@@ -1849,7 +1849,7 @@
                         <div class="real-status-card"><div class="real-status-label">Độ toàn vẹn</div><div class="real-status-value" style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">${hp}%</div></div>
                     </div>
                     <div class="real-video-frame">
-                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">ĐANG KẾT NỐI LIVE TAB TỰ ĐỘNG TỪ NHÓM ${esc(team)}</div><div>Người chơi không cần bấm bật live. Khi nhóm nhấn vào chơi, thiết bị sẽ tự truyền tab game lên host. Nếu đứng quá lâu ở đây, hãy đảm bảo điện thoại và host đang mở đúng cùng bản V7.8, cùng link Vercel, rồi tải lại trang người chơi.</div></div>`}
+                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">ĐANG NHẬN TRẠNG THÁI GAME TỪ NHÓM ${esc(team)}</div><div>Người chơi không cần bấm bật live. Khi nhóm nhấn vào chơi, thiết bị sẽ tự gửi trạng thái game realtime lên host. Nếu đứng quá lâu ở đây, hãy đảm bảo điện thoại và host đang mở đúng cùng bản V7.8, cùng link Vercel, rồi tải lại trang người chơi.</div></div>`}
                     </div>
                 </div>`;
             if (stream) {
@@ -2125,59 +2125,86 @@
             updateAutoFollowButton();
         }
 
+        // =======================================================
+        // V8.0 STABLE REALTIME CORE — KHÔI PHỤC CƠ CHẾ BẢN 4.4
+        // Không WebRTC, không getDisplayMedia, không xin quyền.
+        // Người chơi bấm chơi -> tự đẩy trạng thái game thật -> host dựng lại màn chơi realtime.
+        // =======================================================
+        const BACKUP_NETWORK_TOPIC = NETWORK_TOPIC + "_backup_v80";
+        const REALTIME_TOPICS = [NETWORK_TOPIC, BACKUP_NETWORK_TOPIC];
+        let playerRealtimeTimer = null;
+        let lastStageName = "🔑 Đăng nhập";
+        let lastExtraData = { text: "Đang kết nối tháp..." };
+        let localBus = null;
+        try { localBus = new BroadcastChannel('elogix_v80_local_bus'); } catch(e) { localBus = null; }
+
         function parseNtfyPayload(data) {
             try {
-                if (!data || data.event !== "message" || !data.message) return null;
-                const payload = typeof data.message === "string" ? JSON.parse(data.message) : data.message;
+                if (!data) return null;
+                let raw = data;
+                if (data.event && data.event !== "message") return null;
+                if (data.message !== undefined) raw = data.message;
+                const payload = typeof raw === "string" ? JSON.parse(raw) : raw;
                 if (!payload || !payload.team) return null;
+                payload.team = String(payload.team);
+                payload.hp = Number(payload.hp ?? 100);
+                payload.time = Number(payload.time ?? 0);
+                payload.extra = payload.extra || {};
                 return payload;
             } catch(e) { return null; }
         }
 
         function applyHostPayload(payload) {
+            payload = parseNtfyPayload(payload) || payload;
             if (!payload || !payload.team) return;
+
             const previousPayload = window.teamStates[payload.team];
-            const incomingStamp = Number(payload.sentAt || 0);
-            const previousStamp = Number(previousPayload?.sentAt || 0);
+            const incomingStamp = Number(payload.sentAt || payload.activityAt || Date.now());
+            const previousStamp = Number(previousPayload?.sentAt || previousPayload?.activityAt || 0);
             if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
-            payload._receivedAt = incomingStamp || Date.now();
+            payload.sentAt = incomingStamp;
+            payload._receivedAt = Date.now();
+            payload.online = true;
             window.teamStates[payload.team] = payload;
 
-            document.querySelectorAll('.host-card').forEach(c => c.classList.remove('live-playing'));
-            let card = document.getElementById(`card-team-${payload.team}`);
-            if(card) { card.classList.add("active-card"); if (livePriority(payload) >= 50) card.classList.add('live-playing'); }
-            let stageEl = document.getElementById(`host-stage-${payload.team}`);
-            if(stageEl) stageEl.innerHTML = payload.stage || "Đang đồng bộ...";
-            let timeEl = document.getElementById(`host-time-${payload.team}`);
-            if(timeEl) timeEl.innerHTML = (payload.time || 0) + "s";
-            let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
-            if(hpTxtEl) hpTxtEl.innerHTML = (payload.hp ?? 100) + "%";
+            const card = document.getElementById(`card-team-${payload.team}`);
+            if (card) {
+                card.classList.add("active-card");
+                card.classList.toggle('live-playing', ['c1','c2','c3','c4','c5'].includes(payload.stageCode));
+                card.classList.remove('offline-card');
+            }
+
+            const stageEl = document.getElementById(`host-stage-${payload.team}`);
+            if (stageEl) stageEl.innerHTML = payload.stage || "Đang đồng bộ...";
+            const timeEl = document.getElementById(`host-time-${payload.team}`);
+            if (timeEl) timeEl.innerHTML = (payload.time || 0) + "s";
+            const hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
+            if (hpTxtEl) hpTxtEl.innerHTML = (payload.hp ?? 100) + "%";
             const fill = document.getElementById(`host-hp-fill-${payload.team}`);
-            if(fill) {
+            if (fill) {
                 fill.style.width = (payload.hp ?? 100) + "%";
-                if(payload.hp < 40) fill.style.background = "var(--neon-red)";
-                else if(payload.hp < 75) fill.style.background = "orange";
+                if (payload.hp < 40) fill.style.background = "var(--neon-red)";
+                else if (payload.hp < 75) fill.style.background = "orange";
                 else fill.style.background = "var(--neon-green)";
             }
 
-            // Auto-follow: host tự nhảy sang nhóm đang chơi/thao tác mới nhất để thấy màn hình thật theo thời gian thực.
-            if (window.hostAutoFollow) {
-                window.selectedSpecTeam = chooseAutoFollowTeam(payload);
+            // Host tự hiện nhóm vừa có tín hiệu, không cần bấm chọn thủ công.
+            if (window.hostAutoFollow || !window.selectedSpecTeam) {
+                window.selectedSpecTeam = payload.team;
                 document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
-                const autoCard = document.getElementById(`card-team-${window.selectedSpecTeam}`);
+                const autoCard = document.getElementById(`card-team-${payload.team}`);
                 if (autoCard) autoCard.classList.add('spec-selected');
             }
 
-            if (window.selectedSpecTeam === payload.team) { mirrorPlayerScreen(payload); }
+            if (window.selectedSpecTeam === payload.team) mirrorPlayerScreen(payload);
             updateAutoFollowButton();
             refreshHostPresenceCards();
             renderLeaderboard();
         }
 
-        async function loadCachedPlayerStates() {
-            if (!isHost) return;
+        async function pollTopicOnce(topic) {
             try {
-                const res = await fetch(`https://ntfy.sh/${NETWORK_TOPIC}/json?poll=1&_=${Date.now()}`, { cache: "no-store" });
+                const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&_=${Date.now()}`, { cache: "no-store" });
                 const text = await res.text();
                 if (!text.trim()) return;
                 text.trim().split(/\n+/).forEach(line => {
@@ -2187,60 +2214,100 @@
                         if (payload) applyHostPayload(payload);
                     } catch(e) {}
                 });
-            } catch(e) {
-                const title = document.getElementById('spec-title');
-                if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: ĐANG THỬ KẾT NỐI LẠI";
-            }
+            } catch(e) {}
+        }
+
+        function loadCachedPlayerStates() {
+            if (!isHost) return;
+            REALTIME_TOPICS.forEach(pollTopicOnce);
+        }
+
+        function listenToOneTopic(topic) {
+            try {
+                const source = new EventSource(`https://ntfy.sh/${topic}/sse`);
+                source.onopen = () => {
+                    const title = document.getElementById('spec-title');
+                    if (title && !window.selectedSpecTeam) title.innerHTML = "📡 MIRROR MATRIX FEED: ĐÃ KẾT NỐI, ĐANG CHỜ NGƯỜI CHƠI";
+                };
+                source.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        const payload = parseNtfyPayload(data);
+                        if (payload) applyHostPayload(payload);
+                    } catch(e) {}
+                };
+                source.onerror = () => {
+                    const title = document.getElementById('spec-title');
+                    if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: MẠNG CHẬP CHỜN, ĐANG TỰ KẾT NỐI LẠI";
+                };
+            } catch(e) {}
         }
 
         function listenToPlayerUpdates() {
-            // 1) Lấy lại tín hiệu cache: sửa lỗi host mở sau người chơi nên không thấy màn hình.
+            // Y hệt tinh thần bản 4.4: host nghe ntfy/SSE và tự vẽ lại màn chơi.
             loadCachedPlayerStates();
             setInterval(loadCachedPlayerStates, 3000);
+            REALTIME_TOPICS.forEach(listenToOneTopic);
 
-            // 2) Nghe real-time qua SSE như bản cũ.
-            const source = new EventSource(`https://ntfy.sh/${NETWORK_TOPIC}/sse`);
-            source.onopen = () => {
-                const title = document.getElementById('spec-title');
-                if (title && !window.selectedSpecTeam) title.innerHTML = "📡 MIRROR MATRIX FEED: ĐÃ KẾT NỐI, ĐANG CHỜ NGƯỜI CHƠI";
-            };
-            source.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    const payload = parseNtfyPayload(data);
+            // Fallback khi test host + player trên cùng một máy/trình duyệt.
+            if (localBus) {
+                localBus.onmessage = (ev) => {
+                    const payload = parseNtfyPayload(ev.data);
                     if (payload) applyHostPayload(payload);
-                } catch(e) {}
-            };
-            source.onerror = () => {
-                const title = document.getElementById('spec-title');
-                if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: MẠNG CHẬP CHỜN, ĐANG TỰ KẾT NỐI LẠI";
-            };
+                };
+            }
+            window.addEventListener('storage', (ev) => {
+                if (ev.key !== 'elogix_v80_last_payload' || !ev.newValue) return;
+                const payload = parseNtfyPayload(ev.newValue);
+                if (payload) applyHostPayload(payload);
+            });
         }
-
-        let playerRealtimeTimer = null;
-        let lastStageName = "🔑 Đăng nhập";
-        let lastExtraData = { text: "Đang kết nối tháp..." };
 
         function startPlayerRealtimeLoop() {
             if (isHost || playerRealtimeTimer) return;
-            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 1000);
+            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 900);
         }
 
-        function sendCurrentPlayerPayload() {
-            if (isHost || !teamId) return;
+        function buildCurrentPlayerPayload() {
             const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
             const now = Date.now();
             const code = window.currentStageCode || "login";
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
-            const isPlaying = isGameStage && (now - (window.lastPlayerActivityAt || now) < 7000);
-            const payload = { team: teamId, stage: lastStageName, stageCode: code, hp: integrity, time: currentSeconds, sentAt: now, activityAt: window.lastPlayerActivityAt || now, isPlaying, online: true, screenShareStatus: window.trueScreenShareStatus || 'off', extra: lastExtraData || {} };
-            fetch(`https://ntfy.sh/${NETWORK_TOPIC}`, { method: 'POST', body: JSON.stringify(payload) }).catch(e => {});
+            return {
+                team: String(teamId),
+                stage: lastStageName,
+                stageCode: code,
+                hp: integrity,
+                time: currentSeconds,
+                sentAt: now,
+                activityAt: window.lastPlayerActivityAt || now,
+                isPlaying: isGameStage,
+                online: true,
+                screenShareStatus: 'game_state',
+                extra: lastExtraData || {}
+            };
+        }
+
+        function sendCurrentPlayerPayload() {
+            if (isHost || !teamId) return;
+            const payload = buildCurrentPlayerPayload();
+            const body = JSON.stringify(payload);
+
+            // Kênh online cho nhiều thiết bị: host máy chiếu nhận được từ điện thoại/laptop người chơi.
+            REALTIME_TOPICS.forEach(topic => {
+                try { fetch(`https://ntfy.sh/${topic}`, { method: 'POST', body, keepalive: true }).catch(e => {}); } catch(e) {}
+            });
+
+            // Kênh local để test cùng máy.
+            try { localStorage.setItem('elogix_v80_last_payload', body); } catch(e) {}
+            try { if (localBus) localBus.postMessage(payload); } catch(e) {}
         }
 
         function broadcastState(stageName, extraData = {}) {
             if (isHost || !teamId) return;
             lastStageName = stageName || lastStageName;
             lastExtraData = extraData || {};
+            markPlayerActivity();
             startPlayerRealtimeLoop();
             sendCurrentPlayerPayload();
         }
@@ -2250,7 +2317,6 @@
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
             listenToPlayerUpdates();
-            startHostRtcListener();
             setInterval(refreshHostPresenceCards, 1000);
         } else {
             document.getElementById("view-login").classList.add("active");
@@ -2263,11 +2329,9 @@
         function startAudioEngine() {
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
-            installPlayerSharePanel();
-            ensurePlayerRtcListener();
+            // V8.0: khôi phục đúng kiểu bản 4.4 — không live tab/WebRTC, chỉ tự gửi trạng thái game realtime.
             startPlayerRealtimeLoop();
-            sendCurrentPlayerPayload();
-            setTimeout(() => autoStartPlayerLiveMirror('auto-start-on-login'), 450);
+            broadcastState('🔑 Đăng nhập', { text: 'Đang kết nối tháp...' });
             try { if (audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {}
             if (bgmIntervalId) return;
             originalAudioStarted = true;
