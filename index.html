@@ -6,8 +6,8 @@
     <title>E-Logix Cyber Shield V3 - Hardcore Premium</title>
     <style>
         :root {
-            --bg-color: #04060e;
-            --panel-bg: #090e24;
+            --bg-color: #03050d;
+            --panel-bg: #080d26;
             --neon-green: #39ff14;
             --neon-red: #ff0055;
             --neon-blue: #00d2ff;
@@ -43,12 +43,12 @@
 
         .game-wrapper {
             width: 100%;
-            max-width: 680px; 
+            max-width: 720px; 
             background: var(--panel-bg);
-            border: 3px solid #1e295d;
+            border: 3px solid #1c2654;
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 0 40px rgba(0, 210, 255, 0.25), inset 0 0 20px rgba(0,0,0,0.6);
+            box-shadow: 0 0 45px rgba(0, 210, 255, 0.25), inset 0 0 20px rgba(0,0,0,0.6);
             box-sizing: border-box;
             position: relative;
         }
@@ -58,7 +58,7 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
             z-index: 10;
             background-size: 100% 4px;
             pointer-events: none;
@@ -73,7 +73,7 @@
             color: var(--neon-blue);
             text-shadow: 0 0 15px var(--neon-blue);
             margin-top: 0;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 800;
             letter-spacing: 2px;
         }
@@ -83,7 +83,7 @@
             color: var(--neon-purple);
             text-shadow: 0 0 10px var(--neon-purple);
             margin-top: 0;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: 700;
         }
 
@@ -94,7 +94,7 @@
             border-radius: 10px;
             color: var(--neon-red);
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.05rem;
             text-align: center;
             margin-bottom: 25px;
             animation: pulse 0.8s infinite alternate;
@@ -108,21 +108,21 @@
         .status-bar {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
             margin-bottom: 20px;
-            background: #04060f;
-            padding: 10px 15px;
+            background: #03050f;
+            padding: 12px 18px;
             border-radius: 8px;
-            border-left: 4px solid var(--neon-blue);
+            border-left: 5px solid var(--neon-blue);
         }
 
         .btn {
-            background: #141c42;
+            background: #12183a;
             color: #cbd5e1;
-            border: 2px solid #253375;
-            padding: 16px;
-            font-size: 1.1rem;
+            border: 2px solid #23306d;
+            padding: 18px;
+            font-size: 1.15rem;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
@@ -143,7 +143,7 @@
             color: white;
             border: none;
             box-shadow: 0 0 20px rgba(176, 38, 255, 0.4);
-            font-size: 1.2rem;
+            font-size: 1.25rem;
         }
 
         .grid-container {
@@ -154,9 +154,9 @@
         }
 
         .grid-item {
-            background: #12193b;
-            border: 2px solid #222e6b;
-            padding: 22px 15px;
+            background: #101637;
+            border: 2px solid #202b63;
+            padding: 24px 15px;
             text-align: center;
             border-radius: 12px;
             cursor: pointer;
@@ -166,7 +166,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 55px;
+            min-height: 60px;
         }
 
         .grid-item.selected-malware {
@@ -185,11 +185,11 @@
 
         .progress-bar {
             width: 100%;
-            background: #04060f;
-            height: 12px;
-            border-radius: 6px;
+            background: #03050f;
+            height: 14px;
+            border-radius: 7px;
             overflow: hidden;
-            border: 1px solid #1e295d;
+            border: 1px solid #1c2654;
             margin-top: 5px;
         }
 
@@ -201,16 +201,16 @@
         }
 
         .terminal-text {
-            background: #020308;
-            padding: 15px;
+            background: #020307;
+            padding: 18px;
             border-radius: 10px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #94a3b8;
-            height: 80px;
+            height: 85px;
             overflow-y: auto;
             margin-bottom: 20px;
             border-left: 5px solid var(--neon-purple);
-            line-height: 1.5;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -219,8 +219,8 @@
     <div class="game-wrapper" id="console-box">
         <div id="view-login" class="view active">
             <h1>E-LOGIX SHIELD V3</h1>
-            <div style="text-align:center; margin-bottom: 30px; color: var(--neon-blue); font-size: 0.9rem; font-weight: bold;">[ ĐẤU TRƯỜNG AN NINH CHUỖI CUNG ỨNG HARDCORE PREMIUM ]</div>
-            <label style="margin-bottom: 10px; font-size: 1rem; color: var(--text-sub);">XÁC THỰC MÃ DOANH NGHIỆP CỔ ĐÔNG:</label>
+            <div style="text-align:center; margin-bottom: 30px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ ĐẤU TRƯỜNG KHÔI PHỤC CHUỖI CUNG ỨNG SAU KHỦNG HOẢNG ]</div>
+            <label style="margin-bottom: 10px; font-size: 1.05rem; color: var(--text-sub);">XÁC THỰC DOANH NGHIỆP THAM CHIẾU:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
                 <option value="1">Nhóm Cổ Đông 1</option>
                 <option value="2">Nhóm Cổ Đông 2</option>
@@ -234,11 +234,11 @@
         </div>
 
         <div id="view-intro" class="view">
-            <div class="alert-banner">🚨 PHÒNG TÁC CHIẾN AN NINH MẠNG KHẨN CẤP 🚨</div>
-            <p style="font-size: 1.05rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 25px;">
-                Hệ thống dữ liệu lõi của hãng tàu Maersk đang bị virus Ransomware phá hủy trên diện rộng! Toàn bộ chuỗi logistics bị đóng băng toàn cầu.
+            <div class="alert-banner">🚨 PHÒNG TÁC CHIẾN KHÔI PHỤC HỆ THỐNG 🚨</div>
+            <p style="font-size: 1.1rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 25px;">
+                Hãng tàu <strong>Maersk</strong> dính mã độc tê liệt hệ thống, khiến toàn bộ container chứa hàng triệu đô của công ty mình (<strong>E-Logix</strong>) đang gửi trên tàu bị kẹt cứng ngoài biển Đông.
                 <br><br>
-                Hội đồng cổ đông phải vượt qua 5 TẦNG BẢO MẬT KHÔNG CÓ TRỢ GIÚP để cứu vớt dữ liệu vận tải. Bấm sai hệ thống sẽ bị sốc xung nhịp và reset!
+                Hội đồng cổ đông hãy vượt qua 5 tầng bảo mật khẩn cấp để tự cứu lấy chuỗi cung ứng của doanh nghiệp. Ấn sai hệ thống xung nhịp sẽ lập tức reset màn chơi!
             </p>
             <button class="btn btn-action" onclick="enterStage1()">BẮT ĐẦU CHIẾN DỊCH GIẢI CỨU</button>
         </div>
@@ -246,7 +246,7 @@
         <div id="view-stage1" class="view">
             <div class="status-bar"><span>🔒 CHẶNG 1: CYBERSECURITY</span><span id="hp-s1" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>QUÉT MÃ ĐỘC LẬT KÈO</h2>
-            <div class="terminal-text" id="log-s1">> LỖI: Phát hiện 3 tệp tin tống tiền đang chiếm quyền mã hóa hóa đơn đường biển. Hãy cô lập ngay!</div>
+            <div class="terminal-text" id="log-s1">> LỖI: Hệ thống dính Ransomware tống tiền. Hãy tìm và click để cô lập đúng 4 tệp tin mã độc đang mã hóa vận đơn đường biển!</div>
             <div class="grid-container" id="grid-s1"></div>
             <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">TIẾN VÀO TẦNG SAO LƯU KHO</button>
@@ -254,9 +254,9 @@
 
         <div id="view-stage2" class="view">
             <div class="status-bar"><span>💾 CHẶNG 2: CLOUD BACKUP</span><span id="hp-s2" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
-            <h2>CẤU TRÚC ĐỊNH VỊ KHO BÃI</h2>
-            <div class="terminal-text" id="log-s2">> LỖI: Hệ thống WMS bị xóa sạch cấu trúc phân vị. Hãy sắp xếp lại sơ đồ vị trí kho bãi theo đúng thứ tự phân tầng logistics từ RỘNG NHẤT đến HẸP NHẤT!</div>
-            <div style="text-align: center; font-size: 1rem; margin-bottom: 15px; color: var(--neon-blue); font-weight: bold;" id="target-s2">[ KHÔNG CÓ GỢI Ý - HÃY TỰ LỰC CHỌN BƯỚC 1 ]</div>
+            <h2 id="title-s2">CẤU TRÚC ĐỊNH VỊ KHO XUẤT KHẨU</h2>
+            <div class="terminal-text" id="log-s2">> LỖI: Máy tính mất trí nhớ sơ đồ kho. Hãy sắp xếp lại sơ đồ vị trí theo đúng thứ tự phân tầng Logistics từ RỘNG NHẤT đến HẸP NHẤT để khôi phục định vị hàng hóa!</div>
+            <div style="text-align: center; font-size: 1.1rem; margin-bottom: 15px; color: var(--neon-blue); font-weight: bold;" id="target-s2">[ KHÔNG GỢI Ý - BẮT ĐẦU TỪ BLOCK ]</div>
             <div class="grid-container" id="grid-s2"></div>
             <button class="btn btn-action" id="next-s2" style="display:none;" onclick="initStage3()">TIẾN VÀO TẦNG QUẢN LÝ RỦI RO</button>
         </div>
@@ -264,41 +264,42 @@
         <div id="view-stage3" class="view">
             <div class="status-bar"><span>🛳️ CHẶNG 3: INCOTERMS STRATEGY</span><span id="hp-s3" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>ĐẤU TRÍ TRANH CHẤP RỦI RO</h2>
-            <div class="terminal-text" id="log-s3">> LỖI: Hệ thống bảo hiểm bị đóng băng. Hãy xử lý tình huống tranh chấp vận tải biển sau để giải phóng dữ liệu:</div>
-            <div style="background: #04060f; padding: 18px; border-radius: 10px; font-size: 1rem; border: 1px solid #1e295d; margin-bottom: 15px; line-height: 1.5;" id="text-s3">Tình huống...</div>
+            <div class="terminal-text" id="log-s3">> LỖI: Tàu Maersk dừng chạy làm chậm hàng, phát sinh tranh chấp bảo hiểm. Hãy xử lý các bài toán Incoterms sau để thông suốt pháp lý:</div>
+            <div style="background: #04060f; padding: 20px; border-radius: 10px; font-size: 1.05rem; border: 1px solid #1e295d; margin-bottom: 15px; line-height: 1.6;" id="text-s3">Tình huống...</div>
             <div id="options-s3" style="display: flex; flex-direction: column; gap: 12px;"></div>
         </div>
 
         <div id="view-stage4" class="view">
-            <div class="status-bar"><span><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span></span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
-            <h2>THẨM ĐỊNH CỬA KHẨU HẢI QUAN</h2>
-            <div class="terminal-text" id="log-s4">> LỖI: Cổng thông quan một cửa quốc gia bị tin tặc chèn tờ khai lậu. Hãy cô lập khẩn cấp các lệnh có Mã Chi cục Hải quan CÁT LÁI bị làm giả (Mã chuẩn xịn phải là 02CI)!</div>
+            <div class="status-bar"><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
+            <h2>THẨM ĐỊNH HẢI QUAN CÁT LÁI</h2>
+            <div class="terminal-text" id="log-s4">> LỖI: Hệ thống một cửa bị chèn tờ khai thông quan lậu. Hãy dùng mắt thần click tìm và chặn đứng 4 lệnh có Mã Chi cục Hải quan Cát Lái bị LÀM GIẢ (Mã xịn chuẩn phải là 02CI)!</div>
             <div class="grid-container" id="grid-s4"></div>
             <button class="btn btn-action" id="next-s4" style="display:none;" onclick="initStage5()">TIẾN VÀO KHÓA TRUY CẬP CUỐI</button>
         </div>
 
         <div id="view-stage5" class="view">
             <div class="status-bar"><span>🔑 CHẶNG 5: ACCESS CONTROL</span><span id="hp-s5" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
-            <h2>TƯỜNG LỬA CHẶNG CUỐI REALTIME</h2>
-            <div class="terminal-text" id="log-s5">> BÁO ĐỘNG ĐỎ: Hacker đang cố tình đột nhập tài khoản admin để xóa dữ liệu vận đơn gốc (Master Bill). Phân loại ngay!</div>
-            <div style="background: #04060f; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #1e295d;">
-                <div id="account-task" style="font-weight: bold; color: #ffffff; font-size: 1.05rem; line-height: 1.5;">Đang quét...</div>
+            <h2>THẨM ĐỊNH YÊU CẦU NỘI BỘ</h2>
+            <div class="terminal-text" id="log-s5">> HƯỚNG DẪN: Hacker đang giả danh nhân viên để sửa đổi dữ liệu hệ thống. Hãy đọc kỹ hành vi bên dưới: Nếu phát hiện nguy hiểm ➔ Bấm BLOCK (Chặn đứng). Nếu là hành vụ làm việc hợp pháp ➔ Bấm ALLOW (Cho phép)!</div>
+            <div style="background: #04060f; padding: 22px; border-radius: 12px; text-align: center; margin-bottom: 25px; border: 1px solid #1e295d;">
+                <div style="font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Yêu cầu hệ thống phát hiện:</div>
+                <div id="account-task" style="font-weight: bold; color: #ffffff; font-size: 1.15rem; line-height: 1.5;">Đang quét...</div>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <button class="btn" style="flex:1; border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.03);" onclick="classifyAccount(true)">ALLOW (CHO PHÉP)</button>
-                <button class="btn" style="flex:1; border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.03);" onclick="classifyAccount(false)">BLOCK (CHẶN ĐỨNG)</button>
+            <div style="display: flex; gap: 20px;">
+                <button class="btn" style="flex:1; border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.03); padding: 20px;" onclick="classifyAccount(true)">ALLOW (HỢP PHÁP)</button>
+                <button class="btn" style="flex:1; border-color: var(--neon-red); color: var(--neon-red); background: rgba(255,0,85,0.03); padding: 20px;" onclick="classifyAccount(false)">BLOCK (HACKER/NGUY HIỂM)</button>
             </div>
         </div>
 
         <div id="view-result" class="view">
-            <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); font-size: 1.8rem;">HỆ THỐNG ĐÃ KHÔI PHỤC</h2>
-            <div style="text-align: center; font-size: 4.2rem; font-weight: bold; margin: 15px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(57,255,20,0.4);" id="final-integrity">0%</div>
-            <div style="background: #020308; padding: 20px; border-radius: 12px; font-size: 1rem; line-height: 2; border: 1px solid #1e295d;">
-                <div>💎 <span style="color: var(--text-sub);">Doanh Nghiệp:</span> <span id="res-team" style="font-weight: bold;">-</span></div>
-                <div>⏱️ <span style="color: var(--text-sub);">Thời gian tác chiến:</span> <span id="res-time" style="font-weight: bold; color:var(--neon-blue)">0</span> giây</div>
-                <div>🔐 <span style="color: var(--text-sub);">Mã Bảo Mật Gốc:</span> <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">-</span></div>
+            <h2 style="color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); font-size: 1.9rem;">HỆ THỐNG ĐÃ KHÔI PHỤC VỮNG CHẮC</h2>
+            <div style="text-align: center; font-size: 4.5rem; font-weight: bold; margin: 15px 0; color: var(--neon-green); text-shadow: 0 0 25px rgba(57,255,20,0.4);" id="final-integrity">0%</div>
+            <div style="background: #020308; padding: 25px; border-radius: 12px; font-size: 1.05rem; line-height: 2; border: 1px solid #1e295d;">
+                <div>💎 <span style="color: var(--text-sub);">Lực lượng cứu nguy:</span> <span id="res-team" style="font-weight: bold; color: white;">-</span></div>
+                <div>⏱️ <span style="color: var(--text-sub);">Thời gian phá đảo:</span> <span id="res-time" style="font-weight: bold; color:var(--neon-blue)">0</span> giây</div>
+                <div>🔐 <span style="color: var(--text-sub);">Mã Chứng Nhận Gốc:</span> <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">-</span></div>
             </div>
-            <div style="text-align: center; font-size: 0.9rem; color: #64748b; margin-top: 25px; line-height: 1.5;">Hãy chụp màn hình kết quả gửi cho Ban điều hành để chốt thứ hạng!</div>
+            <div style="text-align: center; font-size: 0.95rem; color: #64748b; margin-top: 25px; line-height: 1.5;">Hãy chụp màn hình kết quả này gửi lên Ban điều hành để ghi nhận điểm số ưu tú!</div>
         </div>
     </div>
 
@@ -307,23 +308,28 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmIntervalId = null;
 
+        // --- HỆ THỐNG ÂM NHẠC CYBER SPY ĐIỆP VIÊN - CỐ ĐỊNH, DỄ CHỊU VÀ SANG TRỌNG ---
         function startAudioEngine() {
             if (bgmIntervalId) return;
             try {
-                let beatCount = 0;
+                let step = 0;
                 bgmIntervalId = setInterval(() => {
                     let osc = audioCtx.createOscillator();
                     let gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    let notes = [55, 55, 65, 55, 73, 73, 65, 82];
-                    let currentNote = notes[beatCount % notes.length];
-                    osc.frequency.setValueAtTime(currentNote, audioCtx.currentTime);
+                    
+                    // Đi nốt âm hưởng điệp viên bằng sóng Triangle êm dịu, không nhức đầu
+                    osc.type = 'triangle';
+                    let melody = [110, 110, 130, 110, 146, 146, 130, 164];
+                    let currentFreq = melody[step % melody.length];
+                    
+                    osc.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
                     gain.gain.setValueAtTime(0.06, audioCtx.currentTime); 
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+                    
                     osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.25);
-                    beatCount++;
-                }, 250); 
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+                    step++;
+                }, 350); // Nhịp điệu thong thả, giữ không khí chuyên nghiệp công sở
             } catch(e) {}
         }
 
@@ -338,16 +344,16 @@
             } catch(e) {}
         }
 
-        function correctSound() { playTone(880, 'sine', 0.1, 0.15); setTimeout(() => playTone(1320, 'sine', 0.12, 0.15), 60); }
-        function wrongSound() { playTone(120, 'sawtooth', 0.25, 0.25); playTone(85, 'sawtooth', 0.25, 0.25); }
+        function correctSound() { playTone(660, 'sine', 0.08, 0.15); setTimeout(() => playTone(990, 'sine', 0.1, 0.15), 50); }
+        function wrongSound() { playTone(100, 'triangle', 0.2, 0.25); }
         function winSound() { 
             if(bgmIntervalId) clearInterval(bgmIntervalId); 
             let arr = [523, 659, 784, 1046, 1318]; 
-            arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.15), i*90)); 
+            arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.15), i*80)); 
         }
 
         function triggerDamage(stage) {
-            wrongSound(); integrity -= 8; if(integrity < 0) integrity = 0;
+            wrongSound(); integrity -= 6; if(integrity < 0) integrity = 0;
             document.getElementById(`hp-${stage}`).innerHTML = `HỆ THỐNG: ${integrity}%`;
             document.getElementById(`hp-${stage}`).style.color = integrity > 40 ? 'var(--neon-green)' : 'var(--neon-red)';
             let box = document.getElementById('console-box'); box.classList.add('shake');
@@ -361,11 +367,12 @@
 
         function enterStage1() { startTime = Date.now(); nextView('view-stage1'); initStage1(); }
 
-        // STAGE 1
+        // CHẶNG 1: MỞ RỘNG 4 MÃ ĐỘC TRÊN 8 FILES
         const s1Data = [
-            { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest", bad: false },
-            { text: "Trojan_Port_8080.sh", bad: true }, { text: "WMS_Stock_Report", bad: false },
-            { text: "Exploit_Admin_Crack", bad: true }, { text: "TMS_Delivery_Note", bad: false }
+            { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest.xml", bad: false },
+            { text: "Worm_Port_8080.sh", bad: true }, { text: "WMS_Stock_Report.xlsx", bad: false },
+            { text: "Spyware_Admin_Crack.bat", bad: true }, { text: "TMS_Delivery_Note.pdf", bad: false },
+            { text: "Trojan_CryptoLocker.exe", bad: true }, { text: "Inbound_Bill_Of_Lading.pdf", bad: false }
         ];
         let s1Found = 0;
         function initStage1() {
@@ -376,8 +383,8 @@
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
                     if(item.bad) {
                         correctSound(); div.className = 'grid-item selected-malware'; s1Found++;
-                        document.getElementById('progress-s1').style.width = (s1Found / 3) * 100 + "%";
-                        if(s1Found === 3) document.getElementById('next-s1').style.display = "block";
+                        document.getElementById('progress-s1').style.width = (s1Found / 4) * 100 + "%";
+                        if(s1Found === 4) document.getElementById('next-s1').style.display = "block";
                     } else {
                         div.className = 'grid-item selected-clean'; triggerDamage('s1');
                     }
@@ -386,9 +393,9 @@
             });
         }
 
-        // STAGE 2
+        // CHẶNG 2: MỞ RỘNG 2 VÒNG CHUỖI KHO (XUẤT KHẨU -> NHẬP KHẨU)
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
-        let s2Idx = 0;
+        let s2Idx = 0; let s2Round = 1;
         function initStage2() {
             nextView('view-stage2'); document.getElementById('hp-s2').innerHTML = `HỆ THỐNG: ${integrity}%`;
             renderStage2Grid();
@@ -402,15 +409,22 @@
                     if (step === s2Steps[s2Idx]) {
                         correctSound(); s2Idx++;
                         if(s2Idx === 4) {
-                            document.getElementById('target-s2').innerHTML = "✅ KHÔI PHỤC THÀNH CÔNG SƠ ĐỒ KHO BÃI!";
-                            document.getElementById('next-s2').style.display = "block";
+                            if (s2Round === 1) {
+                                s2Round = 2; s2Idx = 0;
+                                document.getElementById('title-s2').innerHTML = "CẤU TRÚC ĐỊNH VỊ KHO NHẬP KHẨU (VÒNG 2)";
+                                document.getElementById('target-s2').innerHTML = "⚡ KHO XUẤT ĐÃ XONG! TIẾP TỤC XẾP TIẾP KHO NHẬP!";
+                                renderStage2Grid();
+                            } else {
+                                document.getElementById('target-s2').innerHTML = "✅ TOÀN BỘ HỆ THỐNG KHO ĐÃ ĐỒNG BỘ ĐÚNG CHUẨN!";
+                                document.getElementById('next-s2').style.display = "block";
+                            }
                         } else {
-                            document.getElementById('target-s2').innerHTML = `BƯỚC TIẾP THEO ĐÃ ĐƯỢC GHI NHẬN...`;
+                            document.getElementById('target-s2').innerHTML = `GHI NHẬN THÀNH CÔNG BƯỚC ${s2Idx}...`;
                             renderStage2Grid(); 
                         }
                     } else {
                         triggerDamage('s2'); s2Idx = 0;
-                        document.getElementById('target-s2').innerHTML = "❌ RESET! SAI THỨ TỰ LOGISTICS! HÃY BẮT ĐẦU LẠI TỪ BLOCK!";
+                        document.getElementById('target-s2').innerHTML = "❌ RESET VÒNG! SAI THỨ TỰ LOGISTICS! ẤN LẠI TỪ BLOCK!";
                         renderStage2Grid();
                     }
                 };
@@ -418,32 +432,37 @@
             });
         }
 
-        // STAGE 3
+        // CHẶNG 3: MỞ RỘNG 3 CÂU HỎI INCOTERMS
         const s3Scenarios = [
             {
-                text: "E-Logix mua hàng theo điều kiện FOB Cát Lái. Hàng hóa bị sóng đánh vỡ khi tàu đang lênh đênh trên biển Đông. Ai là bên phải chịu rủi ro tổn thất này?",
-                opts: ["A. Người bán (Seller) gánh rủi ro", "B. E-Logix (Buyer) gánh rủi ro", "C. Hãng tàu vận chuyển gánh rủi ro"],
+                text: "Câu 1: E-Logix mua hàng theo điều kiện FOB Cát Lái. Hàng hóa bị sóng đánh rơi xuống biển khi tàu đang lênh đênh ngoài khơi. Theo luật Incoterms, ai là bên phải gánh chịu rủi ro tổn thất tiền bạc này?",
+                opts: ["A. Người bán nước ngoài gánh rủi ro", "B. Công ty bên mình (E-Logix - Buyer) gánh rủi ro", "C. Chi cục hải quan cảng gánh rủi ro"],
                 ans: 1
             },
             {
-                text: "E-Logix xuất khẩu lô hàng logistics theo điều kiện CIF Rotterdam. Hàng bị cháy khi đang nằm trong kho bãi tại cảng đến Rotterdam trước khi làm thủ tục hải quan nhập khẩu. Ai chịu trách nhiệm mua bảo hiểm hàng hóa chặng biển?",
-                opts: ["A. E-Logix phải mua bảo hiểm", "B. Người mua nước ngoài phải mua", "C. Cả hai bên cùng chia đôi"],
+                text: "Câu 2: E-Logix xuất khẩu lô hàng theo điều kiện CIF Rotterdam. Hệ thống Maersk sập làm hàng bị trễ, cháy nổ khi đang nằm trên tàu chặng biển. Ai là người có trách nhiệm bắt buộc phải mua bảo hiểm cho chặng vận tải biển này?",
+                opts: ["A. Bên mình (E-Logix - Người bán) bắt buộc phải mua", "B. Người mua nước ngoài tự mua", "C. Hãng tàu Maersk tự tặng bảo hiểm miễn phí"],
                 ans: 0
+            },
+            {
+                text: "Câu 3: Công ty đối tác muốn bên mình tự đến tận kho của họ ở nước ngoài để bốc hàng, tự lo từ A-Z mọi thủ tục hải quan xuất khẩu lẫn nhập khẩu. Ta nên chọn điều kiện Incoterms nào cho đúng?",
+                opts: ["A. Chọn điều kiện FOB", "B. Chọn điều kiện CIF", "C. Chọn điều kiện EXW (Giao tại xưởng)"],
+                ans: 2
             }
         ];
-        let s3Round = 0;
+        let s3RoundIdx = 0;
         function initStage3() {
             nextView('view-stage3'); document.getElementById('hp-s3').innerHTML = `HỆ THỐNG: ${integrity}%`;
             showS3Question();
         }
         function showS3Question() {
-            if(s3Round < s3Scenarios.length) {
-                let q = s3Scenarios[s3Round]; document.getElementById('text-s3').innerHTML = q.text;
+            if(s3RoundIdx < s3Scenarios.length) {
+                let q = s3Scenarios[s3RoundIdx]; document.getElementById('text-s3').innerHTML = q.text;
                 let optDiv = document.getElementById('options-s3'); optDiv.innerHTML = "";
                 q.opts.forEach((o, i) => {
                     let b = document.createElement('button'); b.className = "btn"; b.innerHTML = o;
                     b.onclick = () => {
-                        if(i === q.ans) { correctSound(); s3Round++; showS3Question(); }
+                        if(i === q.ans) { correctSound(); s3RoundIdx++; showS3Question(); }
                         else { triggerDamage('s3'); }
                     };
                     optDiv.appendChild(b);
@@ -453,11 +472,12 @@
             }
         }
 
-        // STAGE 4 (MÃ CÁT LÁI 02CI XỊN)
+        // CHẶNG 4: MỞ RỘNG 4 MÃ HẢI QUAN FAKE TRÊN 8 LỆNH
         const s4Data = [
             { text: "TK: 10293 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 94821 / CH-CATLAI / 02C2", fake: true },
             { text: "TK: 58201 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 30192 / CH-FAKE  / 02B9", fake: true },
-            { text: "TK: 74210 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 44102 / CH-CATLAI / 02A1", fake: true }
+            { text: "TK: 74210 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 44102 / CH-CATLAI / 02A1", fake: true },
+            { text: "TK: 88512 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 12053 / CH-HACKER / 02D7", fake: true }
         ];
         let s4Cleared = 0;
         function initStage4() {
@@ -469,7 +489,7 @@
                     if(div.classList.contains('selected-malware') || div.classList.contains('selected-clean')) return;
                     if(item.fake) {
                         correctSound(); div.className = 'grid-item selected-malware'; s4Cleared++;
-                        if(s4Cleared === 3) document.getElementById('next-s4').style.display = "block";
+                        if(s4Cleared === 4) document.getElementById('next-s4').style.display = "block";
                     } else {
                         div.className = 'grid-item selected-clean'; triggerDamage('s4');
                     }
@@ -478,12 +498,12 @@
             });
         }
 
-        // STAGE 5
+        // CHẶNG 5: MỞ RỘNG 4 TÌNH HUỐNG THẨM ĐỊNH NỘI BỘ RÕ RÀNG
         const s5Tasks = [
-            { text: "Yêu cầu xóa toàn bộ lịch sử Bill of Lading từ IP vô danh", allow: false },
-            { text: "Hệ thống tự động thông quan tờ khai Luồng Xanh qua chi cục 02CI", allow: true },
-            { text: "Yêu cầu đảo lộn phân cấp quản lý kho thành Tier-Line-Row-Block", allow: false },
-            { text: "Đồng bộ dữ liệu manifest của đại lý hãng tàu chính thống", allow: true }
+            { text: "[Yêu cầu xóa khẩn cấp] Toàn bộ lịch sử tệp tin Master Bill of Lading từ một tài khoản nặc danh IP lạ", allow: false },
+            { text: "[Yêu cầu thông quan] Hệ thống tự động đẩy dữ liệu Luồng Xanh hợp lệ qua Hải quan Cát Lái mã xịn 02CI", allow: true },
+            { text: "[Yêu cầu can thiệp] Lệnh ghi đè cấu trúc hệ thống kho thành Tier-Line-Row-Block từ nhân viên thực tập", allow: false },
+            { text: "[Yêu cầu trích xuất] Giám đốc Chuỗi cung ứng yêu cầu tải file dữ liệu manifest của đại lý hãng tàu Maersk để đối chiếu bảo hiểm", allow: true }
         ];
         let s5Idx = 0;
         function initStage5() { nextView('view-stage5'); document.getElementById('hp-s5').innerHTML = `HỆ THỐNG: ${integrity}%`; showS5Task(); }
@@ -496,7 +516,7 @@
             else { triggerDamage('s5'); }
         }
 
-        // FINISH
+        // KẾT THÚC
         function finishGame() {
             winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000);
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
