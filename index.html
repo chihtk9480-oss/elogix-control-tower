@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Logix Cyber Shield V3 - Premium Edition</title>
+    <title>E-Logix Cyber Shield V3 - Hardcore Premium</title>
     <style>
         :root {
             --bg-color: #04060e;
@@ -38,10 +38,9 @@
             10%, 90% { transform: translate3d(-2px, 0, 0); }
             20%, 80% { transform: translate3d(4px, 0, 0); }
             30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
-            40%, 60% { transform: translate3d(5px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        /* Mở rộng toàn bộ khung màn hình chơi to rõ */
         .game-wrapper {
             width: 100%;
             max-width: 680px; 
@@ -220,7 +219,7 @@
     <div class="game-wrapper" id="console-box">
         <div id="view-login" class="view active">
             <h1>E-LOGIX SHIELD V3</h1>
-            <div style="text-align:center; margin-bottom: 30px; color: var(--neon-blue); font-size: 0.9rem; font-weight: bold;">[ ĐẤU TRƯỜNG AN NINH CHUỖI CUNG ỨNG PREMIUM ]</div>
+            <div style="text-align:center; margin-bottom: 30px; color: var(--neon-blue); font-size: 0.9rem; font-weight: bold;">[ ĐẤU TRƯỜNG AN NINH CHUỖI CUNG ỨNG HARDCORE PREMIUM ]</div>
             <label style="margin-bottom: 10px; font-size: 1rem; color: var(--text-sub);">XÁC THỰC MÃ DOANH NGHIỆP CỔ ĐÔNG:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
                 <option value="1">Nhóm Cổ Đông 1</option>
@@ -237,9 +236,9 @@
         <div id="view-intro" class="view">
             <div class="alert-banner">🚨 PHÒNG TÁC CHIẾN AN NINH MẠNG KHẨN CẤP 🚨</div>
             <p style="font-size: 1.05rem; line-height: 1.7; color: #cbd5e1; text-align: justify; margin-bottom: 25px;">
-                Hệ thống dữ liệu lõi của hãng tàu Maersk đang bị virus Ransomware phá hủy trên diện rộng! Toàn bộ chuỗi logistics đóng băng toàn cầu.
+                Hệ thống dữ liệu lõi của hãng tàu Maersk đang bị virus Ransomware phá hủy trên diện rộng! Toàn bộ chuỗi logistics bị đóng băng toàn cầu.
                 <br><br>
-                Hội đồng cổ đông phải vượt qua <strong>5 TẦNG BẢO MẬT KHÔNG CÓ TRỢ GIÚP</strong> để cứu vớt dữ liệu vận tải. Bấm sai hệ thống sẽ bị sốc xung nhịp và reset!
+                Hội đồng cổ đông phải vượt qua 5 TẦNG BẢO MẬT KHÔNG CÓ TRỢ GIÚP để cứu vớt dữ liệu vận tải. Bấm sai hệ thống sẽ bị sốc xung nhịp và reset!
             </p>
             <button class="btn btn-action" onclick="enterStage1()">BẮT ĐẦU CHIẾN DỊCH GIẢI CỨU</button>
         </div>
@@ -271,9 +270,9 @@
         </div>
 
         <div id="view-stage4" class="view">
-            <div class="status-bar"><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
+            <div class="status-bar"><span><span>🛂 CHẶNG 4: CUSTOMS AUDIT</span></span><span id="hp-s4" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>THẨM ĐỊNH CỬA KHẨU HẢI QUAN</h2>
-            <div class="terminal-text" id="log-s4">> LỖI: Cổng thông quan một cửa quốc gia bị tin tặc chèn tờ khai lậu. Hãy cô lập khẩn cấp các lệnh có Mã Chi cục Hải quan PHÚ MỸ bị làm giả!</div>
+            <div class="terminal-text" id="log-s4">> LỖI: Cổng thông quan một cửa quốc gia bị tin tặc chèn tờ khai lậu. Hãy cô lập khẩn cấp các lệnh có Mã Chi cục Hải quan CÁT LÁI bị làm giả (Mã chuẩn xịn phải là 02CI)!</div>
             <div class="grid-container" id="grid-s4"></div>
             <button class="btn btn-action" id="next-s4" style="display:none;" onclick="initStage5()">TIẾN VÀO KHÓA TRUY CẬP CUỐI</button>
         </div>
@@ -308,29 +307,23 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmIntervalId = null;
 
-        // --- HỆ THỐNG NHẠC NỀN SYNTWAVE XẬP XÌNH CHẠY XUYÊN SUỐT ---
         function startAudioEngine() {
-            if (bgmIntervalId) return; // Không kích hoạt trùng lặp
+            if (bgmIntervalId) return;
             try {
-                // Vòng lặp nốt trầm dồn dập tạo nhạc nền hacker
                 let beatCount = 0;
                 bgmIntervalId = setInterval(() => {
                     let osc = audioCtx.createOscillator();
                     let gain = audioCtx.createGain();
                     osc.type = 'sawtooth';
-                    
-                    // Đi giai điệu nhạc nền techno đơn giản (Bassline loop)
                     let notes = [55, 55, 65, 55, 73, 73, 65, 82];
                     let currentNote = notes[beatCount % notes.length];
-                    
                     osc.frequency.setValueAtTime(currentNote, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime); // Nhạc nền vừa phải để không lấn át tiếng MC
+                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime); 
                     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
-                    
                     osc.connect(gain); gain.connect(audioCtx.destination);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.25);
                     beatCount++;
-                }, 250); // Tốc độ đập nhịp dồn dập căng thẳng
+                }, 250); 
             } catch(e) {}
         }
 
@@ -348,7 +341,7 @@
         function correctSound() { playTone(880, 'sine', 0.1, 0.15); setTimeout(() => playTone(1320, 'sine', 0.12, 0.15), 60); }
         function wrongSound() { playTone(120, 'sawtooth', 0.25, 0.25); playTone(85, 'sawtooth', 0.25, 0.25); }
         function winSound() { 
-            if(bgmIntervalId) clearInterval(bgmIntervalId); // Tắt nhạc nền khi thắng cuộc
+            if(bgmIntervalId) clearInterval(bgmIntervalId); 
             let arr = [523, 659, 784, 1046, 1318]; 
             arr.forEach((n,i) => setTimeout(() => playTone(n,'sine',0.4,0.15), i*90)); 
         }
@@ -368,9 +361,9 @@
 
         function enterStage1() { startTime = Date.now(); nextView('view-stage1'); initStage1(); }
 
-        // --- CHẶNG 1: CYBERSECURITY ---
+        // STAGE 1
         const s1Data = [
-            { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_51C1_Manifest", bad: false },
+            { text: "Ransomware_NotPetya.exe", bad: true }, { text: "Customs_02CI_Manifest", bad: false },
             { text: "Trojan_Port_8080.sh", bad: true }, { text: "WMS_Stock_Report", bad: false },
             { text: "Exploit_Admin_Crack", bad: true }, { text: "TMS_Delivery_Note", bad: false }
         ];
@@ -393,7 +386,7 @@
             });
         }
 
-        // --- CHẶNG 2: WAREHOUSE HIERARCHY (BLOCK ➔ ROW ➔ LINE ➔ TIER) ---
+        // STAGE 2
         const s2Steps = ["1. BLOCK", "2. ROW", "3. LINE", "4. TIER"];
         let s2Idx = 0;
         function initStage2() {
@@ -425,7 +418,7 @@
             });
         }
 
-        // --- CHẶNG 3: INCOTERMS STRATEGY ---
+        // STAGE 3
         const s3Scenarios = [
             {
                 text: "E-Logix mua hàng theo điều kiện FOB Cát Lái. Hàng hóa bị sóng đánh vỡ khi tàu đang lênh đênh trên biển Đông. Ai là bên phải chịu rủi ro tổn thất này?",
@@ -460,11 +453,11 @@
             }
         }
 
-        // --- CHẶNG 4: CUSTOMS AUDIT (PHÚ MỸ 51C1 CHECK) ---
+        // STAGE 4 (MÃ CÁT LÁI 02CI XỊN)
         const s4Data = [
-            { text: "TK: 10293 / CH-PHUMY / 51C1", fake: false }, { text: "TK: 94821 / CH-PHUMY / 51C2", fake: true },
-            { text: "TK: 58201 / CH-BRVT  / 51C1", fake: false }, { text: "TK: 30192 / CH-FAKE  / 51B9", fake: true },
-            { text: "TK: 74210 / CH-PHUMY / 51C1", fake: false }, { text: "TK: 44102 / CH-PHUMY / 51A1", fake: true }
+            { text: "TK: 10293 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 94821 / CH-CATLAI / 02C2", fake: true },
+            { text: "TK: 58201 / CH-SGKV1  / 02CI", fake: false }, { text: "TK: 30192 / CH-FAKE  / 02B9", fake: true },
+            { text: "TK: 74210 / CH-CATLAI / 02CI", fake: false }, { text: "TK: 44102 / CH-CATLAI / 02A1", fake: true }
         ];
         let s4Cleared = 0;
         function initStage4() {
@@ -485,10 +478,10 @@
             });
         }
 
-        // --- CHẶNG 5: ACCESS CONTROL ---
+        // STAGE 5
         const s5Tasks = [
             { text: "Yêu cầu xóa toàn bộ lịch sử Bill of Lading từ IP vô danh", allow: false },
-            { text: "Hệ thống tự động thông quan tờ khai Luồng Xanh qua chi cục 51C1", allow: true },
+            { text: "Hệ thống tự động thông quan tờ khai Luồng Xanh qua chi cục 02CI", allow: true },
             { text: "Yêu cầu đảo lộn phân cấp quản lý kho thành Tier-Line-Row-Block", allow: false },
             { text: "Đồng bộ dữ liệu manifest của đại lý hãng tàu chính thống", allow: true }
         ];
@@ -503,7 +496,7 @@
             else { triggerDamage('s5'); }
         }
 
-        // --- FINISH ---
+        // FINISH
         function finishGame() {
             winSound(); let seconds = Math.floor((Date.now() - startTime) / 1000);
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
