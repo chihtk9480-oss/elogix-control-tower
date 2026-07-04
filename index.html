@@ -1523,7 +1523,7 @@
 
 
         /* ======================================================= */
-        /* V11.1 INFINITY ELITE MOBILE SAFE UI - BILLION-CLASS EXPERIENCE      */
+        /* V11.2 STABLE MOBILE REALTIME UI - BILLION-CLASS EXPERIENCE      */
         /* ======================================================= */
         .elite-hero-strip {
             display: grid;
@@ -2046,6 +2046,65 @@
             }
         }
 
+
+
+        /* ======================================================= */
+        /* V11.2 PERFORMANCE + REALTIME STABILITY PATCH            */
+        /* ======================================================= */
+        @media (max-width: 768px), (pointer: coarse) {
+            .particle-canvas,
+            .cursor-orb,
+            .hud-rings,
+            .cyber-atmosphere,
+            .scanline-layer {
+                display: none !important;
+            }
+            body::before,
+            body::after {
+                animation: none !important;
+                opacity: 0.28 !important;
+            }
+            .game-wrapper,
+            .btn-action,
+            .progress-fill,
+            .winner-strip,
+            .leader-row.perfect,
+            .sonic-badge,
+            h1,
+            #final-integrity,
+            .deck-progress-fill,
+            .elite-hero-card.primary-card .elite-card-value,
+            .signal-card .elite-card-value::before {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+            }
+            .btn,
+            select.btn,
+            .grid-item,
+            .host-card,
+            .leader-row,
+            .mirror-item,
+            .prestige-command-deck,
+            .elite-hero-card,
+            .host-right-side,
+            .leaderboard-panel,
+            .mirror-phone-viewport,
+            .terminal-text {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .game-wrapper {
+                box-shadow:
+                    0 18px 52px rgba(0,0,0,0.75),
+                    0 0 26px rgba(0,229,255,0.12),
+                    inset 0 1px 0 rgba(255,255,255,0.10) !important;
+            }
+        }
+        .host-card.signal-stale {
+            border-color: rgba(255,184,77,0.55) !important;
+            box-shadow: 0 0 18px rgba(255,184,77,0.12) !important;
+        }
+
 </style>
 </head>
 <body id="main-body">
@@ -2117,7 +2176,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V11.1</h1>
+            <h1>E-LOGIX SHIELD V11.2</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Prestige Command Deck</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
@@ -2221,6 +2280,18 @@
         function installUltraVisuals() {
             if (window.__ultraVisualsInstalled) return;
             window.__ultraVisualsInstalled = true;
+            const mobilePerfMode = window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+            if (mobilePerfMode) {
+                try {
+                    document.documentElement.classList.add('mobile-performance');
+                    if (document.body) document.body.classList.add('mobile-performance');
+                    const canvas = document.getElementById('particle-canvas');
+                    if (canvas) canvas.style.display = 'none';
+                    const orb = document.getElementById('cursor-orb');
+                    if (orb) orb.style.display = 'none';
+                } catch(e) {}
+                return;
+            }
 
             const cursorOrb = document.getElementById('cursor-orb');
             if (cursorOrb && window.matchMedia('(hover: hover)').matches) {
@@ -2341,17 +2412,28 @@
             const code = payload.stageCode || 'login';
             const base = Math.max(0, Number(payload.time || 0));
             if (code === 'win') return getPayloadFinalSeconds(payload);
+
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
             const started = Number(payload.startedAt || 0);
-            // V8.7: host tự tính thời gian từ mốc bắt đầu để vẫn nhảy từng giây ở TẤT CẢ tầng,
-            // kể cả khi mạng/SSE bị nghẽn vài giây. Không còn chỉ đếm trong 9 giây sau gói tin cuối.
-            if (isGameStage && started > 0) {
+            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 999999;
+
+            // V11.2: nếu host mất gói quá lâu thì KHÔNG tự cộng giờ ảo nữa.
+            // Khi tín hiệu còn tươi, host tự đếm từng giây từ startedAt.
+            // Khi tín hiệu chập chờn > 4.5s, host giữ mốc cuối cùng để không bị sai kiểu “đã xong mà vẫn chạy”.
+            if (isGameStage && started > 0 && recvAge <= 4500) {
                 return Math.max(base, Math.floor((Date.now() - started) / 1000));
             }
-            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 0;
-            if (isGameStage && recvAge >= 0) return base + Math.floor(Math.max(0, recvAge) / 1000);
+            if (isGameStage) return base;
             return base;
         }
+
+        function isPayloadStale(payload) {
+            if (!payload || payload.stageCode === 'win') return false;
+            const isGameStage = ['c1','c2','c3','c4','c5'].includes(payload.stageCode || 'login');
+            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 999999;
+            return isGameStage && recvAge > 4500;
+        }
+
         function createSafeAudioCtx() {
             try {
                 const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -2384,11 +2466,13 @@
         // Khi test hoặc thi thật có thể thêm &session=ten-buoi-choi vào cả host và người chơi.
         const NETWORK_SESSION = String(urlParams.get('session') || urlParams.get('s') || 'main')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'main';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v90_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v90_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        // Không nghe kênh V8.x nữa: đó là nguyên nhân hay làm host nhận lại trạng thái cũ và kẹt mirror.
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v112_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v112_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_FINAL = "elogix_chitk9480_controltower_v112_finish_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        // V11.2: tách kênh mới hoàn toàn để không dính cache/kẹt tầng từ V9/V10/V11 cũ.
+        // Kênh FINISH riêng giúp host nhận được thời gian khóa cuối cùng chắc hơn.
         const NETWORK_PUBLISH_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
-        const NETWORK_LISTEN_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
+        const NETWORK_LISTEN_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE, NETWORK_TOPIC_FINAL]));
         const NETWORK_TOPICS = NETWORK_LISTEN_TOPICS;
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
@@ -2422,8 +2506,8 @@
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
 
-        const HOST_HISTORY_KEY = `elogix_host_history_v90_${ROOM_CODE}_${NETWORK_SESSION}`;
-        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v90_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_HISTORY_KEY = `elogix_host_history_v112_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v112_${ROOM_CODE}_${NETWORK_SESSION}`;
 
         function getHostResetCutoff() {
             try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
@@ -2803,14 +2887,16 @@
                 const payload = window.teamStates[id];
                 const card = document.getElementById(`card-team-${id}`);
                 if (!card) return;
-                card.classList.remove('offline-card','real-playing-card');
+                card.classList.remove('offline-card','real-playing-card','signal-stale');
                 if (!payload) return;
+                if (isPayloadStale(payload)) card.classList.add('signal-stale');
                 const p = getTruePresence(payload);
                 if (!p.isOnline) card.classList.add('offline-card');
                 if (p.isPlaying) card.classList.add('real-playing-card');
                 const stageEl = document.getElementById(`host-stage-${id}`);
                 if (stageEl) {
-                    const label = p.isPlaying ? '🟢 ĐANG CHƠI THẬT' : p.isOnline ? (payload.stageCode === 'win' ? '🏁 ĐÃ XONG' : '🟡 ONLINE/ĐANG NGHỈ') : '⚫ MẤT TÍN HIỆU';
+                    const stale = isPayloadStale(payload);
+                    const label = stale ? '🟠 TÍN HIỆU CHẬP CHỜN' : (p.isPlaying ? '🟢 ĐANG CHƠI THẬT' : p.isOnline ? (payload.stageCode === 'win' ? '🏁 ĐÃ XONG' : '🟡 ONLINE/ĐANG NGHỈ') : '⚫ MẤT TÍN HIỆU');
                     stageEl.innerHTML = `${label} · ${payload.stage || 'Đang đồng bộ...'}`;
                 }
                 const timeEl = document.getElementById(`host-time-${id}`);
@@ -3087,6 +3173,8 @@
             const cutoff = getHostResetCutoff();
             if (cutoff && incomingStamp < cutoff) return;
             const previousPayload = window.teamStates[payload.team];
+            // V11.2: nếu host đã nhận trạng thái WIN của nhóm thì không cho gói cũ/non-win đè ngược lại.
+            if (!options.fromHistory && previousPayload && previousPayload.stageCode === 'win' && payload.stageCode !== 'win') return;
             const previousStamp = Number(previousPayload?.sentAt || 0);
             const previousSeq = Number(previousPayload?.seq || 0);
             const incomingSeq = Number(payload.seq || 0);
@@ -3136,7 +3224,7 @@
             // Nghe cả kênh V8.4 và kênh 4.4 cũ để tránh host/player bị lẫn bản.
             for (const topic of NETWORK_TOPICS) {
                 try {
-                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=5m&_=${Date.now()}`, { cache: "no-store" });
+                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=30s&_=${Date.now()}`, { cache: "no-store" });
                     const text = await res.text();
                     if (!text.trim()) continue;
                     text.trim().split(/\n+/).forEach(line => {
@@ -3156,7 +3244,7 @@
         function listenToPlayerUpdates() {
             // 1) Poll ngay và poll lặp lại: sửa lỗi host mở sau người chơi hoặc SSE bị chặn.
             loadCachedPlayerStates();
-            setInterval(loadCachedPlayerStates, 1200);
+            setInterval(loadCachedPlayerStates, 700);
 
             const title = document.getElementById('spec-title');
             if (title && !window.selectedSpecTeam) {
@@ -3195,7 +3283,8 @@
         function postRealtimePayload(payload, options = {}) {
             const body = JSON.stringify(payload);
             const important = !!options.important;
-            const topics = important ? NETWORK_PUBLISH_TOPICS : [NETWORK_TOPIC_PRIMARY];
+            const finalPacket = !!options.final || payload.stageCode === 'win' || payload.finishedAt;
+            const topics = finalPacket ? Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE, NETWORK_TOPIC_FINAL])) : (important ? NETWORK_PUBLISH_TOPICS : [NETWORK_TOPIC_PRIMARY]);
             topics.forEach((topic) => {
                 const url = `https://ntfy.sh/${topic}`;
                 const sendByBeacon = () => {
@@ -3207,6 +3296,8 @@
                     return false;
                 };
                 try {
+                    // V11.2: final/important dùng thêm beacon song song để điện thoại thoát tab vẫn kịp đẩy trạng thái.
+                    if (finalPacket || important) sendByBeacon();
                     fetch(url, {
                         method: 'POST',
                         body,
@@ -3255,7 +3346,7 @@
             if (isHost || playerRealtimeTimer) return;
             sendCurrentPlayerPayload('loop-start', true);
             // V9.0: đồng hồ host tự đếm từng giây; heartbeat chỉ giữ kết nối, không spam 3-6 request/giây như bản cũ.
-            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload('heartbeat', false), 1000);
+            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload('heartbeat', false), 1500);
         }
 
         // V9.0: khi điện thoại vừa mở lại tab / mạng vừa hồi, bắn lại trạng thái quan trọng ngay.
@@ -3272,7 +3363,7 @@
         window.addEventListener('focus', forceMobileRealtimePing);
         window.addEventListener('online', forceMobileRealtimePing);
 
-        function sendCurrentPlayerPayload(reason = 'heartbeat', important = false) {
+        function sendCurrentPlayerPayload(reason = 'heartbeat', important = false, options = {}) {
             if (isHost || !teamId) return;
             const now = Date.now();
             const code = window.currentStageCode || "login";
@@ -3286,7 +3377,7 @@
                 extraPayload.finalTime = getPlayerElapsedSeconds();
             }
             const payload = {
-                game: 'elogix-shield', version: '9.0-stable-game-state-realtime', room: ROOM_CODE, session: NETWORK_SESSION,
+                game: 'elogix-shield', version: '11.2-stable-mobile-realtime', room: ROOM_CODE, session: NETWORK_SESSION,
                 clientId: PLAYER_CLIENT_ID,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity,
                 time: currentSeconds, finalTime: isFinished ? getPlayerElapsedSeconds() : null,
@@ -3295,7 +3386,7 @@
                 seq: ++playerRealtimeSeq, reason,
                 isPlaying, online: true, screenShareStatus: 'game_state', extra: extraPayload
             };
-            postRealtimePayload(payload, { important });
+            postRealtimePayload(payload, { important, final: !!options.final || isFinished });
         }
 
         function broadcastState(stageName, extraData = {}) {
@@ -3308,10 +3399,10 @@
             startPlayerRealtimeLoop();
             // V9.0: mỗi lần màn chơi đổi tầng/đổi đáp án sẽ đẩy gói quan trọng nhiều nhịp, nhưng không spam ntfy liên tục.
             sendCurrentPlayerPayload('state-change', true);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-1', true), 250);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-2', true), 750);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-3', false), 1600);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-4', false), 3200);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-1', true), 220);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-2', true), 650);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-3', false), 1400);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-4', false), 2600);
         }
 
         window.addEventListener('pagehide', () => {
@@ -3319,7 +3410,7 @@
             try {
                 const payload = { game:'elogix-shield', version:'9.0-stable-game-state-realtime', room:ROOM_CODE, session:NETWORK_SESSION, clientId:PLAYER_CLIENT_ID, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), seq:++playerRealtimeSeq, reason:'pagehide', isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
-                if (navigator.sendBeacon) NETWORK_PUBLISH_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
+                if (navigator.sendBeacon) (window.currentStageCode === 'win' ? Array.from(new Set([...NETWORK_PUBLISH_TOPICS, NETWORK_TOPIC_FINAL])) : NETWORK_PUBLISH_TOPICS).forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
         });
 
@@ -3327,7 +3418,7 @@
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V11.1 INFINITY ELITE MOBILE SAFE`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V11.2 STABLE MOBILE REALTIME`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
@@ -3335,7 +3426,7 @@
 
 
 
-        // V11.1 INFINITY ELITE MOBILE SAFE LAYER: command deck + stage rail + host metrics
+        // V11.2 STABLE MOBILE REALTIME LAYER: command deck + stage rail + host metrics
         function installPrestigeInterface() {
             if (window.__prestigeUIInstalled) return;
             window.__prestigeUIInstalled = true;
@@ -3396,7 +3487,7 @@
             }
 
             refreshPrestigeInterface();
-            setInterval(refreshPrestigeInterface, 500);
+            setInterval(refreshPrestigeInterface, (window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches) ? 1400 : 700);
         }
 
         function prestigeStageIndex() {
@@ -3468,7 +3559,7 @@
 
 
 
-        // V11.1 INFINITY ELITE MOBILE SAFE UI LAYER: billionaire-grade overview + mission intelligence
+        // V11.2 STABLE MOBILE REALTIME UI LAYER: billionaire-grade overview + mission intelligence
         function installInfinityEliteUI() {
             if (window.__infinityEliteInstalled) return;
             window.__infinityEliteInstalled = true;
@@ -3492,7 +3583,7 @@
             }
 
             refreshInfinityEliteUI();
-            setInterval(refreshInfinityEliteUI, 500);
+            setInterval(refreshInfinityEliteUI, (window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches) ? 1500 : 800);
         }
 
         function getInfinityBestResult() {
@@ -3810,6 +3901,21 @@
         }
 
         // FINISH
+        function sendFinishBurst(finalSeconds) {
+            if (isHost || !teamId) return;
+            const delays = [0, 180, 420, 800, 1300, 2100, 3400, 5200, 7600, 11000, 15000];
+            delays.forEach((delay, idx) => {
+                setTimeout(() => {
+                    try {
+                        finalElapsedSeconds = finalSeconds;
+                        finishedAt = finishedAt || Date.now();
+                        window.currentStageCode = "win";
+                        sendCurrentPlayerPayload('finish-lock-' + idx, true, { final: true });
+                    } catch(e) {}
+                }, delay);
+            });
+        }
+
         function finishGame() {
             if (gameFinished) return;
             gameFinished = true;
@@ -3831,8 +3937,7 @@
             }
             // V8.7: tiếp tục gửi heartbeat để host lưu kết quả, nhưng thời gian đã bị khóa, không cộng dồn nữa.
             broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds });
-            setTimeout(sendCurrentPlayerPayload, 250);
-            setTimeout(sendCurrentPlayerPayload, 900);
+            sendFinishBurst(seconds);
         }
     </script>
 </body>
