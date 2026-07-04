@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>E-Logix Cyber Shield V8.2 - V7.8 UI + 4.4 Realtime Core</title>
+    <title>E-Logix Cyber Shield V8.4 - V7.8 UI + Stable 4.4 Realtime Core</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1280,6 +1280,7 @@
             <h1>E-LOGIX SHIELD V7.8</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Hologram Warroom</div>
+            <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
                 <option value="1">Nhóm Cổ Đông 1</option>
@@ -1486,8 +1487,9 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
-        // V8.3: tạo kênh realtime mới theo đúng domain Vercel + mã phòng để tránh cache/rate-limit topic cũ.
-        // Host và người chơi chỉ cần mở cùng một link Vercel. Có thể thêm ?room=tenphong nếu muốn tách phòng.
+        // V8.4 FIX CỨNG REALTIME:
+        // Không còn phụ thuộc hostname/domain nên host ở GitHub Pages và người chơi ở link tương ứng vẫn cùng phòng nếu cùng room.
+        // Mặc định dùng room=lop1 để tránh bạn mở thiếu room là lệch kênh.
         function elogixHash(input) {
             let h = 2166136261;
             for (let i = 0; i < input.length; i++) {
@@ -1496,9 +1498,12 @@
             }
             return (h >>> 0).toString(36);
         }
-        const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'main')
-            .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'main';
-        const NETWORK_TOPIC = "elogix_v83_" + elogixHash((location.hostname || 'local') + '_' + ROOM_CODE);
+        const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
+            .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v84_" + ROOM_CODE;
+        const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
+        const NETWORK_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_LEGACY_44]));
+        const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
         const RTC_CONFIG = { iceServers: [
             { urls: "stun:stun.l.google.com:19302" },
@@ -1816,7 +1821,7 @@
                         <div class="real-status-card"><div class="real-status-label">Độ toàn vẹn</div><div class="real-status-value" style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">${hp}%</div></div>
                     </div>
                     <div class="real-video-frame">
-                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">ĐANG KẾT NỐI LIVE TAB TỰ ĐỘNG TỪ NHÓM ${esc(team)}</div><div>Người chơi không cần bấm bật live. Khi nhóm nhấn vào chơi, thiết bị sẽ tự truyền tab game lên host. Nếu đứng quá lâu ở đây, hãy đảm bảo điện thoại và host đang mở đúng cùng bản V7.8, cùng link Vercel, rồi tải lại trang người chơi.</div></div>`}
+                        ${stream ? `<video id="actual-screen-video-${esc(team)}" autoplay playsinline muted></video>` : `<div class="real-no-stream"><div class="big">ĐANG NHẬN DỮ LIỆU GAME REALTIME TỪ NHÓM ${esc(team)}</div><div>Người chơi chỉ cần bấm kích hoạt. Host sẽ dựng lại màn chơi bằng dữ liệu game thật, không cần cấp quyền share màn hình. Nếu đứng quá lâu, hãy chắc chắn host và người chơi cùng room=lop1.</div></div>`}
                     </div>
                 </div>`;
             if (stream) {
@@ -2113,7 +2118,7 @@
             const incomingStamp = Number(payload.sentAt || 0);
             const previousStamp = Number(previousPayload?.sentAt || 0);
             if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
-            payload._receivedAt = incomingStamp || Date.now();
+            payload._receivedAt = Date.now();
             window.teamStates[payload.team] = payload;
 
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('live-playing'));
@@ -2149,21 +2154,24 @@
 
         async function loadCachedPlayerStates() {
             if (!isHost) return;
-            try {
-                // Poll mạnh hơn SSE để tránh lỗi EventSource trong Zalo/in-app browser/mạng trường.
-                const res = await fetch(`https://ntfy.sh/${NETWORK_TOPIC}/json?poll=1&since=15m&_=${Date.now()}`, { cache: "no-store" });
-                const text = await res.text();
-                if (!text.trim()) return;
-                text.trim().split(/\n+/).forEach(line => {
-                    try {
-                        const data = JSON.parse(line);
-                        const payload = parseNtfyPayload(data);
-                        if (payload) applyHostPayload(payload);
-                    } catch(e) {}
-                });
-            } catch(e) {
-                const title = document.getElementById('spec-title');
-                if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: ĐANG THỬ KẾT NỐI LẠI";
+            // Poll mạnh hơn SSE để tránh lỗi EventSource trong Zalo/in-app browser/mạng trường.
+            // Nghe cả kênh V8.4 và kênh 4.4 cũ để tránh host/player bị lẫn bản.
+            for (const topic of NETWORK_TOPICS) {
+                try {
+                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=2m&_=${Date.now()}`, { cache: "no-store" });
+                    const text = await res.text();
+                    if (!text.trim()) continue;
+                    text.trim().split(/\n+/).forEach(line => {
+                        try {
+                            const data = JSON.parse(line);
+                            const payload = parseNtfyPayload(data);
+                            if (payload) applyHostPayload(payload);
+                        } catch(e) {}
+                    });
+                } catch(e) {
+                    const title = document.getElementById('spec-title');
+                    if (title && !window.selectedSpecTeam) title.innerHTML = "⚠️ MIRROR FEED: ĐANG THỬ KẾT NỐI LẠI";
+                }
             }
         }
 
@@ -2174,28 +2182,32 @@
 
             const title = document.getElementById('spec-title');
             if (title && !window.selectedSpecTeam) {
-                title.innerHTML = `📡 MIRROR MATRIX FEED: ROOM ${ROOM_CODE.toUpperCase()} · ĐANG CHỜ NGƯỜI CHƠI`;
+                title.innerHTML = `📡 ROOM ${ROOM_CODE.toUpperCase()} · ĐANG CHỜ NGƯỜI CHƠI`;
+                const pill = document.getElementById('live-status-pill');
+                if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · KÊNH ỔN ĐỊNH`;
             }
 
             // 2) Nghe realtime qua SSE nếu browser/mạng cho phép. Poll phía trên vẫn là tuyến dự phòng chính.
             try {
                 if (typeof EventSource === 'undefined') throw new Error('EventSource not supported');
-                const source = new EventSource(`https://ntfy.sh/${NETWORK_TOPIC}/sse`);
-                source.onopen = () => {
-                    const t = document.getElementById('spec-title');
-                    if (t && !window.selectedSpecTeam) t.innerHTML = `📡 MIRROR MATRIX FEED: ROOM ${ROOM_CODE.toUpperCase()} · ĐÃ KẾT NỐI`;
-                };
-                source.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        const payload = parseNtfyPayload(data);
-                        if (payload) applyHostPayload(payload);
-                    } catch(e) {}
-                };
-                source.onerror = () => {
-                    const t = document.getElementById('spec-title');
-                    if (t && !window.selectedSpecTeam) t.innerHTML = `⚠️ ROOM ${ROOM_CODE.toUpperCase()} · SSE CHẬP CHỜN, POLLING ĐANG CHẠY`;
-                };
+                NETWORK_TOPICS.forEach((topic) => {
+                    const source = new EventSource(`https://ntfy.sh/${topic}/sse`);
+                    source.onopen = () => {
+                        const t = document.getElementById('spec-title');
+                        if (t && !window.selectedSpecTeam) t.innerHTML = `📡 MIRROR MATRIX FEED: ROOM ${ROOM_CODE.toUpperCase()} · ĐÃ KẾT NỐI`;
+                    };
+                    source.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            const payload = parseNtfyPayload(data);
+                            if (payload) applyHostPayload(payload);
+                        } catch(e) {}
+                    };
+                    source.onerror = () => {
+                        const t = document.getElementById('spec-title');
+                        if (t && !window.selectedSpecTeam) t.innerHTML = `⚠️ ROOM ${ROOM_CODE.toUpperCase()} · SSE CHẬP CHỜN, POLLING ĐANG CHẠY`;
+                    };
+                });
             } catch(e) {
                 const t = document.getElementById('spec-title');
                 if (t && !window.selectedSpecTeam) t.innerHTML = `⚠️ ROOM ${ROOM_CODE.toUpperCase()} · ĐANG DÙNG POLLING`;
@@ -2204,30 +2216,32 @@
 
         function postRealtimePayload(payload) {
             const body = JSON.stringify(payload);
-            const url = `https://ntfy.sh/${NETWORK_TOPIC}`;
-            try {
-                fetch(url, {
-                    method: 'POST',
-                    body,
-                    cache: 'no-store',
-                    keepalive: body.length < 60000,
-                    headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
-                }).catch(() => {
+            NETWORK_TOPICS.forEach((topic) => {
+                const url = `https://ntfy.sh/${topic}`;
+                try {
+                    fetch(url, {
+                        method: 'POST',
+                        body,
+                        cache: 'no-store',
+                        keepalive: body.length < 60000,
+                        headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+                    }).catch(() => {
+                        try {
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('POST', url, true);
+                            xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
+                            xhr.send(body);
+                        } catch(e) {}
+                    });
+                } catch(e) {
                     try {
                         const xhr = new XMLHttpRequest();
                         xhr.open('POST', url, true);
                         xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
                         xhr.send(body);
-                    } catch(e) {}
-                });
-            } catch(e) {
-                try {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
-                    xhr.send(body);
-                } catch(_) {}
-            }
+                    } catch(_) {}
+                }
+            });
         }
 
         let playerRealtimeTimer = null;
@@ -2248,7 +2262,7 @@
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
             const isPlaying = isGameStage;
             const payload = {
-                game: 'elogix-shield', version: '8.3-v78-ui-44-core', room: ROOM_CODE,
+                game: 'elogix-shield', version: '8.4-v78-ui-44-core-stable', room: ROOM_CODE,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity, time: currentSeconds,
                 sentAt: now, activityAt: window.lastPlayerActivityAt || now, isPlaying, online: true,
                 screenShareStatus: 'game_state', extra: lastExtraData || {}
@@ -2269,13 +2283,24 @@
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.3-v78-ui-44-core', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const payload = { game:'elogix-shield', version:'8.4-v78-ui-44-core-stable', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
-                if (navigator.sendBeacon) navigator.sendBeacon(`https://ntfy.sh/${NETWORK_TOPIC}`, new Blob([body], { type:'text/plain;charset=UTF-8' }));
+                if (navigator.sendBeacon) NETWORK_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
         });
 
+
+        function updateRoomLabels() {
+            try {
+                const info = document.getElementById('player-room-info');
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · KÊNH: ${NETWORK_TOPIC_PRIMARY}`;
+                const pill = document.getElementById('live-status-pill');
+                if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · ĐANG NGHE`;
+            } catch(e) {}
+        }
+
         // ĐIỀU HƯỚNG ROUTING BAN ĐẦU
+        updateRoomLabels();
         if (isHost) {
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
