@@ -1528,7 +1528,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
-        // V8.7 FIX REALTIME TOÀN BỘ TẦNG + LƯU LỊCH SỬ HOST:
+        // V8.8 FIX MOBILE BRIDGE + REALTIME TOÀN BỘ TẦNG + LƯU LỊCH SỬ HOST:
         // Không còn phụ thuộc hostname/domain nên host ở GitHub Pages và người chơi ở link tương ứng vẫn cùng phòng nếu cùng room.
         // Mặc định dùng room=lop1 để tránh bạn mở thiếu room là lệch kênh.
         function elogixHash(input) {
@@ -1541,10 +1541,19 @@
         }
         const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v87_" + ROOM_CODE;
-        // V8.7: dùng kênh mới để realtime sạch; host có nút xóa kết quả để chặn dữ liệu test cũ.
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v88_" + ROOM_CODE;
+        // V8.8: thêm kênh cầu nối ổn định để điện thoại/host không bị lệch bản sau khi deploy/cache.
+        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_live_" + ROOM_CODE;
+        const NETWORK_TOPIC_V87 = "elogix_chitk9480_controltower_v87_" + ROOM_CODE;
+        const NETWORK_TOPIC_V86 = "elogix_chitk9480_controltower_v86_" + ROOM_CODE;
+        const NETWORK_TOPIC_V85 = "elogix_chitk9480_controltower_v85_reset_" + ROOM_CODE;
+        const NETWORK_TOPIC_V84 = "elogix_chitk9480_controltower_v84_" + ROOM_CODE;
         const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
-        const NETWORK_TOPICS = [NETWORK_TOPIC_PRIMARY];
+        // Người chơi chỉ phát lên 3 kênh chính để không spam mạng trường.
+        const NETWORK_PUBLISH_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE, NETWORK_TOPIC_V87]));
+        // Host nghe thêm các kênh cũ để nếu điện thoại còn cache bản trước vẫn bắt được tín hiệu.
+        const NETWORK_LISTEN_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE, NETWORK_TOPIC_V87, NETWORK_TOPIC_V86, NETWORK_TOPIC_V85, NETWORK_TOPIC_V84, NETWORK_TOPIC_LEGACY_44]));
+        const NETWORK_TOPICS = NETWORK_LISTEN_TOPICS;
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
         const RTC_CONFIG = { iceServers: [
@@ -1575,8 +1584,8 @@
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
 
-        const HOST_HISTORY_KEY = `elogix_host_history_v87_${ROOM_CODE}`;
-        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v87_${ROOM_CODE}`;
+        const HOST_HISTORY_KEY = `elogix_host_history_v88_${ROOM_CODE}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v88_${ROOM_CODE}`;
 
         function getHostResetCutoff() {
             try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
@@ -2335,8 +2344,14 @@
 
         function postRealtimePayload(payload) {
             const body = JSON.stringify(payload);
-            NETWORK_TOPICS.forEach((topic) => {
+            NETWORK_PUBLISH_TOPICS.forEach((topic) => {
                 const url = `https://ntfy.sh/${topic}`;
+                // V8.8: gửi song song bằng sendBeacon để điện thoại/Zalo/in-app browser vẫn bắn được tín hiệu cross-origin.
+                try {
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon(url, new Blob([body], { type:'text/plain;charset=UTF-8' }));
+                    }
+                } catch(e) {}
                 try {
                     fetch(url, {
                         method: 'POST',
@@ -2361,6 +2376,10 @@
                     } catch(_) {}
                 }
             });
+            try {
+                const info = document.getElementById('player-room-info');
+                if (info && !isHost) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · ĐÃ GỬI TÍN HIỆU ${new Date().toLocaleTimeString('vi-VN')}`;
+            } catch(e) {}
         }
 
         let playerRealtimeTimer = null;
@@ -2372,6 +2391,16 @@
             sendCurrentPlayerPayload();
             playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 1000);
         }
+
+        // V8.8: khi điện thoại vừa mở lại tab / vừa thoát Zalo browser / mạng vừa hồi, bắn lại tín hiệu ngay.
+        function forceMobileRealtimePing() {
+            if (!isHost && teamId) {
+                try { sendCurrentPlayerPayload(); setTimeout(sendCurrentPlayerPayload, 350); } catch(e) {}
+            }
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) forceMobileRealtimePing(); });
+        window.addEventListener('focus', forceMobileRealtimePing);
+        window.addEventListener('online', forceMobileRealtimePing);
 
         function sendCurrentPlayerPayload() {
             if (isHost || !teamId) return;
@@ -2387,7 +2416,7 @@
                 extraPayload.finalTime = getPlayerElapsedSeconds();
             }
             const payload = {
-                game: 'elogix-shield', version: '8.7-v78-ui-realtime-persist-timer', room: ROOM_CODE,
+                game: 'elogix-shield', version: '8.8-v78-ui-mobile-bridge-persist-timer', room: ROOM_CODE,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity,
                 time: currentSeconds, finalTime: isFinished ? getPlayerElapsedSeconds() : null,
                 startedAt: startTime || 0, finishedAt: finishedAt || 0,
@@ -2410,9 +2439,9 @@
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.7-v78-ui-realtime-persist-timer', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const payload = { game:'elogix-shield', version:'8.8-v78-ui-mobile-bridge-persist-timer', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
-                if (navigator.sendBeacon) NETWORK_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
+                if (navigator.sendBeacon) NETWORK_PUBLISH_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
         });
 
@@ -2420,7 +2449,7 @@
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · KÊNH: ${NETWORK_TOPIC_PRIMARY}`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · KÊNH ỔN ĐỊNH: ${NETWORK_TOPIC_STABLE}`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
