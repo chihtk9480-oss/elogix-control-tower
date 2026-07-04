@@ -1224,6 +1224,828 @@
             .capturing-live-tab #real-share-panel { display: none !important; }
         .tab-capture-badge { color:#7dd3fc; text-shadow:0 0 12px rgba(0,210,255,.55); }
         .real-share-panel .real-share-mini { display:block; margin-top:6px; color:#7dd3fc; font-size:.68rem; font-weight:900; letter-spacing:.6px; }
+
+
+        /* ======================================================= */
+        /* V10.0 PRESTIGE COMMAND DECK UI - ULTRA LUXE EDITION     */
+        /* ======================================================= */
+        .prestige-command-deck {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 22px;
+            padding: 16px 18px;
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(0,229,255,0.16), transparent 26%),
+                radial-gradient(circle at 100% 0%, rgba(255,211,106,0.12), transparent 28%),
+                linear-gradient(180deg, rgba(12,18,44,0.90), rgba(3,7,20,0.95));
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.08),
+                inset 0 0 30px rgba(0,229,255,0.04),
+                0 20px 44px rgba(0,0,0,0.34),
+                0 0 34px rgba(0,229,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .prestige-command-deck::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0 38%, rgba(255,255,255,0.06) 50%, transparent 62%);
+            transform: translateX(-120%);
+            animation: prestige-sheen 7s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes prestige-sheen {
+            0%, 55% { transform: translateX(-120%); }
+            75%, 100% { transform: translateX(120%); }
+        }
+        .prestige-deck-left, .prestige-deck-center, .prestige-deck-right {
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+        }
+        .prestige-brand-mark {
+            font-size: 1.05rem;
+            font-weight: 1000;
+            letter-spacing: 0.16em;
+            color: #fff6d1;
+            text-shadow: 0 0 14px rgba(255,211,106,0.42), 0 0 14px rgba(0,229,255,0.18);
+            margin-bottom: 8px;
+        }
+        .prestige-brand-sub {
+            color: #a5eaff;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.95;
+        }
+        .prestige-deck-center {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .deck-chip {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            color: #eefcff;
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 20px rgba(0,0,0,0.20);
+            white-space: nowrap;
+        }
+        .prestige-deck-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            padding-left: 10px;
+        }
+        .deck-signal-title {
+            color: #90e7ff;
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+        .deck-signal-value {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+        }
+        .deck-progress {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.48);
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.55);
+        }
+        .deck-progress-fill {
+            width: 12%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #00e5ff, #00ff88, #ffd36a, #b026ff);
+            background-size: 220% 100%;
+            animation: premium-gradient 3.5s ease-in-out infinite;
+            box-shadow: 0 0 18px rgba(0,229,255,0.34), 0 0 18px rgba(255,211,106,0.24);
+            transition: width .35s ease;
+        }
+        .prestige-stage-rail {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 10px;
+            margin: 0 0 16px;
+            padding: 12px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(12,18,44,0.74), rgba(4,8,24,0.88));
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: inset 0 0 24px rgba(0,229,255,0.04), 0 14px 28px rgba(0,0,0,0.24);
+        }
+        .prestige-stage-step {
+            position: relative;
+            min-width: 0;
+            padding: 10px 8px 9px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            text-align: center;
+            transition: all .25s ease;
+            overflow: hidden;
+        }
+        .prestige-stage-step::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(0,229,255,0.14), transparent 50%);
+            opacity: 0;
+            transition: opacity .25s ease;
+        }
+        .prestige-stage-step .step-number {
+            display: inline-flex;
+            width: 28px;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+            color: #dffcff;
+            font-size: 0.82rem;
+            font-weight: 1000;
+        }
+        .prestige-stage-step .step-title {
+            color: #f8fbff;
+            font-size: 0.73rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .prestige-stage-step .step-sub {
+            color: #8fb9cb;
+            font-size: 0.64rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .prestige-stage-step.done {
+            border-color: rgba(0,255,136,0.45);
+            box-shadow: 0 0 18px rgba(0,255,136,0.10), inset 0 0 20px rgba(0,255,136,0.05);
+        }
+        .prestige-stage-step.done .step-number {
+            background: rgba(0,255,136,0.12);
+            border-color: rgba(0,255,136,0.30);
+            color: #d8fff0;
+        }
+        .prestige-stage-step.active {
+            transform: translateY(-3px) scale(1.02);
+            border-color: rgba(255,211,106,0.55);
+            box-shadow: 0 0 22px rgba(255,211,106,0.14), 0 0 22px rgba(0,229,255,0.10), inset 0 0 26px rgba(255,211,106,0.04);
+        }
+        .prestige-stage-step.active::before { opacity: 1; }
+        .prestige-stage-step.active .step-number {
+            background: linear-gradient(180deg, rgba(255,211,106,0.22), rgba(0,229,255,0.12));
+            border-color: rgba(255,211,106,0.42);
+            color: #fff7d3;
+            box-shadow: 0 0 16px rgba(255,211,106,0.20);
+        }
+        .host-ops-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .host-ops-card {
+            padding: 14px 12px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(12,18,44,0.84), rgba(4,8,24,0.94));
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: inset 0 0 18px rgba(0,229,255,0.04), 0 12px 26px rgba(0,0,0,0.22);
+            text-align: center;
+        }
+        .host-ops-label {
+            color: #9fe7ff;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .host-ops-value {
+            color: #ffffff;
+            font-size: 1.45rem;
+            font-weight: 1000;
+            text-shadow: 0 0 14px rgba(0,229,255,0.24);
+        }
+        .view.active .status-bar,
+        .view.active .terminal-text,
+        .view.active .grid-container,
+        .view.active .leaderboard-panel,
+        .view.active .host-right-side,
+        .view.active .host-card,
+        .view.active #text-s3,
+        .view.active #view-stage5 > div:nth-of-type(3),
+        .view.active #view-result > div:nth-of-type(2) {
+            animation: prestige-card-rise .42s ease both;
+        }
+        @keyframes prestige-card-rise {
+            from { opacity: 0; transform: translateY(8px) scale(.992); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        #view-result #final-integrity {
+            position: relative;
+        }
+        #view-result #final-integrity::after {
+            content: "SYSTEM CERTIFIED";
+            display: block;
+            margin-top: 10px;
+            font-size: 0.92rem;
+            color: #fff4ca;
+            letter-spacing: 0.30em;
+            text-transform: uppercase;
+        }
+        body.host-mode-active .prestige-command-deck {
+            grid-template-columns: 1.1fr 1fr 1.05fr;
+        }
+        @media (max-width: 980px) {
+            .prestige-command-deck { grid-template-columns: 1fr; }
+            .prestige-deck-right { padding-left: 0; }
+            .host-ops-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 680px) {
+            .prestige-stage-rail { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .prestige-command-deck {
+                padding: 14px 12px;
+                gap: 12px;
+                border-radius: 18px;
+                margin-bottom: 16px;
+            }
+            .prestige-brand-mark { font-size: 0.86rem; letter-spacing: 0.10em; }
+            .prestige-brand-sub { font-size: 0.70rem; }
+            .prestige-deck-center { justify-content: flex-start; }
+            .deck-chip { font-size: 0.66rem; padding: 8px 10px; }
+            .deck-signal-value { font-size: 0.88rem; }
+            .prestige-stage-rail {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                padding: 10px;
+                border-radius: 16px;
+            }
+            .prestige-stage-step { padding: 8px 7px; border-radius: 12px; }
+            .prestige-stage-step .step-title { font-size: 0.66rem; }
+            .prestige-stage-step .step-sub { font-size: 0.58rem; }
+            .host-ops-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .host-ops-card { padding: 10px 8px; border-radius: 14px; }
+            .host-ops-value { font-size: 1.1rem; }
+        }
+
+
+
+        /* ======================================================= */
+        /* V11.1 INFINITY ELITE MOBILE SAFE UI - BILLION-CLASS EXPERIENCE      */
+        /* ======================================================= */
+        .elite-hero-strip {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr 0.95fr 0.95fr;
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+        .elite-hero-card {
+            position: relative;
+            min-width: 0;
+            padding: 18px 18px 16px;
+            border-radius: 24px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(255,211,106,0.11), transparent 34%),
+                radial-gradient(circle at 0% 0%, rgba(0,229,255,0.16), transparent 38%),
+                linear-gradient(180deg, rgba(12,18,44,0.90), rgba(2,6,18,0.96));
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.08),
+                inset 0 0 28px rgba(0,229,255,0.04),
+                0 20px 44px rgba(0,0,0,0.30),
+                0 0 26px rgba(0,229,255,0.06);
+            isolation: isolate;
+        }
+        .elite-hero-card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(140deg, rgba(0,229,255,0.5), rgba(255,255,255,0.02), rgba(255,211,106,0.35), rgba(176,38,255,0.28));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .elite-hero-card::after {
+            content: "";
+            position: absolute;
+            inset: auto -20% -55% auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,229,255,0.16), transparent 70%);
+            filter: blur(10px);
+            opacity: 0.7;
+            z-index: -1;
+        }
+        .elite-hero-card.primary-card {
+            background:
+                radial-gradient(circle at 80% 20%, rgba(255,211,106,0.18), transparent 30%),
+                radial-gradient(circle at 0% 0%, rgba(0,229,255,0.18), transparent 40%),
+                linear-gradient(180deg, rgba(16,24,58,0.94), rgba(4,8,24,0.98));
+        }
+        .elite-card-kicker {
+            color: #9deaff;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            font-weight: 1000;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .elite-card-value {
+            color: #ffffff;
+            font-size: clamp(1.1rem, 2vw, 1.45rem);
+            font-weight: 1000;
+            line-height: 1.08;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 18px rgba(0,229,255,0.18);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .elite-hero-card.primary-card .elite-card-value {
+            font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+            background: linear-gradient(90deg, #ffffff, #dffcff 22%, #ffd36a 54%, #ffffff 88%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: elite-title-flow 6s linear infinite;
+            text-shadow: none;
+        }
+        @keyframes elite-title-flow { to { background-position: 220% 0; } }
+        .elite-card-meta {
+            margin-top: 9px;
+            color: #9eb3c4;
+            font-size: 0.76rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        .signal-card .elite-card-value {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .signal-card .elite-card-value::before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 16px #00ff88, 0 0 24px rgba(0,229,255,0.45);
+            animation: elite-live-pulse 1.2s ease-in-out infinite;
+            flex: 0 0 auto;
+        }
+        @keyframes elite-live-pulse {
+            50% { transform: scale(0.76); opacity: 0.45; }
+        }
+        .game-wrapper {
+            box-shadow:
+                0 48px 140px rgba(0,0,0,0.92),
+                0 0 120px rgba(0,229,255,0.20),
+                0 0 150px rgba(176,38,255,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.18),
+                inset 0 0 88px rgba(0,229,255,0.07) !important;
+        }
+        .game-wrapper > .view.active {
+            animation: infinity-view-rise .48s cubic-bezier(.2,.7,.2,1) both;
+        }
+        @keyframes infinity-view-rise {
+            from { opacity: 0; transform: translateY(14px) scale(0.992); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        .winner-strip, .leaderboard-panel, .host-right-side, .host-card, .mirror-phone-viewport, .terminal-text, #text-s3, #view-stage5 > div:nth-of-type(3), #view-result > div:nth-of-type(2), .status-bar {
+            position: relative;
+            overflow: hidden;
+        }
+        .winner-strip::after, .leaderboard-panel::after, .host-right-side::after, .host-card::after, .mirror-phone-viewport::after, .terminal-text::after {
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .host-card.real-playing-card {
+            border-color: rgba(0,255,136,0.55) !important;
+            box-shadow: 0 0 30px rgba(0,255,136,0.18), inset 0 0 20px rgba(0,255,136,0.05), 0 14px 30px rgba(0,0,0,0.32) !important;
+        }
+        .host-card.offline-card {
+            opacity: 0.7;
+            filter: saturate(0.8);
+        }
+        .mirror-phone-viewport {
+            background:
+                radial-gradient(circle at 50% -18%, rgba(255,211,106,0.09), transparent 34%),
+                radial-gradient(circle at 0% 0%, rgba(0,229,255,0.11), transparent 30%),
+                linear-gradient(180deg, rgba(5,9,26,0.985), rgba(0,1,9,0.995)) !important;
+        }
+        .leader-row {
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+        .leader-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px rgba(0,0,0,0.22), 0 0 18px rgba(0,229,255,0.09);
+        }
+        #view-result {
+            position: relative;
+        }
+        #view-result .result-crown-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto 14px;
+            padding: 9px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,211,106,0.34);
+            background: linear-gradient(90deg, rgba(255,211,106,0.12), rgba(0,229,255,0.09), rgba(176,38,255,0.10));
+            color: #fff3c1;
+            font-size: 0.78rem;
+            font-weight: 1000;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            box-shadow: 0 0 22px rgba(255,211,106,0.12);
+        }
+        #view-result #final-integrity {
+            position: relative;
+            width: min(320px, 88vw);
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 18px auto;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08), transparent 58%),
+                radial-gradient(circle at 50% 10%, rgba(255,211,106,0.10), transparent 30%),
+                linear-gradient(180deg, rgba(8,13,36,0.72), rgba(2,5,16,0.88));
+            box-shadow:
+                inset 0 0 44px rgba(0,229,255,0.06),
+                0 0 40px rgba(0,255,136,0.12),
+                0 0 24px rgba(255,211,106,0.10);
+        }
+        #view-result #final-integrity::before {
+            content: "";
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,211,106,0.22);
+            box-shadow: 0 0 34px rgba(255,211,106,0.12), inset 0 0 20px rgba(0,229,255,0.05);
+        }
+        #view-result #final-integrity::after {
+            margin-top: 0 !important;
+            position: absolute;
+            left: 50%;
+            bottom: 28px;
+            transform: translateX(-50%);
+            width: 100%;
+            font-size: 0.74rem !important;
+            letter-spacing: 0.24em !important;
+        }
+        .elite-corner-watermark {
+            position: absolute;
+            right: 18px;
+            top: 18px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: #e1fbff;
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            z-index: 4;
+            pointer-events: none;
+        }
+        @media (max-width: 1100px) {
+            .elite-hero-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .elite-hero-strip { grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+            .elite-hero-card { padding: 14px 14px 13px; border-radius: 18px; }
+            .elite-card-value { font-size: 1rem; }
+            .elite-hero-card.primary-card .elite-card-value { font-size: 1.28rem; }
+            #view-result #final-integrity {
+                width: min(260px, 88vw);
+                font-size: 3.9rem !important;
+            }
+        }
+
+
+
+        /* ======================================================= */
+        /* V11.1 MOBILE SAFE PATCH - NO OVERLAP / PHONE OPTIMIZED  */
+        /* ======================================================= */
+        .view {
+            position: relative;
+        }
+        .elite-corner-watermark {
+            top: 0 !important;
+            right: 0 !important;
+            transform: none !important;
+            position: static !important;
+            display: inline-flex;
+            align-self: flex-end;
+            margin: 0 0 12px auto;
+            z-index: 2;
+            max-width: 100%;
+            white-space: nowrap;
+        }
+        #view-login .elite-corner-watermark,
+        #view-intro .elite-corner-watermark {
+            margin-bottom: 14px;
+        }
+        #view-stage1 .elite-corner-watermark,
+        #view-stage2 .elite-corner-watermark,
+        #view-stage3 .elite-corner-watermark,
+        #view-stage4 .elite-corner-watermark,
+        #view-stage5 .elite-corner-watermark,
+        #view-result .elite-corner-watermark {
+            order: -1;
+        }
+        .status-bar {
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status-bar span:last-child {
+            margin-left: auto;
+            text-align: right;
+            white-space: nowrap;
+            flex: 0 0 auto;
+        }
+        .prestige-stage-rail {
+            margin-top: 2px;
+        }
+        .prestige-stage-step {
+            min-height: 84px;
+        }
+        .elite-hero-card,
+        .prestige-command-deck,
+        .host-card,
+        .host-right-side,
+        .leader-row,
+        .leaderboard-panel,
+        .mirror-phone-viewport,
+        .winner-strip,
+        .terminal-text,
+        .status-bar,
+        .grid-item,
+        .btn {
+            max-width: 100%;
+        }
+        .grid-container,
+        .mirror-grid,
+        .leaderboard-list,
+        .host-left-side,
+        .host-split-layout,
+        .host-ops-grid,
+        .elite-hero-strip,
+        .prestige-deck-center,
+        .mirror-controls,
+        .status-bar,
+        #options-s3,
+        #view-stage5 > div[style*="display: flex"],
+        #view-result > div:nth-of-type(2) {
+            min-width: 0;
+        }
+        @media (max-width: 860px) {
+            .prestige-stage-rail {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .elite-corner-watermark {
+                font-size: 0.62rem;
+                padding: 5px 8px;
+            }
+        }
+        @media (max-width: 640px) {
+            .game-wrapper {
+                padding: 18px 12px !important;
+                border-radius: 20px !important;
+            }
+            .prestige-command-deck {
+                padding: 12px 11px;
+                border-radius: 16px;
+                margin-bottom: 14px;
+            }
+            .prestige-brand-mark {
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+            }
+            .prestige-brand-sub {
+                font-size: 0.64rem;
+                line-height: 1.35;
+            }
+            .deck-chip {
+                font-size: 0.62rem;
+                letter-spacing: 0.05em;
+                padding: 7px 9px;
+            }
+            .deck-signal-title {
+                font-size: 0.60rem;
+            }
+            .deck-signal-value {
+                font-size: 0.82rem;
+            }
+            .elite-hero-card {
+                padding: 12px 12px 11px;
+                border-radius: 16px;
+            }
+            .elite-card-kicker {
+                font-size: 0.60rem;
+                letter-spacing: 0.12em;
+                margin-bottom: 7px;
+            }
+            .elite-card-value {
+                font-size: 0.92rem !important;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+            }
+            .elite-card-meta {
+                font-size: 0.66rem;
+                margin-top: 6px;
+            }
+            h1 {
+                font-size: 1.5rem !important;
+                letter-spacing: 0.06em !important;
+            }
+            h1::after {
+                margin-top: 10px;
+                width: 78%;
+            }
+            h2 {
+                font-size: 1.02rem !important;
+                padding: 7px 10px !important;
+                line-height: 1.35;
+                text-align: center;
+            }
+            .mission-subtitle,
+            .sonic-badge {
+                font-size: 0.68rem !important;
+                line-height: 1.35;
+                padding: 8px 10px !important;
+            }
+            .status-bar {
+                font-size: 0.78rem !important;
+                padding: 9px 10px !important;
+                border-radius: 14px !important;
+            }
+            .status-bar span:first-child {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+            .status-bar span:last-child {
+                width: 100%;
+                text-align: left;
+                margin-left: 0;
+                font-size: 0.76rem;
+            }
+            .terminal-text,
+            #text-s3,
+            #view-stage5 > div:nth-of-type(3),
+            #view-result > div:nth-of-type(2) {
+                font-size: 0.86rem !important;
+                line-height: 1.5;
+                padding: 12px !important;
+                border-radius: 16px !important;
+            }
+            .grid-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                margin: 10px 0 !important;
+            }
+            .grid-item {
+                min-height: 56px !important;
+                font-size: 0.76rem !important;
+                padding: 10px 6px !important;
+                border-radius: 12px !important;
+                line-height: 1.25;
+            }
+            .btn,
+            select.btn {
+                font-size: 0.88rem !important;
+                padding: 12px 10px !important;
+                border-radius: 14px !important;
+            }
+            .prestige-stage-rail {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 7px;
+                padding: 8px;
+                border-radius: 14px;
+                margin-bottom: 12px;
+            }
+            .prestige-stage-step {
+                min-height: 66px;
+                padding: 8px 6px;
+                border-radius: 12px;
+            }
+            .prestige-stage-step .step-number {
+                width: 23px;
+                height: 23px;
+                font-size: 0.72rem;
+                margin-bottom: 4px;
+            }
+            .prestige-stage-step .step-title {
+                font-size: 0.60rem;
+            }
+            .prestige-stage-step .step-sub {
+                font-size: 0.54rem;
+                margin-top: 1px;
+            }
+            .elite-corner-watermark {
+                display: none !important;
+            }
+            .host-split-layout {
+                flex-direction: column;
+                gap: 14px !important;
+            }
+            .host-left-side,
+            .leaderboard-list,
+            .host-ops-grid,
+            .elite-hero-strip {
+                grid-template-columns: 1fr !important;
+            }
+            .host-card {
+                padding: 12px;
+                border-radius: 16px !important;
+            }
+            .host-team-name {
+                font-size: 0.95rem !important;
+                gap: 8px;
+            }
+            .host-team-stage {
+                font-size: 0.72rem !important;
+            }
+            .host-right-side {
+                padding: 14px !important;
+                border-radius: 18px !important;
+            }
+            .mirror-phone-viewport {
+                padding: 14px !important;
+                border-radius: 18px !important;
+            }
+            .mirror-item,
+            .mirror-incoterm-btn {
+                font-size: 0.76rem !important;
+                padding: 10px 6px !important;
+            }
+            #view-stage5 > div[style*="display: flex"] {
+                flex-direction: column !important;
+            }
+            #view-result #final-integrity {
+                width: min(220px, 84vw) !important;
+                font-size: 3.2rem !important;
+            }
+            #view-result #final-integrity::after {
+                bottom: 18px !important;
+                font-size: 0.62rem !important;
+                letter-spacing: 0.16em !important;
+            }
+            #account-ip {
+                font-size: 0.78rem !important;
+                line-height: 1.35;
+                word-break: break-word;
+            }
+            #account-task {
+                font-size: 0.92rem !important;
+            }
+        }
+
 </style>
 </head>
 <body id="main-body">
@@ -1239,12 +2061,29 @@
     </div>
 
     <div class="game-wrapper" id="console-box">
+        <div class="prestige-command-deck" id="prestige-command-deck">
+            <div class="prestige-deck-left">
+                <div class="prestige-brand-mark">✦ E-LOGIX INFINITY ELITE DECK</div>
+                <div class="prestige-brand-sub">Billion-Class Command Experience / Infinity Elite Mobile Safe Layer</div>
+            </div>
+            <div class="prestige-deck-center">
+                <div class="deck-chip" id="deck-room-chip">ROOM: --</div>
+                <div class="deck-chip" id="deck-mode-chip">MODE: --</div>
+                <div class="deck-chip" id="deck-stage-chip">STAGE: STANDBY</div>
+            </div>
+            <div class="prestige-deck-right">
+                <div class="deck-signal-title">LIVE SIGNAL</div>
+                <div class="deck-signal-value" id="deck-signal-value">ĐANG ĐỒNG BỘ...</div>
+                <div class="deck-progress"><div class="deck-progress-fill" id="deck-progress-fill"></div></div>
+            </div>
+        </div>
+
         
         <!-- TRUNG TÂM GIÁM SÁT MÁY CHIẾU -->
         <div id="view-host" class="view">
             <h1>CO-LOGIX MISSION CONTROL CENTER</h1>
             <div class="mission-subtitle">[ HOST MIRROR REALTIME THEO TRẠNG THÁI GAME THẬT - KHÔNG CẦN QUYỀN SHARE MÀN HÌNH ]</div>
-            <div class="sonic-badge">Supreme Audio Core / Hologram Warroom</div>
+            <div class="sonic-badge">Supreme Audio Core / Prestige Command Deck</div>
             <div class="winner-strip" id="winner-strip">🏁 CHƯA CÓ NHÓM NÀO HOÀN THÀNH 100%</div>
             <div class="leaderboard-panel">
                 <div class="leaderboard-title">
@@ -1278,9 +2117,9 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V9.0</h1>
+            <h1>E-LOGIX SHIELD V11.1</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
-            <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Hologram Warroom</div>
+            <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Prestige Command Deck</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
             <label style="margin-bottom: 8px; font-size: 1.05rem; color: var(--text-main);">CHỌN MÃ SỐ NHÓM CỦA BẠN:</label>
             <select id="team-id" class="btn" style="background: #090e24; color: white;">
@@ -2488,14 +3327,247 @@
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V9.0 REALTIME READY`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V11.1 INFINITY ELITE MOBILE SAFE`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
         }
 
+
+
+        // V11.1 INFINITY ELITE MOBILE SAFE LAYER: command deck + stage rail + host metrics
+        function installPrestigeInterface() {
+            if (window.__prestigeUIInstalled) return;
+            window.__prestigeUIInstalled = true;
+
+            const playerRailTargets = [
+                { id: 'view-intro', anchor: 'button', active: 0 },
+                { id: 'view-stage1', anchor: '.status-bar', active: 1 },
+                { id: 'view-stage2', anchor: '.status-bar', active: 2 },
+                { id: 'view-stage3', anchor: '.status-bar', active: 3 },
+                { id: 'view-stage4', anchor: '.status-bar', active: 4 },
+                { id: 'view-stage5', anchor: '.status-bar', active: 5 },
+                { id: 'view-result', anchor: 'h2', active: 6 }
+            ];
+            const steps = [
+                ['01', 'Khởi động', 'Chuẩn bị'],
+                ['02', 'Tầng 1', 'Cybersecurity'],
+                ['03', 'Tầng 2', 'Cloud Backup'],
+                ['04', 'Tầng 3', 'Incoterms'],
+                ['05', 'Tầng 4', 'Customs Audit'],
+                ['06', 'Tầng 5', 'Access Control']
+            ];
+
+            playerRailTargets.forEach(target => {
+                const view = document.getElementById(target.id);
+                if (!view || view.querySelector('.prestige-stage-rail')) return;
+                const rail = document.createElement('div');
+                rail.className = 'prestige-stage-rail';
+                rail.dataset.active = String(target.active);
+                rail.innerHTML = steps.map((step, idx) => `
+                    <div class="prestige-stage-step" data-step="${idx + 1}">
+                        <div class="step-number">${step[0]}</div>
+                        <div class="step-title">${step[1]}</div>
+                        <div class="step-sub">${step[2]}</div>
+                    </div>
+                `).join('');
+                const anchor = view.querySelector(target.anchor);
+                if (anchor && anchor.parentNode) {
+                    anchor.insertAdjacentElement(target.active === 6 ? 'afterend' : 'afterend', rail);
+                } else {
+                    view.insertBefore(rail, view.firstChild);
+                }
+            });
+
+            const hostRight = document.querySelector('#view-host .host-right-side');
+            if (hostRight && !document.getElementById('host-ops-grid')) {
+                const hostOps = document.createElement('div');
+                hostOps.className = 'host-ops-grid';
+                hostOps.id = 'host-ops-grid';
+                hostOps.innerHTML = `
+                    <div class="host-ops-card"><div class="host-ops-label">Online</div><div class="host-ops-value" id="host-ops-online">0</div></div>
+                    <div class="host-ops-card"><div class="host-ops-label">Đang chơi</div><div class="host-ops-value" id="host-ops-playing">0</div></div>
+                    <div class="host-ops-card"><div class="host-ops-label">Hoàn thành</div><div class="host-ops-value" id="host-ops-finished">0</div></div>
+                    <div class="host-ops-card"><div class="host-ops-label">Perfect 100%</div><div class="host-ops-value" id="host-ops-perfect">0</div></div>
+                `;
+                const controls = hostRight.querySelector('.mirror-controls');
+                if (controls) hostRight.insertBefore(hostOps, controls);
+                else hostRight.insertBefore(hostOps, hostRight.firstChild);
+            }
+
+            refreshPrestigeInterface();
+            setInterval(refreshPrestigeInterface, 500);
+        }
+
+        function prestigeStageIndex() {
+            const map = { intro:0, c1:1, c2:2, c3:3, c4:4, c5:5, win:6 };
+            return map[window.currentStageCode || 'intro'] || 0;
+        }
+
+        function refreshPrestigeInterface() {
+            try {
+                const roomChip = document.getElementById('deck-room-chip');
+                const modeChip = document.getElementById('deck-mode-chip');
+                const stageChip = document.getElementById('deck-stage-chip');
+                const signalValue = document.getElementById('deck-signal-value');
+                const progressFill = document.getElementById('deck-progress-fill');
+                const stageIndex = prestigeStageIndex();
+                const stageLabels = {
+                    login: 'Standby',
+                    intro: 'Mở đầu',
+                    c1: 'Tầng 1 / Cybersecurity',
+                    c2: 'Tầng 2 / Cloud Backup',
+                    c3: 'Tầng 3 / Incoterms',
+                    c4: 'Tầng 4 / Customs Audit',
+                    c5: 'Tầng 5 / Access Control',
+                    win: 'Mission Complete'
+                };
+                if (roomChip) roomChip.textContent = `ROOM: ${String(ROOM_CODE || 'lop1').toUpperCase()} · SESSION: ${String(NETWORK_SESSION || 'main').toUpperCase()}`;
+                if (modeChip) modeChip.textContent = isHost ? 'MODE: HOST WARROOM' : `MODE: ${teamName || 'PLAYER OPS'}`;
+                if (stageChip) stageChip.textContent = `STAGE: ${stageLabels[window.currentStageCode || (isHost ? 'intro' : 'login')] || 'Standby'}`;
+                if (signalValue) {
+                    if (isHost) {
+                        const online = (activeTeams || []).filter(id => window.teamStates && window.teamStates[id] && getTruePresence(window.teamStates[id]).isOnline).length;
+                        signalValue.textContent = `${online}/${(activeTeams || []).length} NHÓM ONLINE · LIVE MONITORING`;
+                    } else {
+                        const sec = getPlayerElapsedSeconds();
+                        signalValue.textContent = teamName ? `${teamName} · ${sec}s · ${Math.max(0, Number(integrity || 100))}% INTEGRITY` : 'ĐANG CHỜ KÍCH HOẠT';
+                    }
+                }
+                if (progressFill) {
+                    const pct = isHost ? 100 : Math.max(12, Math.min(100, Math.round((stageIndex / 6) * 100)));
+                    progressFill.style.width = pct + '%';
+                }
+
+                document.querySelectorAll('.prestige-stage-rail').forEach(rail => {
+                    const activeStep = rail.closest('#view-result') ? 6 : stageIndex;
+                    rail.querySelectorAll('.prestige-stage-step').forEach((step, idx) => {
+                        const logical = idx + 1;
+                        step.classList.toggle('active', logical === activeStep);
+                        step.classList.toggle('done', logical < activeStep || (window.currentStageCode === 'win'));
+                    });
+                });
+
+                const onlineEl = document.getElementById('host-ops-online');
+                const playingEl = document.getElementById('host-ops-playing');
+                const finishedEl = document.getElementById('host-ops-finished');
+                const perfectEl = document.getElementById('host-ops-perfect');
+                if (isHost && onlineEl && Array.isArray(activeTeams)) {
+                    const online = activeTeams.filter(id => window.teamStates[id] && getTruePresence(window.teamStates[id]).isOnline).length;
+                    const playing = activeTeams.filter(id => window.teamStates[id] && getTruePresence(window.teamStates[id]).isPlaying).length;
+                    const finished = activeTeams.filter(id => window.teamStates[id] && window.teamStates[id].stageCode === 'win').length;
+                    const perfect = activeTeams.filter(id => window.teamStates[id] && window.teamStates[id].stageCode === 'win' && Number(window.teamStates[id].hp) === 100).length;
+                    onlineEl.textContent = online;
+                    playingEl.textContent = playing;
+                    finishedEl.textContent = finished;
+                    perfectEl.textContent = perfect;
+                }
+            } catch (e) {}
+        }
+
+
+
+
+        // V11.1 INFINITY ELITE MOBILE SAFE UI LAYER: billionaire-grade overview + mission intelligence
+        function installInfinityEliteUI() {
+            if (window.__infinityEliteInstalled) return;
+            window.__infinityEliteInstalled = true;
+
+            document.querySelectorAll('.view').forEach(view => {
+                if (!view.querySelector('.elite-corner-watermark')) {
+                    const tag = document.createElement('div');
+                    tag.className = 'elite-corner-watermark';
+                    tag.textContent = 'Infinity Elite';
+                    view.appendChild(tag);
+                }
+            });
+
+            const resultView = document.getElementById('view-result');
+            if (resultView && !resultView.querySelector('.result-crown-badge')) {
+                const badge = document.createElement('div');
+                badge.className = 'result-crown-badge';
+                badge.textContent = '✦ Mission Accomplished / Infinity Elite Certificate';
+                const title = resultView.querySelector('#result-title');
+                if (title) title.insertAdjacentElement('beforebegin', badge);
+            }
+
+            refreshInfinityEliteUI();
+            setInterval(refreshInfinityEliteUI, 500);
+        }
+
+        function getInfinityBestResult() {
+            try {
+                const finished = (activeTeams || [])
+                    .map(id => window.teamStates && window.teamStates[id])
+                    .filter(Boolean)
+                    .filter(s => s.stageCode === 'win' && Number(s.hp) === 100)
+                    .sort((a, b) => getPayloadFinalSeconds(a) - getPayloadFinalSeconds(b));
+                return finished[0] || null;
+            } catch (e) { return null; }
+        }
+
+        function refreshInfinityEliteUI() {
+            try {
+                const modeValue = document.getElementById('elite-mode-value');
+                const modeMeta = document.getElementById('elite-mode-meta');
+                const signalValue = document.getElementById('elite-signal-value');
+                const signalMeta = document.getElementById('elite-signal-meta');
+                const edgeValue = document.getElementById('elite-edge-value');
+                const edgeMeta = document.getElementById('elite-edge-meta');
+                const stageNames = {
+                    login: 'Standby', intro: 'Khởi động', c1: 'Tầng 1', c2: 'Tầng 2', c3: 'Tầng 3', c4: 'Tầng 4', c5: 'Tầng 5', win: 'Hoàn tất'
+                };
+
+                if (modeValue) modeValue.textContent = isHost ? 'HOST WARROOM' : (teamName || 'PLAYER OPS');
+                if (modeMeta) modeMeta.textContent = isHost ? 'Bảng điều hành máy chiếu cao cấp' : (teamName ? `Điều phối bởi ${teamName}` : 'Chờ chọn nhóm để kích hoạt');
+
+                if (isHost) {
+                    const online = (activeTeams || []).filter(id => window.teamStates && window.teamStates[id] && getTruePresence(window.teamStates[id]).isOnline).length;
+                    const playing = (activeTeams || []).filter(id => window.teamStates && window.teamStates[id] && getTruePresence(window.teamStates[id]).isPlaying).length;
+                    const best = getInfinityBestResult();
+                    if (signalValue) signalValue.textContent = `${online}/${(activeTeams || []).length} ONLINE`;
+                    if (signalMeta) signalMeta.textContent = playing > 0 ? `${playing} nhóm đang chơi realtime` : 'Đang chờ tín hiệu vận hành';
+                    if (best) {
+                        edgeValue.textContent = `NHÓM ${best.team} · ${getPayloadFinalSeconds(best)}S`;
+                        edgeMeta.textContent = 'Best perfect run hiện tại trên leaderboard';
+                    } else {
+                        edgeValue.textContent = 'NO PERFECT YET';
+                        edgeMeta.textContent = 'Chưa có nhóm hoàn thành 100%';
+                    }
+                } else {
+                    const current = stageNames[window.currentStageCode || 'login'] || 'Standby';
+                    if (signalValue) signalValue.textContent = teamName ? `${Math.max(0, Number(integrity || 100))}% INTEGRITY` : 'READY';
+                    if (signalMeta) signalMeta.textContent = teamName ? `Thời gian: ${getPlayerElapsedSeconds()} giây` : 'Kích hoạt để bắt đầu nhiệm vụ';
+                    if (edgeValue) edgeValue.textContent = current.toUpperCase();
+                    if (edgeMeta) edgeMeta.textContent = teamName ? `Tiến trình nhiệm vụ / ${stageNames[window.currentStageCode || 'login']}` : 'Sẵn sàng bước vào hành trình 5 tầng';
+                }
+            } catch (e) {}
+        }
+
+
+
+
+        // V11.1 MOBILE SAFE UI PATCH: responsive labels + no overlap watermark
+        function installMobileSafePatch() {
+            if (window.__mobileSafeInstalled) return;
+            window.__mobileSafeInstalled = true;
+            const views = ['view-stage1','view-stage2','view-stage3','view-stage4','view-stage5','view-result'];
+            views.forEach(id => {
+                const view = document.getElementById(id);
+                if (!view) return;
+                const wm = view.querySelector('.elite-corner-watermark');
+                if (wm && view.firstElementChild !== wm) {
+                    view.insertBefore(wm, view.firstChild);
+                }
+            });
+        }
+
+
         // ĐIỀU HƯỚNG ROUTING BAN ĐẦU
         updateRoomLabels();
+        installPrestigeInterface();
+        installInfinityEliteUI();
+        installMobileSafePatch();
         if (isHost) {
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
