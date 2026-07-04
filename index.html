@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>E-Logix Cyber Shield V8.4 - V7.8 UI + Stable 4.4 Realtime Core</title>
+    <title>E-Logix Cyber Shield V8.5 - V7.8 UI + Resettable Stable Realtime</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1309,7 +1309,7 @@
         <div id="view-stage1" class="view">
             <div class="status-bar"><span>🔒 TẦNG 1: CYBERSECURITY</span><span id="hp-s1" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
-            <div class="terminal-text" id="log-s1">> LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!</div>
+            <div class="terminal-text" id="log-s1">> LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!<br><br><span style="color: var(--neon-red); font-weight: 900;">LƯU Ý: Ở tầng này, ô chuyển sang MÀU ĐỎ nghĩa là BẠN ĐÃ ĐÚNG, vì nhiệm vụ là cô lập tệp chứa mã độc.</span></div>
             <div class="grid-container" id="grid-s1"></div>
             <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">TIẾN VÀO TẦNG SAO LƯU KHO</button>
@@ -1369,6 +1369,7 @@
                 <div>🔐 <span style="color: #94a3b8;">Mã Chứng Nhận Gốc:</span> <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">-</span></div>
             </div>
             <div style="text-align: center; font-size: 0.95rem; color: #64748b; margin-top: 20px;">Hệ thống đã tự động đẩy kết quả lên màn hình máy chiếu báo cáo cô giáo!</div>
+            <button class="btn btn-action" style="margin-top: 18px;" onclick="resetPlayerGame()">CHƠI LẠI TỪ ĐẦU / RESET NHÓM</button>
         </div>
     </div>
 
@@ -1472,6 +1473,7 @@
         }
 
         let teamId = ""; let teamName = ""; let startTime = 0; let integrity = 100;
+        let gameFinished = false; let finalSeconds = 0; let finalRealtimeBurstTimer = null;
         function createSafeAudioCtx() {
             try {
                 const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -1500,9 +1502,9 @@
         }
         const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v84_" + ROOM_CODE;
-        const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
-        const NETWORK_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_LEGACY_44]));
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v85_reset_" + ROOM_CODE;
+        // V8.5: dùng kênh mới riêng, không đọc cache kênh cũ để tránh hiện lại kết quả test hôm trước.
+        const NETWORK_TOPICS = [NETWORK_TOPIC_PRIMARY];
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
         const RTC_CONFIG = { iceServers: [
@@ -1530,6 +1532,7 @@
         window.teamStates = {};
         window.selectedSpecTeam = null;
         window.hostAutoFollow = true;
+        window.hostBootAt = Date.now();
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
 
@@ -2033,7 +2036,7 @@
                 const found = Number(extra.found || 0);
                 body = `${liveTopBar(payload)}
                     <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
-                    <div class="live-terminal">&gt; LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!</div>
+                    <div class="live-terminal">&gt; LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!<br><br><span style="color:var(--neon-red); font-weight:1000;">LƯU Ý: Ở tầng này, ô màu đỏ nghĩa là BẠN ĐÃ ĐÚNG vì đang cô lập tệp mã độc.</span></div>
                     ${renderLiveGrid(extra.items || [], extra.badClicked || [], extra.goodClicked || [])}
                     <div class="live-progress"><span style="width:${Math.min(100, found / 4 * 100)}%"></span></div>
                     ${found >= 4 ? '<div class="live-next">TIẾN VÀO TẦNG SAO LƯU KHO</div>' : ''}`;
@@ -2114,8 +2117,32 @@
 
         function applyHostPayload(payload) {
             if (!payload || !payload.team) return;
-            const previousPayload = window.teamStates[payload.team];
             const incomingStamp = Number(payload.sentAt || 0);
+            // V8.5: khi host F5/mở lại, bỏ qua tin nhắn cũ trong cache ntfy để không hiện lại màn đã phá đảo khi chỉ là dữ liệu test cũ.
+            if (!incomingStamp || incomingStamp < (window.hostBootAt - 2500)) return;
+
+            if (payload.stageCode === 'reset') {
+                delete window.teamStates[payload.team];
+                const card = document.getElementById(`card-team-${payload.team}`);
+                if (card) card.classList.remove('active-card','live-playing','offline-card','real-playing-card','winner-card','spec-selected');
+                const stageEl = document.getElementById(`host-stage-${payload.team}`);
+                if (stageEl) stageEl.innerHTML = 'Đang chờ kết nối...';
+                const timeEl = document.getElementById(`host-time-${payload.team}`);
+                if (timeEl) timeEl.innerHTML = '0s';
+                const hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
+                if (hpTxtEl) hpTxtEl.innerHTML = '100%';
+                const fill = document.getElementById(`host-hp-fill-${payload.team}`);
+                if (fill) { fill.style.width = '100%'; fill.style.background = 'var(--neon-green)'; }
+                if (window.selectedSpecTeam === payload.team) {
+                    window.selectedSpecTeam = null;
+                    const viewport = document.getElementById('mirror-viewport');
+                    if (viewport) viewport.innerHTML = `<div style="text-align: center; color: #475569; font-style: italic; margin: auto;">Nhóm ${payload.team} đã reset. Host sẽ tự hiện lại khi nhóm bấm kích hoạt.</div>`;
+                }
+                renderLeaderboard();
+                return;
+            }
+
+            const previousPayload = window.teamStates[payload.team];
             const previousStamp = Number(previousPayload?.sentAt || 0);
             if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
             payload._receivedAt = Date.now();
@@ -2155,7 +2182,7 @@
         async function loadCachedPlayerStates() {
             if (!isHost) return;
             // Poll mạnh hơn SSE để tránh lỗi EventSource trong Zalo/in-app browser/mạng trường.
-            // Nghe cả kênh V8.4 và kênh 4.4 cũ để tránh host/player bị lẫn bản.
+            // V8.5 chỉ nghe kênh mới của room hiện tại để tránh dữ liệu test cũ.
             for (const topic of NETWORK_TOPICS) {
                 try {
                     const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=2m&_=${Date.now()}`, { cache: "no-store" });
@@ -2249,20 +2276,27 @@
         let lastExtraData = { text: "Đang kết nối tháp..." };
 
         function startPlayerRealtimeLoop() {
-            if (isHost || playerRealtimeTimer) return;
+            if (isHost || playerRealtimeTimer || gameFinished) return;
             sendCurrentPlayerPayload();
             playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 4000);
         }
 
+        function stopPlayerRealtimeLoop() {
+            if (playerRealtimeTimer) {
+                clearInterval(playerRealtimeTimer);
+                playerRealtimeTimer = null;
+            }
+        }
+
         function sendCurrentPlayerPayload() {
             if (isHost || !teamId) return;
-            const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
+            const currentSeconds = gameFinished ? finalSeconds : (startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0);
             const now = Date.now();
             const code = window.currentStageCode || "login";
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
-            const isPlaying = isGameStage;
+            const isPlaying = isGameStage && !gameFinished;
             const payload = {
-                game: 'elogix-shield', version: '8.4-v78-ui-44-core-stable', room: ROOM_CODE,
+                game: 'elogix-shield', version: '8.5-v78-ui-resettable-realtime', room: ROOM_CODE,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity, time: currentSeconds,
                 sentAt: now, activityAt: window.lastPlayerActivityAt || now, isPlaying, online: true,
                 screenShareStatus: 'game_state', extra: lastExtraData || {}
@@ -2270,10 +2304,48 @@
             postRealtimePayload(payload);
         }
 
+        function broadcastFinalPayloadBurst() {
+            stopPlayerRealtimeLoop();
+            if (finalRealtimeBurstTimer) clearInterval(finalRealtimeBurstTimer);
+            let count = 0;
+            sendCurrentPlayerPayload();
+            finalRealtimeBurstTimer = setInterval(() => {
+                count++;
+                sendCurrentPlayerPayload();
+                if (count >= 5) {
+                    clearInterval(finalRealtimeBurstTimer);
+                    finalRealtimeBurstTimer = null;
+                }
+            }, 1000);
+        }
+
+        function sendResetPayloadForTeam() {
+            if (isHost || !teamId) return;
+            const now = Date.now();
+            postRealtimePayload({
+                game: 'elogix-shield', version: '8.5-v78-ui-resettable-realtime', room: ROOM_CODE,
+                team: teamId, stage: 'Reset về ban đầu', stageCode: 'reset', hp: 100, time: 0,
+                sentAt: now, activityAt: now, isPlaying: false, online: false,
+                screenShareStatus: 'game_state', extra: { text: 'Nhóm đã reset/F5 để chơi lại từ đầu.' }
+            });
+        }
+
+        function resetPlayerGame() {
+            sendResetPayloadForTeam();
+            setTimeout(() => {
+                const base = window.location.origin + window.location.pathname + '?room=' + encodeURIComponent(ROOM_CODE);
+                window.location.replace(base);
+            }, 180);
+        }
+
         function broadcastState(stageName, extraData = {}) {
             if (isHost || !teamId) return;
             lastStageName = stageName || lastStageName;
             lastExtraData = extraData || {};
+            if (gameFinished) {
+                sendCurrentPlayerPayload();
+                return;
+            }
             startPlayerRealtimeLoop();
             sendCurrentPlayerPayload();
             // Bắn thêm 1 nhịp ngắn để host bắt được ngay nhưng không spam relay công cộng.
@@ -2283,7 +2355,10 @@
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.4-v78-ui-44-core-stable', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const now = Date.now();
+                const payload = gameFinished
+                    ? { game:'elogix-shield', version:'8.5-v78-ui-resettable-realtime', room:ROOM_CODE, team:teamId, stage:'Reset về ban đầu', stageCode:'reset', hp:100, time:0, sentAt:now, activityAt:now, isPlaying:false, online:false, screenShareStatus:'game_state', extra:{ text:'Nhóm đã F5 sau khi hoàn thành để reset lượt chơi.' } }
+                    : { game:'elogix-shield', version:'8.5-v78-ui-resettable-realtime', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:startTime > 0 ? Math.floor((now - startTime) / 1000) : 0, sentAt:now, activityAt:now, isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
                 if (navigator.sendBeacon) NETWORK_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
@@ -2318,6 +2393,9 @@
             audioCtx = getAudioCtx();
             teamId = document.getElementById('team-id').value;
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
+            // Bấm kích hoạt luôn xem như bắt đầu một lượt mới, xoá kết quả test cũ của đúng nhóm trên host.
+            gameFinished = false; finalSeconds = 0; integrity = 100; startTime = 0;
+            sendResetPayloadForTeam();
             installPlayerSharePanel();
             startPlayerRealtimeLoop();
             sendCurrentPlayerPayload();
@@ -2397,7 +2475,17 @@
             if (targetView) targetView.classList.add('active');
             stageTransitionSound(viewId);
         }
-        function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
+        function enterStage1() {
+            startTime = Date.now(); gameFinished = false; finalSeconds = 0; integrity = 100;
+            s1Found = 0; s1BadClicked = []; s1GoodClicked = [];
+            s2Idx = 0; s2DoneSteps = [];
+            s3RoundIdx = 0;
+            s4Cleared = 0; s4BadClicked = []; s4GoodClicked = [];
+            s5Idx = 0;
+            ['next-s1','next-s2','next-s4'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+            const p1 = document.getElementById('progress-s1'); if (p1) p1.style.width = '0%';
+            window.currentStageCode = "c1"; nextView('view-stage1'); initStage1();
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array;
@@ -2536,8 +2624,12 @@
         // FINISH
         function finishGame() { 
             window.currentStageCode = "win"; 
+            if (!gameFinished) {
+                finalSeconds = Math.floor((Date.now() - startTime) / 1000);
+                gameFinished = true;
+            }
             winSound(); 
-            let seconds = Math.floor((Date.now() - startTime) / 1000); 
+            let seconds = finalSeconds; 
             nextView('view-result'); 
             document.getElementById('final-integrity').innerHTML = integrity + "%"; 
             document.getElementById('res-team').innerHTML = teamName; 
@@ -2551,7 +2643,9 @@
                 title.innerHTML = "HOÀN THÀNH NHIỆM VỤ — CHƯA ĐẠT MỐC 100%";
                 title.style.color = "orange";
             }
-            broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds }); 
+            lastStageName = "Phá đảo!";
+            lastExtraData = { finalIntegrity: integrity, finalTime: seconds };
+            broadcastFinalPayloadBurst();
         }
     </script>
 </body>
