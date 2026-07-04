@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>E-Logix Cyber Shield V8.9 - V7.8 UI + Reliable Mobile Realtime</title>
+    <title>E-Logix Cyber Shield V9.0 - Stable Game-State Realtime</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1278,7 +1278,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V7.8</h1>
+            <h1>E-LOGIX SHIELD V9.0</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Hologram Warroom</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
@@ -1541,19 +1541,15 @@
         }
         const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v89_" + ROOM_CODE;
-        // V8.9: kênh chính mới + kênh ổn định. Người chơi chỉ phát 2 kênh để tránh ntfy bị nghẽn/rate-limit.
-        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_live_" + ROOM_CODE;
-        const NETWORK_TOPIC_V88 = "elogix_chitk9480_controltower_v88_" + ROOM_CODE;
-        const NETWORK_TOPIC_V87 = "elogix_chitk9480_controltower_v87_" + ROOM_CODE;
-        const NETWORK_TOPIC_V86 = "elogix_chitk9480_controltower_v86_" + ROOM_CODE;
-        const NETWORK_TOPIC_V85 = "elogix_chitk9480_controltower_v85_reset_" + ROOM_CODE;
-        const NETWORK_TOPIC_V84 = "elogix_chitk9480_controltower_v84_" + ROOM_CODE;
-        const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
-        // Heartbeat thường đi kênh chính; các trạng thái quan trọng đi cả kênh chính + stable.
+        // V9.0: dùng phiên live riêng để tránh bị ntfy trả lại gói cũ/cache từ tối qua.
+        // Khi test hoặc thi thật có thể thêm &session=ten-buoi-choi vào cả host và người chơi.
+        const NETWORK_SESSION = String(urlParams.get('session') || urlParams.get('s') || 'main')
+            .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'main';
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v90_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v90_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        // Không nghe kênh V8.x nữa: đó là nguyên nhân hay làm host nhận lại trạng thái cũ và kẹt mirror.
         const NETWORK_PUBLISH_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
-        // Host vẫn nghe kênh cũ để bắt được điện thoại còn cache, nhưng ưu tiên payload mới nhất bằng sentAt.
-        const NETWORK_LISTEN_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE, NETWORK_TOPIC_V88, NETWORK_TOPIC_V87, NETWORK_TOPIC_V86, NETWORK_TOPIC_V85, NETWORK_TOPIC_V84, NETWORK_TOPIC_LEGACY_44]));
+        const NETWORK_LISTEN_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
         const NETWORK_TOPICS = NETWORK_LISTEN_TOPICS;
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
@@ -1577,6 +1573,8 @@
         window.tabCaptureBusy = false;
         window.tabCaptureMode = false;
         window.lastPlayerActivityAt = Date.now();
+        // Mỗi lần người chơi mở trang sẽ có mã riêng. Host dùng mã này để không bị khóa bởi seq/sentAt cũ sau khi F5.
+        const PLAYER_CLIENT_ID = Math.random().toString(36).slice(2) + "_" + Date.now().toString(36);
 
 
         window.teamStates = {};
@@ -1585,8 +1583,8 @@
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
 
-        const HOST_HISTORY_KEY = `elogix_host_history_v89_${ROOM_CODE}`;
-        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v89_${ROOM_CODE}`;
+        const HOST_HISTORY_KEY = `elogix_host_history_v90_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v90_${ROOM_CODE}_${NETWORK_SESSION}`;
 
         function getHostResetCutoff() {
             try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
@@ -2226,26 +2224,38 @@
         function parseNtfyPayload(data) {
             try {
                 if (!data) return null;
-                // Ntfy SSE/poll thường bọc payload trong data.message; một số browser/proxy có thể trả thẳng JSON payload.
                 let payload = null;
                 if (data.team) payload = data;
                 else if (data.event === "message" && data.message) {
                     payload = typeof data.message === "string" ? JSON.parse(data.message) : data.message;
                 }
                 if (!payload || !payload.team) return null;
+                if (payload.game && payload.game !== 'elogix-shield') return null;
                 if (payload.room && payload.room !== ROOM_CODE) return null;
+                if (payload.session && payload.session !== NETWORK_SESSION) return null;
+                // V9.0: chỉ nhận payload V9 cùng session. Payload cũ không có session sẽ bị bỏ để tránh host kẹt ở tầng cũ.
+                if (!payload.session && String(payload.version || '').indexOf('9.0') === -1) return null;
+                payload.team = String(payload.team);
+                payload.seq = Number(payload.seq || 0);
+                payload.sentAt = Number(payload.sentAt || 0) || Date.now();
                 return payload;
             } catch(e) { return null; }
         }
 
         function applyHostPayload(payload, options = {}) {
             if (!payload || !payload.team) return;
-            const incomingStamp = Number(payload.sentAt || 0);
+            const incomingStamp = Number(payload.sentAt || 0) || Date.now();
             const cutoff = getHostResetCutoff();
-            if (cutoff && (!incomingStamp || incomingStamp < cutoff)) return;
+            if (cutoff && incomingStamp < cutoff) return;
             const previousPayload = window.teamStates[payload.team];
             const previousStamp = Number(previousPayload?.sentAt || 0);
-            if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
+            const previousSeq = Number(previousPayload?.seq || 0);
+            const incomingSeq = Number(payload.seq || 0);
+            const sameClient = previousPayload && payload.clientId && previousPayload.clientId === payload.clientId;
+            // Nếu cùng một thiết bị đang chơi thì bỏ gói seq cũ. Nếu người chơi F5/mở lại, clientId đổi nên vẫn nhận ngay.
+            if (!options.fromHistory && sameClient && previousSeq && incomingSeq && incomingSeq < previousSeq) return;
+            // Chỉ bỏ gói rất cũ từ cache ntfy; chừa 15s để điện thoại lệch giờ nhẹ vẫn được nhận.
+            if (!options.fromHistory && previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp - 15000) return;
             payload._receivedAt = options.fromHistory ? (payload._receivedAt || Date.now()) : Date.now();
             window.teamStates[payload.team] = payload;
 
@@ -2287,7 +2297,7 @@
             // Nghe cả kênh V8.4 và kênh 4.4 cũ để tránh host/player bị lẫn bản.
             for (const topic of NETWORK_TOPICS) {
                 try {
-                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=2h&_=${Date.now()}`, { cache: "no-store" });
+                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=5m&_=${Date.now()}`, { cache: "no-store" });
                     const text = await res.text();
                     if (!text.trim()) continue;
                     text.trim().split(/\n+/).forEach(line => {
@@ -2307,7 +2317,7 @@
         function listenToPlayerUpdates() {
             // 1) Poll ngay và poll lặp lại: sửa lỗi host mở sau người chơi hoặc SSE bị chặn.
             loadCachedPlayerStates();
-            setInterval(loadCachedPlayerStates, 1800);
+            setInterval(loadCachedPlayerStates, 1200);
 
             const title = document.getElementById('spec-title');
             if (title && !window.selectedSpecTeam) {
@@ -2349,41 +2359,51 @@
             const topics = important ? NETWORK_PUBLISH_TOPICS : [NETWORK_TOPIC_PRIMARY];
             topics.forEach((topic) => {
                 const url = `https://ntfy.sh/${topic}`;
-                // V8.9: chỉ dùng sendBeacon cho gói QUAN TRỌNG để tránh spam mobile làm ntfy nghẽn.
-                if (important) {
+                const sendByBeacon = () => {
                     try {
                         if (navigator.sendBeacon) {
-                            navigator.sendBeacon(url, new Blob([body], { type:'text/plain;charset=UTF-8' }));
+                            return navigator.sendBeacon(url, new Blob([body], { type:'text/plain;charset=UTF-8' }));
                         }
                     } catch(e) {}
-                }
+                    return false;
+                };
                 try {
                     fetch(url, {
                         method: 'POST',
                         body,
                         cache: 'no-store',
-                        keepalive: important && body.length < 60000,
-                        headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+                        keepalive: body.length < 60000,
+                        headers: {
+                            'Content-Type': 'text/plain;charset=UTF-8',
+                            'X-Title': `Elogix ${ROOM_CODE}`,
+                            'X-Tags': important ? 'rotating_light' : 'satellite'
+                        }
+                    }).then(res => {
+                        if (!res.ok && important) sendByBeacon();
                     }).catch(() => {
+                        if (!sendByBeacon()) {
+                            try {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', url, true);
+                                xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
+                                xhr.send(body);
+                            } catch(e) {}
+                        }
+                    });
+                } catch(e) {
+                    if (!sendByBeacon()) {
                         try {
                             const xhr = new XMLHttpRequest();
                             xhr.open('POST', url, true);
                             xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
                             xhr.send(body);
-                        } catch(e) {}
-                    });
-                } catch(e) {
-                    try {
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('POST', url, true);
-                        xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
-                        xhr.send(body);
-                    } catch(_) {}
+                        } catch(_) {}
+                    }
                 }
             });
             try {
                 const info = document.getElementById('player-room-info');
-                if (info && !isHost) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · ${important ? 'ĐÃ ĐẨY MÀN HÌNH' : 'ĐANG LIVE'} ${new Date().toLocaleTimeString('vi-VN')}`;
+                if (info && !isHost) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · ${important ? 'ĐẨY TRẠNG THÁI' : 'LIVE'} ${new Date().toLocaleTimeString('vi-VN')}`;
             } catch(e) {}
         }
 
@@ -2395,11 +2415,11 @@
         function startPlayerRealtimeLoop() {
             if (isHost || playerRealtimeTimer) return;
             sendCurrentPlayerPayload('loop-start', true);
-            // V8.9: đồng hồ host tự đếm từng giây; heartbeat chỉ giữ kết nối, không spam 3-6 request/giây như bản cũ.
+            // V9.0: đồng hồ host tự đếm từng giây; heartbeat chỉ giữ kết nối, không spam 3-6 request/giây như bản cũ.
             playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload('heartbeat', false), 1000);
         }
 
-        // V8.9: khi điện thoại vừa mở lại tab / mạng vừa hồi, bắn lại trạng thái quan trọng ngay.
+        // V9.0: khi điện thoại vừa mở lại tab / mạng vừa hồi, bắn lại trạng thái quan trọng ngay.
         function forceMobileRealtimePing() {
             if (!isHost && teamId) {
                 try {
@@ -2427,7 +2447,8 @@
                 extraPayload.finalTime = getPlayerElapsedSeconds();
             }
             const payload = {
-                game: 'elogix-shield', version: '8.9-v78-ui-reliable-mobile-realtime', room: ROOM_CODE,
+                game: 'elogix-shield', version: '9.0-stable-game-state-realtime', room: ROOM_CODE, session: NETWORK_SESSION,
+                clientId: PLAYER_CLIENT_ID,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity,
                 time: currentSeconds, finalTime: isFinished ? getPlayerElapsedSeconds() : null,
                 startedAt: startTime || 0, finishedAt: finishedAt || 0,
@@ -2441,19 +2462,23 @@
         function broadcastState(stageName, extraData = {}) {
             if (isHost || !teamId) return;
             lastStageName = stageName || lastStageName;
-            lastExtraData = Object.assign({}, extraData || {}, { stateUpdatedAt: Date.now() });
+            lastExtraData = Object.assign({}, extraData || {}, {
+                stateUpdatedAt: Date.now(),
+                stageCodeSnapshot: window.currentStageCode || 'login'
+            });
             startPlayerRealtimeLoop();
-            // V8.9: mọi thay đổi màn hình đều bắn gói quan trọng trước, rồi xác nhận lại vài nhịp.
+            // V9.0: mỗi lần màn chơi đổi tầng/đổi đáp án sẽ đẩy gói quan trọng nhiều nhịp, nhưng không spam ntfy liên tục.
             sendCurrentPlayerPayload('state-change', true);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-1', true), 350);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-2', false), 900);
-            setTimeout(() => sendCurrentPlayerPayload('state-confirm-3', false), 1800);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-1', true), 250);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-2', true), 750);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-3', false), 1600);
+            setTimeout(() => sendCurrentPlayerPayload('state-confirm-4', false), 3200);
         }
 
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.9-v78-ui-reliable-mobile-realtime', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), seq:++playerRealtimeSeq, reason:'pagehide', isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const payload = { game:'elogix-shield', version:'9.0-stable-game-state-realtime', room:ROOM_CODE, session:NETWORK_SESSION, clientId:PLAYER_CLIENT_ID, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), seq:++playerRealtimeSeq, reason:'pagehide', isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
                 if (navigator.sendBeacon) NETWORK_PUBLISH_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
@@ -2463,9 +2488,9 @@
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · KÊNH V8.9: ${NETWORK_TOPIC_PRIMARY}`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V9.0 REALTIME READY`;
                 const pill = document.getElementById('live-status-pill');
-                if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · ĐANG NGHE`;
+                if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
         }
 
