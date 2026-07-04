@@ -1523,7 +1523,7 @@
 
 
         /* ======================================================= */
-        /* V12.0 WEBRTC ULTRA REALTIME UI - BILLION-CLASS EXPERIENCE      */
+        /* V12.1 TRUE LIVE TAB HYBRID UI - BILLION-CLASS EXPERIENCE      */
         /* ======================================================= */
         .elite-hero-strip {
             display: grid;
@@ -2105,6 +2105,28 @@
             box-shadow: 0 0 18px rgba(255,184,77,0.12) !important;
         }
 
+
+        /* V12.1 TRUE LIVE TAB HYBRID PATCH */
+        .actual-mirror-video,
+        video[id^="actual-screen-video-"] {
+            width: 100% !important;
+            max-height: 74vh !important;
+            object-fit: contain !important;
+            border-radius: 18px !important;
+            background: #000 !important;
+            box-shadow: 0 0 26px rgba(0,229,255,0.18) !important;
+        }
+        .real-sharing-card {
+            border-color: rgba(0,255,136,0.85) !important;
+            box-shadow: 0 0 28px rgba(0,255,136,0.24), inset 0 0 20px rgba(0,255,136,0.06) !important;
+        }
+        .capturing-live-tab .particle-canvas,
+        .capturing-live-tab .cursor-orb,
+        .capturing-live-tab .hud-rings,
+        .capturing-live-tab .cyber-atmosphere {
+            visibility: hidden !important;
+        }
+
 </style>
 </head>
 <body id="main-body">
@@ -2176,7 +2198,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V12.0</h1>
+            <h1>E-LOGIX SHIELD V12.1</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Prestige Command Deck</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
@@ -2274,6 +2296,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
 
         // V7.0 SUPREME VISUAL ENGINE: particle net + cursor glow + reactive HUD
@@ -2480,7 +2503,7 @@
             { urls: "stun:stun.l.google.com:19302" },
             { urls: "stun:global.stun.twilio.com:3478" }
         ]};
-        window.trueActualMirrorOnly = false; // V8.2: giữ giao diện V7.8 nhưng dùng core realtime kiểu V4.4, không dùng WebRTC/screen share
+        window.trueActualMirrorOnly = false; // V12.1: ưu tiên stream live-tab nếu có; nếu chưa nối được thì vẫn fallback state mirror
         window.realScreenStreams = {};
         window.hostRtcPeers = {};
         window.hostRtcSessions = {};
@@ -2591,15 +2614,23 @@
                 if (!data || data.event !== 'message' || !data.message) return null;
                 const msg = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
                 if (!msg || msg.game !== 'elogix-real-screen-v78') return null;
+                if (msg.room && msg.room !== ROOM_CODE) return null;
+                if (msg.session && msg.session !== NETWORK_SESSION) return null;
                 return msg;
             } catch(e) { return null; }
         }
 
         function sendRtcSignal(msg) {
+            const body = JSON.stringify(Object.assign({ game:'elogix-real-screen-v78', room:ROOM_CODE, session:NETWORK_SESSION, ts:Date.now() }, msg));
             return fetch(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}`, {
                 method: 'POST',
-                body: JSON.stringify(Object.assign({ game:'elogix-real-screen-v78', ts:Date.now() }, msg))
-            }).catch(() => {});
+                body,
+                cache: 'no-store',
+                keepalive: body.length < 60000,
+                headers: { 'Content-Type': 'text/plain;charset=UTF-8', 'X-Tags': 'tv' }
+            }).catch(() => {
+                try { if (navigator.sendBeacon) navigator.sendBeacon(`https://ntfy.sh/${RTC_SIGNAL_TOPIC}`, new Blob([body], { type:'text/plain;charset=UTF-8' })); } catch(e) {}
+            });
         }
 
         function installPlayerSharePanel() {
@@ -2615,10 +2646,25 @@
         let autoLiveBooting = false;
         let autoLiveRetryTimer = null;
         async function autoStartPlayerLiveMirror(reason = 'auto-start-on-play') {
-            // V8.2: Không tự bật WebRTC/html2canvas nữa. Host mirror bằng dữ liệu game realtime như bản 4.4.
+            // V12.1: bật lại cơ chế giống bản hôm qua: live-tab capture bằng canvas + WebRTC video.
+            // Không cần người chơi bấm nút live riêng. Nếu live-tab thất bại thì fallback về game-state mirror.
             if (isHost || !teamId) return;
-            window.trueScreenShareStatus = 'game_state';
-            broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'game_state' }));
+            if (autoLiveBooting || window.tabCaptureMode || window.trueScreenShareStatus === 'live_tab' || window.trueScreenShareStatus === 'live') return;
+            autoLiveBooting = true;
+            try {
+                window.trueScreenShareStatus = 'connecting_live_tab';
+                broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'connecting_live_tab', shareReason: reason }));
+                const ok = await startLiveTabCapture(reason);
+                if (!ok) {
+                    window.trueScreenShareStatus = 'game_state';
+                    broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'game_state_fallback', shareReason: reason }));
+                }
+            } catch(e) {
+                window.trueScreenShareStatus = 'game_state';
+                broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'game_state_fallback', shareReason: reason }));
+            } finally {
+                autoLiveBooting = false;
+            }
         }
 
         function isLikelyMobileDevice() {
@@ -2665,7 +2711,7 @@
             canvas.width = targetW;
             canvas.height = Math.min(1600, Math.max(620, targetH));
             window.tabCaptureCanvas = canvas;
-            const stream = canvas.captureStream(6);
+            const stream = canvas.captureStream(8);
             window.trueScreenStream = stream;
 
             const drawFallbackFrame = (label) => {
@@ -2711,7 +2757,7 @@
                     drawFallbackFrame('Đang thử chụp lại tab game...');
                 } finally {
                     window.tabCaptureBusy = false;
-                    window.tabCaptureTimer = setTimeout(captureLoop, 700);
+                    window.tabCaptureTimer = setTimeout(captureLoop, isLikelyMobileDevice() ? 650 : 420);
                 }
             };
             captureLoop();
@@ -2721,15 +2767,25 @@
         }
 
         function ensurePlayerRtcListener() {
-            // V8.2: tắt kênh WebRTC phụ; không cần quyền chia sẻ màn hình.
-            return;
+            // V12.1: dùng chung EventSource của kênh RTC để nhận answer/candidate video từ host.
+            startRtcDataListener();
         }
 
         async function requestTrueScreenShare() {
-            // V8.2: không xin quyền share màn hình. Chỉ gửi trạng thái game thật cho host.
+            // V12.1: ưu tiên live-tab tự động; nếu trình duyệt desktop cho phép share màn hình thật thì cũng có thể dùng.
             if (isHost || !teamId) return;
-            window.trueScreenShareStatus = 'game_state';
-            broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'game_state' }));
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && !isLikelyMobileDevice()) {
+                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 12 }, audio: false });
+                    stopTrueScreenShare(false);
+                    window.trueScreenStream = stream;
+                    window.trueScreenShareStatus = 'live';
+                    await createPlayerScreenOffer();
+                    broadcastState(lastStageName, Object.assign({}, lastExtraData || {}, { shareMode: 'screen_share' }));
+                    return;
+                }
+            } catch(e) {}
+            await autoStartPlayerLiveMirror('request-true-screen-share');
         }
 
         async function createPlayerScreenOffer() {
@@ -2742,7 +2798,7 @@
                 if (event.candidate) sendRtcSignal({ from:'player', to:'host', team:teamId, sessionId:window.trueScreenSessionId, type:'candidate', candidate:event.candidate });
             };
             pc.onconnectionstatechange = () => {
-                if (['failed','disconnected','closed'].includes(pc.connectionState) && window.trueScreenShareStatus === 'live') {
+                if (['failed','disconnected','closed'].includes(pc.connectionState) && ['live','live_tab','connecting_live_tab'].includes(window.trueScreenShareStatus)) {
                     // Nếu host reload/mất kết nối, gửi offer mới sau một nhịp.
                     setTimeout(() => { if (window.trueScreenStream) createPlayerScreenOffer(); }, 1500);
                 }
@@ -2750,6 +2806,21 @@
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
             await sendRtcSignal({ from:'player', to:'host', team:teamId, sessionId:window.trueScreenSessionId, type:'offer', sdp:offer.sdp });
+        }
+
+
+        async function handlePlayerScreenSignal(msg) {
+            if (isHost || !teamId) return;
+            if (msg.to !== 'player') return;
+            if (String(msg.team) !== String(teamId)) return;
+            if (msg.sessionId && msg.sessionId !== window.trueScreenSessionId) return;
+            const pc = window.trueScreenPc;
+            if (!pc) return;
+            if (msg.type === 'answer' && msg.sdp) {
+                try { await pc.setRemoteDescription({ type:'answer', sdp: msg.sdp }); } catch(e) {}
+            } else if (msg.type === 'candidate' && msg.candidate) {
+                try { await pc.addIceCandidate(msg.candidate); } catch(e) {}
+            }
         }
 
         function stopTrueScreenShare(shouldBroadcast = true) {
@@ -2765,8 +2836,8 @@
         }
 
         function startHostRtcListener() {
-            // V8.2: host chỉ nghe NETWORK_TOPIC như bản 4.4, không mở WebRTC.
-            return;
+            // V12.1: host nghe thêm offer/candidate của live-tab video.
+            startRtcDataListener();
         }
 
         async function handleHostScreenOffer(msg) {
@@ -3073,6 +3144,8 @@
         function mirrorPlayerScreen(payload) {
             const viewport = document.getElementById('mirror-viewport');
             if (!viewport || !payload) return;
+            // V12.1: nếu có stream live-tab/video thật thì ưu tiên hiển thị video, không dựng lại bằng state.
+            if (payload.team && window.realScreenStreams && window.realScreenStreams[String(payload.team)]) { renderActualMirror(payload); return; }
             if (window.trueActualMirrorOnly) { renderActualMirror(payload); return; }
             const extra = payload.extra || {};
             const hp = Number(payload.hp ?? 100);
@@ -3413,6 +3486,16 @@
                 source.onopen = () => updateRtcDataLabel(isHost ? 'WEBRTC DATA: ĐANG NGHE KÊNH SIÊU NHANH' : 'WEBRTC DATA: ĐANG KẾT NỐI');
                 source.onmessage = async (event) => {
                     try {
+                        const screenMsg = safeRtcJson(event);
+                        if (screenMsg) {
+                            if (isHost && screenMsg.to === 'host') {
+                                if (screenMsg.type === 'offer') await handleHostScreenOffer(screenMsg);
+                                else if (screenMsg.type === 'candidate') await handleHostScreenCandidate(screenMsg);
+                            } else if (!isHost && screenMsg.to === 'player') {
+                                await handlePlayerScreenSignal(screenMsg);
+                            }
+                            return;
+                        }
                         const data = JSON.parse(event.data);
                         const msg = parseRtcDataSignal(data);
                         if (!msg) return;
@@ -3671,7 +3754,7 @@ function startPlayerRealtimeLoop() {
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V12.0 WEBRTC ULTRA REALTIME`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V12.1 TRUE LIVE TAB HYBRID`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
@@ -3679,7 +3762,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V12.0 WEBRTC ULTRA REALTIME LAYER: command deck + stage rail + host metrics
+        // V12.1 TRUE LIVE TAB HYBRID LAYER: command deck + stage rail + host metrics
         function installPrestigeInterface() {
             if (window.__prestigeUIInstalled) return;
             window.__prestigeUIInstalled = true;
@@ -3812,7 +3895,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V12.0 WEBRTC ULTRA REALTIME UI LAYER: billionaire-grade overview + mission intelligence
+        // V12.1 TRUE LIVE TAB HYBRID UI LAYER: billionaire-grade overview + mission intelligence
         function installInfinityEliteUI() {
             if (window.__infinityEliteInstalled) return;
             window.__infinityEliteInstalled = true;
@@ -3918,6 +4001,7 @@ function startPlayerRealtimeLoop() {
             restoreHostHistory();
             listenToPlayerUpdates();
             startRtcDataListener();
+            startHostRtcListener();
             setInterval(refreshHostPresenceCards, 500);
         } else {
             document.getElementById("view-login").classList.add("active");
@@ -3933,6 +4017,7 @@ function startPlayerRealtimeLoop() {
             teamName = document.getElementById('team-id').options[document.getElementById('team-id').selectedIndex].text;
             installPlayerSharePanel();
             startPlayerRealtimeLoop();
+            setTimeout(() => autoStartPlayerLiveMirror('player-activated'), 650);
             sendCurrentPlayerPayload();
             // V8.2: không tự bật live tab; realtime đã chạy bằng heartbeat.
             try { audioCtx = getAudioCtx(); if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {}
@@ -4018,6 +4103,7 @@ function startPlayerRealtimeLoop() {
             window.currentStageCode = "c1";
             nextView('view-stage1');
             initStage1();
+            setTimeout(() => autoStartPlayerLiveMirror('entered-stage-1'), 500);
         }
 
         function shuffleArray(array) {
