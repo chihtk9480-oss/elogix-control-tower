@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chặng 1: Điều phối Logistics</title>
+    <style>
+        body { background: #080a12; color: #fff; font-family: 'Courier New', monospace; padding: 20px; }
+        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: auto; }
+        .card { background: #111525; border: 1px solid #303e6d; padding: 20px; border-radius: 10px; }
+        .order-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #222; margin-bottom: 5px; }
+        .status-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+        .IN_TRANSIT { background: #00d2ff; color: #000; }
+        .DELAYED { background: #ff0044; color: #fff; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center; color:#00d2ff;">📡 THÁP ĐIỀU PHỐI LOGISTICS</h1>
+    <div class="dashboard">
+        <div class="card">
+            <h3>TRẠNG THÁI ĐƠN HÀNG</h3>
+            <div id="order-list">
+                <div class="order-row"><span>MAERSK-001</span> <span>Cảng Cát Lái</span> <span class="status-tag IN_TRANSIT">ĐANG ĐI</span></div>
+                <div class="order-row"><span>MAERSK-002</span> <span>Trên biển</span> <span class="status-tag IN_TRANSIT">ĐANG ĐI</span></div>
+                <div class="order-row"><span>MAERSK-003</span> <span>Kho TP.HCM</span> <span class="status-tag IN_TRANSIT">ĐANG ĐI</span></div>
+            </div>
+        </div>
+        <div class="card" id="event-log">
+            <h3>BẢN TIN SỰ CỐ</h3>
+            <p style="color:#666;">Đang đợi tín hiệu từ Tổng đài...</p>
+        </div>
+    </div>
+    <script>
+        // Khi bồ thuyết trình, cứ dùng chuột bấm vào đây để giả lập sự cố
+        document.getElementById('event-log').onclick = () => {
+            document.getElementById('event-log').innerHTML = "<p style='color:#ffcc00; font-weight:bold;'>⚠️ CẢNH BÁO: Tàu MAERSK-002 gặp bão tại Biển Đông! Cập nhật lộ trình ngay!</p>";
+        };
+    </script>
+</body>
+</html>
