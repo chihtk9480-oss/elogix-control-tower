@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>E-Logix Cyber Shield V8.4 - V7.8 UI + Stable 4.4 Realtime Core</title>
+    <title>E-Logix Cyber Shield V8.6 - V7.8 UI + Realtime Timer Lock</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1310,6 +1310,9 @@
             <div class="status-bar"><span>🔒 TẦNG 1: CYBERSECURITY</span><span id="hp-s1" style="color: var(--neon-green);">HỆ THỐNG: 100%</span></div>
             <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
             <div class="terminal-text" id="log-s1">> LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!</div>
+            <div style="background: rgba(255,0,68,0.12); border: 1px solid rgba(255,0,68,0.55); color: #ff9db3; padding: 10px 12px; border-radius: 12px; font-weight: 900; text-align: center; margin: -3px 0 12px; line-height: 1.45;">
+                LƯU Ý TẦNG 1: Ô chuyển sang <span style="color: var(--neon-red);">MÀU ĐỎ</span> nghĩa là <span style="color: #fff;">BẠN ĐÃ ĐÚNG</span>, vì nhiệm vụ là cô lập tệp chứa mã độc.
+            </div>
             <div class="grid-container" id="grid-s1"></div>
             <div class="progress-bar"><div class="progress-fill" id="progress-s1"></div></div>
             <button class="btn btn-action" id="next-s1" style="display:none;" onclick="initStage2()">TIẾN VÀO TẦNG SAO LƯU KHO</button>
@@ -1472,6 +1475,39 @@
         }
 
         let teamId = ""; let teamName = ""; let startTime = 0; let integrity = 100;
+        // V8.6: khóa thời gian khi phá đảo để kết quả không bị cộng dồn sau khi chơi xong.
+        let finalElapsedSeconds = null;
+        let finishedAt = 0;
+        let gameFinished = false;
+        function getPlayerElapsedSeconds() {
+            if (finalElapsedSeconds !== null) return Number(finalElapsedSeconds) || 0;
+            return startTime > 0 ? Math.max(0, Math.floor((Date.now() - startTime) / 1000)) : 0;
+        }
+        function lockFinalElapsedSeconds() {
+            if (finalElapsedSeconds === null) {
+                finalElapsedSeconds = getPlayerElapsedSeconds();
+                finishedAt = Date.now();
+            }
+            return finalElapsedSeconds;
+        }
+        function getPayloadFinalSeconds(payload) {
+            if (!payload) return 0;
+            const extra = payload.extra || {};
+            const v = payload.finalTime ?? extra.finalTime ?? payload.time ?? 0;
+            return Math.max(0, Number(v) || 0);
+        }
+        function getHostDisplaySeconds(payload) {
+            if (!payload) return 0;
+            const code = payload.stageCode || 'login';
+            const base = Math.max(0, Number(payload.time || 0));
+            if (code === 'win') return getPayloadFinalSeconds(payload);
+            const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
+            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 0;
+            if (isGameStage && recvAge >= 0 && recvAge < 9000) {
+                return base + Math.floor(recvAge / 1000);
+            }
+            return base;
+        }
         function createSafeAudioCtx() {
             try {
                 const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -1487,7 +1523,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
-        // V8.4 FIX CỨNG REALTIME:
+        // V8.6 FIX CỨNG REALTIME + KHÓA THỜI GIAN SAU KHI PHÁ ĐẢO:
         // Không còn phụ thuộc hostname/domain nên host ở GitHub Pages và người chơi ở link tương ứng vẫn cùng phòng nếu cùng room.
         // Mặc định dùng room=lop1 để tránh bạn mở thiếu room là lệch kênh.
         function elogixHash(input) {
@@ -1500,9 +1536,10 @@
         }
         const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v84_" + ROOM_CODE;
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v86_" + ROOM_CODE;
+        // V8.6: chỉ dùng kênh mới để tránh host kéo lại kết quả test cũ từ bản 4.4/8.4/8.5.
         const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
-        const NETWORK_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_LEGACY_44]));
+        const NETWORK_TOPICS = [NETWORK_TOPIC_PRIMARY];
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
         const RTC_SIGNAL_TOPIC = NETWORK_TOPIC + "_disabled";
         const RTC_CONFIG = { iceServers: [
@@ -1806,7 +1843,7 @@
             const presence = getTruePresence(payload);
             const shareStatus = payload.screenShareStatus || payload.extra?.shareStatus || (stream ? 'live' : 'off');
             const hp = Number(payload.hp ?? 100);
-            const time = Number(payload.time || 0);
+            const time = getHostDisplaySeconds(payload);
             const onlineText = presence.isPlaying ? '<span class="real-live-badge">🟢 ĐANG CHƠI THẬT</span>' : presence.isOnline ? '<span class="real-warn-badge">🟡 ONLINE / ĐANG NGHỈ</span>' : '<span class="real-dead-badge">⚫ MẤT TÍN HIỆU</span>';
             const shareText = stream ? (shareStatus === 'live_tab' || payload.extra?.shareMode === 'live_tab' ? '<span class="tab-capture-badge">🔵 ĐANG LIVE TAB GAME</span>' : '<span class="real-live-badge">🔴 ĐANG STREAM MÀN HÌNH THẬT</span>') : (shareStatus === 'live' || shareStatus === 'live_tab' ? '<span class="real-warn-badge">🟡 ĐANG KẾT NỐI STREAM...</span>' : '<span class="real-warn-badge">🟡 ĐANG TỰ KẾT NỐI LIVE</span>');
             viewport.innerHTML = `
@@ -1852,6 +1889,8 @@
                     const label = p.isPlaying ? '🟢 ĐANG CHƠI THẬT' : p.isOnline ? (payload.stageCode === 'win' ? '🏁 ĐÃ XONG' : '🟡 ONLINE/ĐANG NGHỈ') : '⚫ MẤT TÍN HIỆU';
                     stageEl.innerHTML = `${label} · ${payload.stage || 'Đang đồng bộ...'}`;
                 }
+                const timeEl = document.getElementById(`host-time-${id}`);
+                if (timeEl) timeEl.innerHTML = getHostDisplaySeconds(payload) + "s"; 
             });
             if (window.selectedSpecTeam && window.teamStates[window.selectedSpecTeam]) {
                 const current = window.teamStates[window.selectedSpecTeam];
@@ -1891,11 +1930,11 @@
                     const bPerfect = Number(b.hp) === 100 ? 1 : 0;
                     if (bPerfect !== aPerfect) return bPerfect - aPerfect;
                     if (Number(b.hp) !== Number(a.hp)) return Number(b.hp) - Number(a.hp);
-                    return Number(a.time) - Number(b.time);
+                    return getPayloadFinalSeconds(a) - getPayloadFinalSeconds(b);
                 });
 
             const perfectFinishers = finished.filter(s => Number(s.hp) === 100)
-                                           .sort((a, b) => Number(a.time) - Number(b.time));
+                                           .sort((a, b) => getPayloadFinalSeconds(a) - getPayloadFinalSeconds(b));
 
             if (!finished.length) {
                 list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ các nhóm phá đảo...</div>`;
@@ -1905,7 +1944,7 @@
 
             if (perfectFinishers.length) {
                 const winner = perfectFinishers[0];
-                strip.innerHTML = `🏆 TẠM DẪN ĐẦU: NHÓM CỔ ĐÔNG ${winner.team} — KHÔI PHỤC 100% TRONG ${winner.time} GIÂY`;
+                strip.innerHTML = `🏆 TẠM DẪN ĐẦU: NHÓM CỔ ĐÔNG ${winner.team} — KHÔI PHỤC 100% TRONG ${getPayloadFinalSeconds(winner)} GIÂY`;
                 const winnerCard = document.getElementById(`card-team-${winner.team}`);
                 if (winnerCard) winnerCard.classList.add("winner-card");
             } else {
@@ -1925,7 +1964,7 @@
                         </div>
                         <div style="text-align:right;">
                             <div style="color:${perfect ? "var(--neon-green)" : "orange"}">${s.hp}%</div>
-                            <div class="leader-meta">${s.time}s</div>
+                            <div class="leader-meta">${getPayloadFinalSeconds(s)}s</div>
                         </div>
                     </div>
                 `;
@@ -2005,7 +2044,7 @@
 
         function liveTopBar(payload) {
             const hp = Number(payload.hp ?? 100);
-            const time = Number(payload.time || 0);
+            const time = getHostDisplaySeconds(payload);
             return `<div class="live-phone-top">
                 <span><span class="live-dot"></span>NHÓM ${esc(payload.team)} · ${time}s</span>
                 <span style="color:${hp >= 75 ? 'var(--neon-green)' : hp >= 40 ? 'orange' : 'var(--neon-red)'}">HỆ THỐNG: ${hp}%</span>
@@ -2033,7 +2072,7 @@
                 const found = Number(extra.found || 0);
                 body = `${liveTopBar(payload)}
                     <h2>QUÉT MÃ ĐỘC TỐNG TIỀN</h2>
-                    <div class="live-terminal">&gt; LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!</div>
+                    <div class="live-terminal">&gt; LỖI: Mã độc Ransomware đang khóa tệp tin vận đơn. Hãy click chọn cô lập chính xác 4 tệp tin chứa virus nguy hiểm!<br><br><span style="color:#ff9db3; font-weight:1000;">LƯU Ý: Ô MÀU ĐỎ = BẠN ĐÃ ĐÚNG, vì đang cô lập tệp mã độc.</span></div>
                     ${renderLiveGrid(extra.items || [], extra.badClicked || [], extra.goodClicked || [])}
                     <div class="live-progress"><span style="width:${Math.min(100, found / 4 * 100)}%"></span></div>
                     ${found >= 4 ? '<div class="live-next">TIẾN VÀO TẦNG SAO LƯU KHO</div>' : ''}`;
@@ -2076,7 +2115,7 @@
                     <div style="text-align:center; margin-top:60px;">
                         <h2 style="color:var(--neon-green); text-shadow:0 0 18px var(--neon-green);">🏆 HỆ THỐNG ĐÃ KHÔI PHỤC</h2>
                         <div style="font-size:4rem; font-weight:1000; color:var(--neon-green); text-shadow:0 0 25px rgba(0,255,102,.45);">${hp}%</div>
-                        <div style="line-height:1.9; color:#cbd5e1; font-weight:900;">Nhóm Cổ Đông ${esc(payload.team)}<br>Thời gian phá đảo: <span style="color:var(--neon-blue)">${esc(payload.time || 0)} giây</span></div>
+                        <div style="line-height:1.9; color:#cbd5e1; font-weight:900;">Nhóm Cổ Đông ${esc(payload.team)}<br>Thời gian phá đảo: <span style="color:var(--neon-blue)">${esc(getPayloadFinalSeconds(payload))} giây</span></div>
                     </div>`;
             } else if (payload.stageCode === 'intro') {
                 body = `${liveTopBar(payload)}
@@ -2127,7 +2166,7 @@
             let stageEl = document.getElementById(`host-stage-${payload.team}`);
             if(stageEl) stageEl.innerHTML = payload.stage || "Đang đồng bộ...";
             let timeEl = document.getElementById(`host-time-${payload.team}`);
-            if(timeEl) timeEl.innerHTML = (payload.time || 0) + "s";
+            if(timeEl) timeEl.innerHTML = getHostDisplaySeconds(payload) + "s";
             let hpTxtEl = document.getElementById(`host-hp-txt-${payload.team}`);
             if(hpTxtEl) hpTxtEl.innerHTML = (payload.hp ?? 100) + "%";
             const fill = document.getElementById(`host-hp-fill-${payload.team}`);
@@ -2251,21 +2290,29 @@
         function startPlayerRealtimeLoop() {
             if (isHost || playerRealtimeTimer) return;
             sendCurrentPlayerPayload();
-            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 4000);
+            playerRealtimeTimer = setInterval(() => sendCurrentPlayerPayload(), 1000);
         }
 
         function sendCurrentPlayerPayload() {
             if (isHost || !teamId) return;
-            const currentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0;
             const now = Date.now();
             const code = window.currentStageCode || "login";
+            const currentSeconds = getPlayerElapsedSeconds();
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
-            const isPlaying = isGameStage;
+            const isFinished = code === 'win';
+            const isPlaying = isGameStage && !isFinished;
+            const extraPayload = Object.assign({}, lastExtraData || {});
+            if (isFinished) {
+                extraPayload.finalIntegrity = integrity;
+                extraPayload.finalTime = getPlayerElapsedSeconds();
+            }
             const payload = {
-                game: 'elogix-shield', version: '8.4-v78-ui-44-core-stable', room: ROOM_CODE,
-                team: teamId, stage: lastStageName, stageCode: code, hp: integrity, time: currentSeconds,
-                sentAt: now, activityAt: window.lastPlayerActivityAt || now, isPlaying, online: true,
-                screenShareStatus: 'game_state', extra: lastExtraData || {}
+                game: 'elogix-shield', version: '8.6-v78-ui-realtime-timer-lock', room: ROOM_CODE,
+                team: teamId, stage: lastStageName, stageCode: code, hp: integrity,
+                time: currentSeconds, finalTime: isFinished ? getPlayerElapsedSeconds() : null,
+                startedAt: startTime || 0, finishedAt: finishedAt || 0,
+                sentAt: now, activityAt: isFinished ? (finishedAt || now) : (window.lastPlayerActivityAt || now),
+                isPlaying, online: true, screenShareStatus: 'game_state', extra: extraPayload
             };
             postRealtimePayload(payload);
         }
@@ -2283,7 +2330,7 @@
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.4-v78-ui-44-core-stable', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : 0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const payload = { game:'elogix-shield', version:'8.6-v78-ui-realtime-timer-lock', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
                 if (navigator.sendBeacon) NETWORK_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
@@ -2397,7 +2444,15 @@
             if (targetView) targetView.classList.add('active');
             stageTransitionSound(viewId);
         }
-        function enterStage1() { startTime = Date.now(); window.currentStageCode = "c1"; nextView('view-stage1'); initStage1(); }
+        function enterStage1() {
+            startTime = Date.now();
+            finalElapsedSeconds = null;
+            finishedAt = 0;
+            gameFinished = false;
+            window.currentStageCode = "c1";
+            nextView('view-stage1');
+            initStage1();
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array;
@@ -2534,15 +2589,17 @@
         }
 
         // FINISH
-        function finishGame() { 
-            window.currentStageCode = "win"; 
-            winSound(); 
-            let seconds = Math.floor((Date.now() - startTime) / 1000); 
-            nextView('view-result'); 
-            document.getElementById('final-integrity').innerHTML = integrity + "%"; 
-            document.getElementById('res-team').innerHTML = teamName; 
-            document.getElementById('res-time').innerHTML = seconds; 
-            document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X"; 
+        function finishGame() {
+            if (gameFinished) return;
+            gameFinished = true;
+            const seconds = lockFinalElapsedSeconds();
+            window.currentStageCode = "win";
+            winSound();
+            nextView('view-result');
+            document.getElementById('final-integrity').innerHTML = integrity + "%";
+            document.getElementById('res-team').innerHTML = teamName;
+            document.getElementById('res-time').innerHTML = seconds;
+            document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X";
             const title = document.getElementById('result-title');
             if (integrity === 100) {
                 title.innerHTML = "KHÔI PHỤC 100% — ĐỦ ĐIỀU KIỆN TRANH HẠNG";
@@ -2551,7 +2608,10 @@
                 title.innerHTML = "HOÀN THÀNH NHIỆM VỤ — CHƯA ĐẠT MỐC 100%";
                 title.style.color = "orange";
             }
-            broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds }); 
+            // V8.6: tiếp tục gửi heartbeat để host biết nhóm đã xong, nhưng thời gian đã bị khóa, không cộng dồn nữa.
+            broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds });
+            setTimeout(sendCurrentPlayerPayload, 250);
+            setTimeout(sendCurrentPlayerPayload, 900);
         }
     </script>
 </body>
