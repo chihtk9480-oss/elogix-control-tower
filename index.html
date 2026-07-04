@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>E-Logix Cyber Shield V8.6 - V7.8 UI + Realtime Timer Lock</title>
+    <title>E-Logix Cyber Shield V8.7 - V7.8 UI + Persistent Realtime All Stages</title>
     <style>
         :root {
             --bg-color: #020308;
@@ -1263,6 +1263,7 @@
                     <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📡 MIRROR MATRIX FEED: IDLE</div>
                     <div class="mirror-controls">
                         <button class="mirror-control-btn active" id="auto-follow-btn" onclick="enableAutoFollow()">🔴 AUTO-FOLLOW NHÓM ĐANG CHƠI</button>
+                        <button class="mirror-control-btn" id="clear-results-btn" onclick="clearHostResults()">🧹 XÓA KẾT QUẢ / RESET HOST</button>
                         <span class="live-status-pill" id="live-status-pill">Đang chờ tín hiệu...</span>
                     </div>
                     <div class="mirror-phone-viewport" id="mirror-viewport">
@@ -1475,7 +1476,7 @@
         }
 
         let teamId = ""; let teamName = ""; let startTime = 0; let integrity = 100;
-        // V8.6: khóa thời gian khi phá đảo để kết quả không bị cộng dồn sau khi chơi xong.
+        // V8.7: khóa thời gian khi phá đảo; host lưu lịch sử để F5 không mất kết quả.
         let finalElapsedSeconds = null;
         let finishedAt = 0;
         let gameFinished = false;
@@ -1502,10 +1503,14 @@
             const base = Math.max(0, Number(payload.time || 0));
             if (code === 'win') return getPayloadFinalSeconds(payload);
             const isGameStage = ['c1','c2','c3','c4','c5'].includes(code);
-            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 0;
-            if (isGameStage && recvAge >= 0 && recvAge < 9000) {
-                return base + Math.floor(recvAge / 1000);
+            const started = Number(payload.startedAt || 0);
+            // V8.7: host tự tính thời gian từ mốc bắt đầu để vẫn nhảy từng giây ở TẤT CẢ tầng,
+            // kể cả khi mạng/SSE bị nghẽn vài giây. Không còn chỉ đếm trong 9 giây sau gói tin cuối.
+            if (isGameStage && started > 0) {
+                return Math.max(base, Math.floor((Date.now() - started) / 1000));
             }
+            const recvAge = payload._receivedAt ? Date.now() - Number(payload._receivedAt) : 0;
+            if (isGameStage && recvAge >= 0) return base + Math.floor(Math.max(0, recvAge) / 1000);
             return base;
         }
         function createSafeAudioCtx() {
@@ -1523,7 +1528,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get('role') === 'host';
-        // V8.6 FIX CỨNG REALTIME + KHÓA THỜI GIAN SAU KHI PHÁ ĐẢO:
+        // V8.7 FIX REALTIME TOÀN BỘ TẦNG + LƯU LỊCH SỬ HOST:
         // Không còn phụ thuộc hostname/domain nên host ở GitHub Pages và người chơi ở link tương ứng vẫn cùng phòng nếu cùng room.
         // Mặc định dùng room=lop1 để tránh bạn mở thiếu room là lệch kênh.
         function elogixHash(input) {
@@ -1536,8 +1541,8 @@
         }
         const ROOM_CODE = String(urlParams.get('room') || urlParams.get('r') || 'lop1')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'lop1';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v86_" + ROOM_CODE;
-        // V8.6: chỉ dùng kênh mới để tránh host kéo lại kết quả test cũ từ bản 4.4/8.4/8.5.
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v87_" + ROOM_CODE;
+        // V8.7: dùng kênh mới để realtime sạch; host có nút xóa kết quả để chặn dữ liệu test cũ.
         const NETWORK_TOPIC_LEGACY_44 = "elogix_warroom_realtime_stream_2026";
         const NETWORK_TOPICS = [NETWORK_TOPIC_PRIMARY];
         const NETWORK_TOPIC = NETWORK_TOPIC_PRIMARY;
@@ -1569,6 +1574,78 @@
         window.hostAutoFollow = true;
 
         const activeTeams = ["1", "2", "4", "5", "6", "7", "8"];
+
+        const HOST_HISTORY_KEY = `elogix_host_history_v87_${ROOM_CODE}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v87_${ROOM_CODE}`;
+
+        function getHostResetCutoff() {
+            try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
+            catch(e) { return 0; }
+        }
+
+        function setHostResetCutoff(ts) {
+            try { localStorage.setItem(HOST_RESET_KEY, String(ts || Date.now())); }
+            catch(e) {}
+        }
+
+        function saveHostHistory() {
+            if (!isHost) return;
+            try {
+                localStorage.setItem(HOST_HISTORY_KEY, JSON.stringify({
+                    room: ROOM_CODE,
+                    savedAt: Date.now(),
+                    selectedSpecTeam: window.selectedSpecTeam,
+                    hostAutoFollow: window.hostAutoFollow,
+                    teamStates: window.teamStates || {}
+                }));
+            } catch(e) {}
+        }
+
+        function restoreHostHistory() {
+            if (!isHost) return;
+            try {
+                const raw = localStorage.getItem(HOST_HISTORY_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (!data || data.room !== ROOM_CODE || !data.teamStates) return;
+                const cutoff = getHostResetCutoff();
+                Object.keys(data.teamStates).forEach(team => {
+                    const payload = data.teamStates[team];
+                    if (!payload || !payload.team) return;
+                    if (cutoff && Number(payload.sentAt || 0) < cutoff) return;
+                    payload._receivedAt = Date.now();
+                    applyHostPayload(payload, { fromHistory: true, persist: false });
+                });
+                if (data.selectedSpecTeam && window.teamStates[data.selectedSpecTeam]) {
+                    window.selectedSpecTeam = data.selectedSpecTeam;
+                    const card = document.getElementById(`card-team-${window.selectedSpecTeam}`);
+                    if (card) card.classList.add('spec-selected');
+                    mirrorPlayerScreen(window.teamStates[window.selectedSpecTeam]);
+                }
+                refreshHostPresenceCards();
+                renderLeaderboard();
+            } catch(e) {}
+        }
+
+        function clearHostResults() {
+            if (!isHost) return;
+            const ok = confirm('Xóa toàn bộ kết quả/lịch sử host trong room này? Nên bấm trước khi vào lớp nếu đã test trước.');
+            if (!ok) return;
+            setHostResetCutoff(Date.now());
+            window.teamStates = {};
+            window.selectedSpecTeam = null;
+            window.hostAutoFollow = true;
+            try { localStorage.removeItem(HOST_HISTORY_KEY); } catch(e) {}
+            initHostDashboard();
+            const title = document.getElementById('spec-title');
+            if (title) title.innerHTML = `📡 ROOM ${ROOM_CODE.toUpperCase()} · ĐÃ XÓA KẾT QUẢ, ĐANG CHỜ NGƯỜI CHƠI`;
+            const pill = document.getElementById('live-status-pill');
+            if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · ĐÃ RESET HOST`;
+            const viewport = document.getElementById('mirror-viewport');
+            if (viewport) viewport.innerHTML = `<div style="text-align: center; color: #475569; font-style: italic; margin: auto;">Đã xóa kết quả/lịch sử host. Khi người chơi bấm kích hoạt, host sẽ hiện lại realtime từ đầu.</div>`;
+            renderLeaderboard();
+            updateAutoFollowButton();
+        }
 
         function markPlayerActivity() {
             if (!isHost) window.lastPlayerActivityAt = Date.now();
@@ -2151,13 +2228,15 @@
             } catch(e) { return null; }
         }
 
-        function applyHostPayload(payload) {
+        function applyHostPayload(payload, options = {}) {
             if (!payload || !payload.team) return;
-            const previousPayload = window.teamStates[payload.team];
             const incomingStamp = Number(payload.sentAt || 0);
+            const cutoff = getHostResetCutoff();
+            if (cutoff && (!incomingStamp || incomingStamp < cutoff)) return;
+            const previousPayload = window.teamStates[payload.team];
             const previousStamp = Number(previousPayload?.sentAt || 0);
             if (previousPayload && previousStamp && incomingStamp && incomingStamp < previousStamp) return;
-            payload._receivedAt = Date.now();
+            payload._receivedAt = options.fromHistory ? (payload._receivedAt || Date.now()) : Date.now();
             window.teamStates[payload.team] = payload;
 
             document.querySelectorAll('.host-card').forEach(c => c.classList.remove('live-playing'));
@@ -2189,6 +2268,7 @@
             updateAutoFollowButton();
             refreshHostPresenceCards();
             renderLeaderboard();
+            if (options.persist !== false) saveHostHistory();
         }
 
         async function loadCachedPlayerStates() {
@@ -2197,7 +2277,7 @@
             // Nghe cả kênh V8.4 và kênh 4.4 cũ để tránh host/player bị lẫn bản.
             for (const topic of NETWORK_TOPICS) {
                 try {
-                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=2m&_=${Date.now()}`, { cache: "no-store" });
+                    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=12h&_=${Date.now()}`, { cache: "no-store" });
                     const text = await res.text();
                     if (!text.trim()) continue;
                     text.trim().split(/\n+/).forEach(line => {
@@ -2217,7 +2297,7 @@
         function listenToPlayerUpdates() {
             // 1) Poll ngay và poll lặp lại: sửa lỗi host mở sau người chơi hoặc SSE bị chặn.
             loadCachedPlayerStates();
-            setInterval(loadCachedPlayerStates, 2000);
+            setInterval(loadCachedPlayerStates, 1000);
 
             const title = document.getElementById('spec-title');
             if (title && !window.selectedSpecTeam) {
@@ -2307,7 +2387,7 @@
                 extraPayload.finalTime = getPlayerElapsedSeconds();
             }
             const payload = {
-                game: 'elogix-shield', version: '8.6-v78-ui-realtime-timer-lock', room: ROOM_CODE,
+                game: 'elogix-shield', version: '8.7-v78-ui-realtime-persist-timer', room: ROOM_CODE,
                 team: teamId, stage: lastStageName, stageCode: code, hp: integrity,
                 time: currentSeconds, finalTime: isFinished ? getPlayerElapsedSeconds() : null,
                 startedAt: startTime || 0, finishedAt: finishedAt || 0,
@@ -2330,7 +2410,7 @@
         window.addEventListener('pagehide', () => {
             if (isHost || !teamId) return;
             try {
-                const payload = { game:'elogix-shield', version:'8.6-v78-ui-realtime-timer-lock', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
+                const payload = { game:'elogix-shield', version:'8.7-v78-ui-realtime-persist-timer', room:ROOM_CODE, team:teamId, stage:lastStageName, stageCode:window.currentStageCode || 'login', hp:integrity, time:getPlayerElapsedSeconds(), finalTime:(window.currentStageCode === 'win' ? getPlayerElapsedSeconds() : null), startedAt:startTime||0, finishedAt:finishedAt||0, sentAt:Date.now(), activityAt:Date.now(), isPlaying:false, online:false, screenShareStatus:'game_state', extra:lastExtraData || {} };
                 const body = JSON.stringify(payload);
                 if (navigator.sendBeacon) NETWORK_TOPICS.forEach(topic => navigator.sendBeacon(`https://ntfy.sh/${topic}`, new Blob([body], { type:'text/plain;charset=UTF-8' })));
             } catch(e) {}
@@ -2351,8 +2431,9 @@
         if (isHost) {
             document.getElementById("view-host").classList.add("active");
             initHostDashboard();
+            restoreHostHistory();
             listenToPlayerUpdates();
-            setInterval(refreshHostPresenceCards, 1000);
+            setInterval(refreshHostPresenceCards, 500);
         } else {
             document.getElementById("view-login").classList.add("active");
         }
@@ -2608,7 +2689,7 @@
                 title.innerHTML = "HOÀN THÀNH NHIỆM VỤ — CHƯA ĐẠT MỐC 100%";
                 title.style.color = "orange";
             }
-            // V8.6: tiếp tục gửi heartbeat để host biết nhóm đã xong, nhưng thời gian đã bị khóa, không cộng dồn nữa.
+            // V8.7: tiếp tục gửi heartbeat để host lưu kết quả, nhưng thời gian đã bị khóa, không cộng dồn nữa.
             broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds });
             setTimeout(sendCurrentPlayerPayload, 250);
             setTimeout(sendCurrentPlayerPayload, 900);
