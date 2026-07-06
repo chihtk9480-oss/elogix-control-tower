@@ -1523,7 +1523,7 @@
 
 
         /* ======================================================= */
-        /* V14.0 FINAL-ONLY SAFE UI - BILLION-CLASS EXPERIENCE      */
+        /* V14.1 SAFE AUTO FINAL UI - BILLION-CLASS EXPERIENCE      */
         /* ======================================================= */
         .elite-hero-strip {
             display: grid;
@@ -2106,7 +2106,7 @@
         }
 
 
-        /* V14.0 FINAL-ONLY SAFE PATCH */
+        /* V14.1 SAFE AUTO FINAL PATCH */
         .actual-mirror-video,
         video[id^="actual-screen-video-"] {
             width: 100% !important;
@@ -2129,7 +2129,7 @@
 
 
         /* ======================================================= */
-        /* V14.0 FINAL-ONLY SAFE WORKSHOP UI                    */
+        /* V14.1 SAFE AUTO FINAL WORKSHOP UI                    */
         /* ======================================================= */
         .result-only-shell {
             width: 100%;
@@ -2335,7 +2335,7 @@
 
 
         /* ======================================================= */
-        /* V14.0 FINAL-ONLY SAFE WORKSHOP UI                       */
+        /* V14.1 SAFE AUTO FINAL WORKSHOP UI                       */
         /* ======================================================= */
         body.host-mode-active .host-split-layout {
             grid-template-columns: 1fr;
@@ -2533,6 +2533,31 @@
             }
         }
 
+
+        /* V14.1 SAFE AUTO-FINAL PATCH */
+        .pending-playing-card {
+            border-color: rgba(0,210,255,.42) !important;
+            box-shadow: 0 0 18px rgba(0,210,255,.12), inset 0 0 16px rgba(0,210,255,.04) !important;
+        }
+        .pending-playing-card .host-team-stage {
+            color: #9eeaff !important;
+        }
+        .final-complete-card {
+            border-color: rgba(0,255,136,.58) !important;
+            box-shadow: 0 0 24px rgba(0,255,136,.16), inset 0 0 18px rgba(0,255,136,.05) !important;
+        }
+        body.host-mode-active .particle-canvas,
+        body.host-mode-active .cursor-orb {
+            display: none !important;
+        }
+        body.host-mode-active .hud-rings,
+        body.host-mode-active .cyber-atmosphere {
+            opacity: .45 !important;
+        }
+        body.host-mode-active .game-wrapper {
+            animation: none !important;
+        }
+
 </style>
 </head>
 <body id="main-body">
@@ -2604,7 +2629,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V14.0</h1>
+            <h1>E-LOGIX SHIELD V14.1</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Prestige Command Deck</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
@@ -2901,9 +2926,9 @@
         // Khi test hoặc thi thật có thể thêm &session=ten-buoi-choi vào cả host và người chơi.
         const NETWORK_SESSION = String(urlParams.get('session') || urlParams.get('s') || 'main')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'main';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v14_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v14_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        const NETWORK_TOPIC_FINAL = "elogix_chitk9480_controltower_v14_finish_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v141_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v141_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_FINAL = "elogix_chitk9480_controltower_v141_finish_" + ROOM_CODE + "_" + NETWORK_SESSION;
         // V11.2: tách kênh mới hoàn toàn để không dính cache/kẹt tầng từ V9/V10/V11 cũ.
         // Kênh FINISH riêng giúp host nhận được thời gian khóa cuối cùng chắc hơn.
         const NETWORK_PUBLISH_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
@@ -2956,8 +2981,8 @@
             return teamLabels[id] || ("Nhóm Cổ Đông " + id);
         }
 
-        const HOST_HISTORY_KEY = `elogix_host_history_v14_final_${ROOM_CODE}_${NETWORK_SESSION}`;
-        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v14_final_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_HISTORY_KEY = `elogix_host_history_v141_final_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v141_final_${ROOM_CODE}_${NETWORK_SESSION}`;
 
         function getHostResetCutoff() {
             try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
@@ -4181,7 +4206,7 @@ function startPlayerRealtimeLoop() {
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V14.0 FINAL-ONLY SAFE`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V14.1 SAFE AUTO FINAL`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
@@ -4189,7 +4214,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V14.0 FINAL-ONLY SAFE LAYER: command deck + stage rail + host metrics
+        // V14.1 SAFE AUTO FINAL LAYER: command deck + stage rail + host metrics
         function installPrestigeInterface() {
             if (window.__prestigeUIInstalled) return;
             window.__prestigeUIInstalled = true;
@@ -4322,7 +4347,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V14.0 FINAL-ONLY SAFE UI LAYER: billionaire-grade overview + mission intelligence
+        // V14.1 SAFE AUTO FINAL UI LAYER: billionaire-grade overview + mission intelligence
         function installInfinityEliteUI() {
             if (window.__infinityEliteInstalled) return;
             window.__infinityEliteInstalled = true;
@@ -4419,7 +4444,7 @@ function startPlayerRealtimeLoop() {
 
 
         // =======================================================
-        // V14.0 FINAL-ONLY SAFE WORKSHOP MODE
+        // V14.1 SAFE AUTO FINAL WORKSHOP MODE
         // Bỏ live màn hình/video để ưu tiên ổn định: host chỉ hiển thị kết quả từng tầng.
         // =======================================================
         const RESULT_STAGE_META = [
@@ -4578,7 +4603,7 @@ function startPlayerRealtimeLoop() {
 
 
         // =======================================================
-        // V14.0 FINAL-ONLY SAFE WORKSHOP MODE
+        // V14.1 SAFE AUTO FINAL WORKSHOP MODE
         // Host chỉ nhận/hiện kết quả cuối. Không theo realtime nữa để giảm rủi ro.
         // Có nhập tay dự phòng nếu mạng không gửi được.
         // =======================================================
@@ -4874,7 +4899,7 @@ function startPlayerRealtimeLoop() {
             const pill = document.getElementById('live-status-pill');
             if (btn) {
                 btn.classList.remove('active');
-                btn.innerHTML = '🛡️ FINAL-ONLY SAFE MODE';
+                btn.innerHTML = '🛡️ SAFE AUTO-FINAL MODE';
                 btn.disabled = true;
             }
             if (pill) {
@@ -5248,6 +5273,417 @@ function startPlayerRealtimeLoop() {
             broadcastState("Phá đảo!", { finalIntegrity: integrity, finalTime: seconds });
             sendFinishBurst(seconds);
         }
+
+        // =======================================================
+        // V14.1 SAFE AUTO-FINAL OVERRIDE - LAST DEFINITIONS WIN
+        // Host nhận diện người chơi vào/chơi nhẹ nhàng, nhưng chỉ xếp hạng khi có kết quả cuối.
+        // Nhập tay chỉ là dự phòng, không phải luồng chính.
+        // =======================================================
+        function v141IsFinal(payload) {
+            return !!payload && String(payload.stageCode || '') === 'win';
+        }
+
+        function v141FinalSeconds(payload) {
+            return Math.max(0, Number(payload?.finalTime ?? payload?.extra?.finalTime ?? payload?.time ?? 0) || 0);
+        }
+
+        function v141MakePayload(team, hp, seconds, source = 'manual') {
+            const now = Date.now();
+            return {
+                game: 'elogix-shield',
+                version: '14.1-safe-auto-final',
+                room: ROOM_CODE,
+                session: NETWORK_SESSION,
+                clientId: source + '_' + now,
+                team: String(team || ''),
+                stage: 'Hoàn thành',
+                stageCode: 'win',
+                hp: Math.max(0, Math.min(100, Number(hp || 0))),
+                time: Math.max(0, Math.floor(Number(seconds || 0))),
+                finalTime: Math.max(0, Math.floor(Number(seconds || 0))),
+                startedAt: 0,
+                finishedAt: now,
+                sentAt: now,
+                activityAt: now,
+                seq: now,
+                reason: source,
+                isPlaying: false,
+                online: true,
+                screenShareStatus: 'final_only',
+                extra: {
+                    finalIntegrity: Math.max(0, Math.min(100, Number(hp || 0))),
+                    finalTime: Math.max(0, Math.floor(Number(seconds || 0))),
+                    source
+                }
+            };
+        }
+
+        function getFinalCode(team, hp, seconds) {
+            return `TEAM=${String(team || '').toUpperCase()};TIME=${Math.max(0, Math.floor(Number(seconds || 0)))};HP=${Math.max(0, Math.min(100, Number(hp || 0)))};ROOM=${String(ROOM_CODE || '').toUpperCase()}`;
+        }
+
+        function parseFinalCodeText(text) {
+            const raw = String(text || '').trim();
+            if (!raw) return null;
+            const out = {};
+            raw.replace(/[|,]/g, ';').split(';').forEach(part => {
+                const [k, ...rest] = part.split('=');
+                if (!k || !rest.length) return;
+                out[k.trim().toLowerCase()] = rest.join('=').trim();
+            });
+            let team = String(out.team || out.nhom || out.group || out.id || '').toLowerCase().trim();
+            team = team.replace('nhóm cổ đông', '').replace('nhom co dong', '').replace('nhóm', '').replace('nhom', '').trim();
+            if (team.includes('châu') || team.includes('chau')) team = 'chau';
+            if (team.includes('dung') || team.includes('dũng')) team = 'dung';
+            const time = Number(out.time || out.seconds || out.giay || out['thời gian'] || 0);
+            const hp = Number(out.hp || out.integrity || out.khoiphuc || out['khôi phục'] || 100);
+            if (!team || !activeTeams.includes(team)) return null;
+            if (!Number.isFinite(time) || time <= 0) return null;
+            if (!Number.isFinite(hp) || hp < 0) return null;
+            return { team, time: Math.floor(time), hp: Math.max(0, Math.min(100, Math.floor(hp))) };
+        }
+
+        function v141SendFinalResult(seconds) {
+            if (isHost || !teamId) return;
+            const payload = v141MakePayload(teamId, integrity, seconds, 'auto-finish');
+            // Gửi nhiều nhịp trong 20 giây, nhưng chỉ khi đã hoàn thành. Đây không phải realtime gameplay.
+            const delays = [0, 150, 350, 700, 1200, 2000, 3200, 5000, 8000, 12000, 17000, 22000];
+            delays.forEach((delay, idx) => {
+                setTimeout(() => {
+                    try {
+                        payload.sentAt = Date.now();
+                        payload.seq = Date.now() + idx;
+                        payload.reason = 'auto-finish-' + idx;
+                        postRealtimePayload(payload, { important: true, final: true });
+                    } catch(e) {}
+                }, delay);
+            });
+        }
+
+        function finishGame() {
+            if (gameFinished) return;
+            gameFinished = true;
+            const seconds = lockFinalElapsedSeconds();
+            window.currentStageCode = "win";
+            winSound();
+            nextView('view-result');
+            document.getElementById('final-integrity').innerHTML = integrity + "%";
+            document.getElementById('res-team').innerHTML = teamName;
+            document.getElementById('res-time').innerHTML = seconds;
+            document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X";
+            const manualCodeEl = document.getElementById('manual-result-code');
+            if (manualCodeEl) manualCodeEl.innerHTML = getFinalCode(teamId, integrity, seconds);
+            const title = document.getElementById('result-title');
+            if (integrity === 100) {
+                title.innerHTML = "KHÔI PHỤC 100% — ĐỦ ĐIỀU KIỆN TRANH HẠNG";
+                title.style.color = "var(--neon-green)";
+            } else {
+                title.innerHTML = "HOÀN THÀNH NHIỆM VỤ — CHƯA ĐẠT MỐC 100%";
+                title.style.color = "orange";
+            }
+            v141SendFinalResult(seconds);
+        }
+
+        function applyHostPayload(payload, options = {}) {
+            if (!payload || !payload.team) return;
+            payload.team = String(payload.team);
+            const incomingStamp = Number(payload.sentAt || 0) || Date.now();
+            const cutoff = getHostResetCutoff();
+            if (cutoff && incomingStamp < cutoff) return;
+            payload._receivedAt = options.fromHistory ? (payload._receivedAt || Date.now()) : Date.now();
+
+            // Nhận diện người chơi vào/chơi, nhưng không xếp hạng khi chưa hoàn thành.
+            if (!v141IsFinal(payload)) {
+                updatePendingHostCard(payload);
+                updateAutoFollowButton();
+                return;
+            }
+
+            payload.stageCode = 'win';
+            payload.stage = 'Hoàn thành';
+            payload.finalTime = v141FinalSeconds(payload);
+            payload.time = payload.finalTime;
+            payload.hp = Math.max(0, Math.min(100, Number(payload.hp ?? payload.extra?.finalIntegrity ?? 0) || 0));
+
+            const old = window.teamStates[payload.team];
+            if (old && old.stageCode === 'win') {
+                const oldHp = Number(old.hp || 0), newHp = Number(payload.hp || 0);
+                const oldT = v141FinalSeconds(old), newT = v141FinalSeconds(payload);
+                if (newHp < oldHp) return;
+                if (newHp === oldHp && newT >= oldT) return;
+            }
+
+            window.teamStates[payload.team] = payload;
+            updateFinalHostCard(payload);
+            renderLeaderboard();
+            renderFinalCenter();
+            updateAutoFollowButton();
+            if (options.persist !== false) saveHostHistory();
+        }
+
+        function updatePendingHostCard(payload) {
+            if (!isHost || !payload || !payload.team) return;
+            const id = String(payload.team);
+            const card = document.getElementById(`card-team-${id}`);
+            if (!card) return;
+            if (!window.teamStates[id] || window.teamStates[id].stageCode !== 'win') {
+                card.classList.add('pending-playing-card');
+                const stageEl = document.getElementById(`host-stage-${id}`);
+                const timeEl = document.getElementById(`host-time-${id}`);
+                const hpTxtEl = document.getElementById(`host-hp-txt-${id}`);
+                const fill = document.getElementById(`host-hp-fill-${id}`);
+                const code = payload.stageCode || 'login';
+                const status = ['c1','c2','c3','c4','c5'].includes(code) ? '🟢 ĐANG CHƠI' : (code === 'intro' ? '🟡 ĐÃ VÀO GAME' : '🟡 ĐÃ KẾT NỐI');
+                if (stageEl) stageEl.innerHTML = `${status} · Chờ kết quả cuối`;
+                if (timeEl) timeEl.innerHTML = '...';
+                if (hpTxtEl) hpTxtEl.innerHTML = payload.hp != null ? `${payload.hp}%` : '—';
+                if (fill) {
+                    fill.style.width = payload.hp != null ? `${payload.hp}%` : '15%';
+                    fill.style.background = 'rgba(0,210,255,.75)';
+                }
+            }
+        }
+
+        function updateFinalHostCard(payload) {
+            const id = String(payload.team);
+            const card = document.getElementById(`card-team-${id}`);
+            if (!card) return;
+            card.classList.remove('pending-playing-card');
+            card.classList.add('active-card', 'final-complete-card');
+            const stageEl = document.getElementById(`host-stage-${id}`);
+            const timeEl = document.getElementById(`host-time-${id}`);
+            const hpTxtEl = document.getElementById(`host-hp-txt-${id}`);
+            const fill = document.getElementById(`host-hp-fill-${id}`);
+            if (stageEl) stageEl.innerHTML = `🏁 ĐÃ HOÀN THÀNH · ${v141FinalSeconds(payload)}s`;
+            if (timeEl) timeEl.innerHTML = `${v141FinalSeconds(payload)}s`;
+            if (hpTxtEl) hpTxtEl.innerHTML = `${payload.hp ?? 100}%`;
+            if (fill) {
+                fill.style.width = `${payload.hp ?? 100}%`;
+                fill.style.background = Number(payload.hp) === 100 ? 'var(--neon-green)' : 'orange';
+            }
+        }
+
+        function initHostDashboard() {
+            document.getElementById("main-body").classList.add("host-mode-active");
+            const container = document.getElementById("host-dashboard");
+            if (!container) return;
+            container.innerHTML = activeTeams.map(id => `
+                <div class="host-card final-only-card" id="card-team-${id}" onclick="selectSpecTeam('${id}')">
+                    <div class="host-team-name"><span>${getTeamDisplayName(id)}</span> <span id="host-time-${id}">—</span></div>
+                    <div class="host-team-stage" id="host-stage-${id}">Chưa có kết quả cuối</div>
+                    <div style="font-size:0.8rem; display:flex; justify-content:space-between; margin-top:3px;"><span>Khôi phục:</span><span id="host-hp-txt-${id}">—</span></div>
+                    <div class="host-hp-bar"><div class="host-hp-fill" id="host-hp-fill-${id}" style="width:0%"></div></div>
+                </div>
+            `).join("");
+            installManualResultPanel();
+            renderLeaderboard();
+            renderFinalCenter();
+            updateAutoFollowButton();
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById("leaderboard-list");
+            const strip = document.getElementById("winner-strip");
+            if (!list || !strip) return;
+            document.querySelectorAll(".host-card").forEach(card => card.classList.remove("winner-card"));
+
+            const finished = activeTeams
+                .map(id => window.teamStates[id])
+                .filter(s => s && s.stageCode === "win")
+                .sort((a, b) => {
+                    const aPerfect = Number(a.hp) === 100 ? 1 : 0;
+                    const bPerfect = Number(b.hp) === 100 ? 1 : 0;
+                    if (bPerfect !== aPerfect) return bPerfect - aPerfect;
+                    if (Number(b.hp) !== Number(a.hp)) return Number(b.hp) - Number(a.hp);
+                    return v141FinalSeconds(a) - v141FinalSeconds(b);
+                });
+
+            const perfectFinishers = finished.filter(s => Number(s.hp) === 100)
+                                           .sort((a, b) => v141FinalSeconds(a) - v141FinalSeconds(b));
+
+            if (!finished.length) {
+                list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:16px;">Đã nhận diện người chơi nếu họ vào game. Bảng xếp hạng chỉ hiện khi có kết quả cuối.</div>`;
+                strip.innerHTML = "🏁 CHƯA CÓ KẾT QUẢ CUỐI";
+                return;
+            }
+
+            if (perfectFinishers.length) {
+                const winner = perfectFinishers[0];
+                strip.innerHTML = `🏆 TẠM DẪN ĐẦU: ${getTeamDisplayName(winner.team)} — 100% TRONG ${v141FinalSeconds(winner)} GIÂY`;
+                const winnerCard = document.getElementById(`card-team-${winner.team}`);
+                if (winnerCard) winnerCard.classList.add("winner-card");
+            } else {
+                strip.innerHTML = "⚠️ ĐÃ CÓ KẾT QUẢ, NHƯNG CHƯA CÓ AI ĐẠT 100%";
+            }
+
+            list.innerHTML = finished.map((s) => {
+                const perfect = Number(s.hp) === 100;
+                const rankLabel = perfect ? `#${perfectFinishers.findIndex(x => x.team === s.team) + 1}` : "—";
+                const status = perfect ? "Đủ điều kiện tranh hạng" : "Hoàn thành nhưng không đạt 100%";
+                return `
+                    <div class="leader-row ${perfect ? "perfect" : "not-perfect"}">
+                        <div class="rank-badge">${rankLabel}</div>
+                        <div>
+                            <div>${getTeamDisplayName(s.team)}</div>
+                            <div class="leader-meta">${status}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="color:${perfect ? "var(--neon-green)" : "orange"}">${s.hp}%</div>
+                            <div class="leader-meta">${v141FinalSeconds(s)}s</div>
+                        </div>
+                    </div>`;
+            }).join("");
+        }
+
+        function renderFinalCenter() {
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport || !isHost) return;
+            const finished = activeTeams.map(id => window.teamStates[id]).filter(s => s && s.stageCode === 'win');
+            const pending = activeTeams.filter(id => !window.teamStates[id] || window.teamStates[id].stageCode !== 'win');
+            const best = finished.filter(s => Number(s.hp) === 100).sort((a,b) => v141FinalSeconds(a) - v141FinalSeconds(b))[0];
+            viewport.innerHTML = `
+                <div class="final-center-shell">
+                    <div class="final-center-head">
+                        <div>
+                            <div class="final-center-kicker">SAFE AUTO-FINAL MODE</div>
+                            <div class="final-center-title">Tự nhận kết quả cuối, nhập tay chỉ để dự phòng</div>
+                        </div>
+                        <div class="final-center-status">${finished.length}/${activeTeams.length} đã hoàn thành</div>
+                    </div>
+                    <div class="final-center-grid">
+                        <div class="final-center-card"><span>Đã có kết quả</span><strong>${finished.length}</strong><small>nhóm/người chơi</small></div>
+                        <div class="final-center-card"><span>Chưa xong</span><strong>${pending.length}</strong><small>${pending.slice(0,3).map(getTeamDisplayName).join(', ') || 'Không còn'}</small></div>
+                        <div class="final-center-card"><span>Đang dẫn đầu</span><strong>${best ? v141FinalSeconds(best) + 's' : '—'}</strong><small>${best ? getTeamDisplayName(best.team) : 'Chưa có 100%'}</small></div>
+                    </div>
+                    <div class="final-center-note">✅ Host vẫn nhận diện người chơi đã vào game, nhưng chỉ xếp hạng khi họ hoàn thành. Nếu tự gửi lỗi, dùng mã dự phòng trên màn hình kết quả người chơi.</div>
+                </div>`;
+        }
+
+        function installManualResultPanel() {
+            if (!isHost) return;
+            const hostRight = document.querySelector('#view-host .host-right-side');
+            if (!hostRight || document.getElementById('manual-result-panel')) return;
+            const panel = document.createElement('div');
+            panel.id = 'manual-result-panel';
+            panel.className = 'manual-result-panel';
+            panel.innerHTML = `
+                <div class="manual-title">🛟 Dự phòng: chỉ dùng khi kết quả không tự hiện</div>
+                <div class="manual-grid">
+                    <select id="manual-team" class="manual-input">${activeTeams.map(id => `<option value="${id}">${getTeamDisplayName(id)}</option>`).join('')}</select>
+                    <input id="manual-time" class="manual-input" type="number" min="0" placeholder="Thời gian giây">
+                    <input id="manual-hp" class="manual-input" type="number" min="0" max="100" value="100" placeholder="% khôi phục">
+                    <button class="manual-btn" onclick="submitManualResult()">GHI KẾT QUẢ</button>
+                </div>
+                <div class="manual-code-row">
+                    <input id="manual-code-input" class="manual-input" placeholder="Hoặc dán mã: TEAM=1;TIME=102;HP=100">
+                    <button class="manual-btn ghost" onclick="submitManualCode()">NHẬP MÃ</button>
+                </div>`;
+            const controls = hostRight.querySelector('.mirror-controls');
+            if (controls) controls.insertAdjacentElement('afterend', panel);
+            else hostRight.insertBefore(panel, hostRight.firstChild);
+        }
+
+        function submitManualResult() {
+            const team = document.getElementById('manual-team')?.value;
+            const time = Number(document.getElementById('manual-time')?.value || 0);
+            const hp = Number(document.getElementById('manual-hp')?.value || 100);
+            if (!team || !Number.isFinite(time) || time <= 0) { alert('Nhập thời gian hợp lệ trước nha.'); return; }
+            applyHostPayload(v141MakePayload(team, hp, time, 'manual-host'));
+            saveHostHistory();
+        }
+
+        function submitManualCode() {
+            const text = document.getElementById('manual-code-input')?.value || '';
+            const parsed = parseFinalCodeText(text);
+            if (!parsed) { alert('Mã chưa đúng. Ví dụ: TEAM=1;TIME=102;HP=100'); return; }
+            applyHostPayload(v141MakePayload(parsed.team, parsed.hp, parsed.time, 'manual-code'));
+            saveHostHistory();
+        }
+
+        function updateAutoFollowButton() {
+            const btn = document.getElementById('auto-follow-btn');
+            const pill = document.getElementById('live-status-pill');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '🛡️ SAFE AUTO-FINAL MODE';
+                btn.disabled = true;
+            }
+            if (pill) {
+                const finished = activeTeams.filter(id => window.teamStates[id] && window.teamStates[id].stageCode === 'win').length;
+                pill.innerHTML = `${finished}/${activeTeams.length} KẾT QUẢ CUỐI`;
+            }
+        }
+
+        function selectSpecTeam(id) {
+            window.selectedSpecTeam = id;
+            const payload = window.teamStates[id];
+            document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
+            const card = document.getElementById(`card-team-${id}`);
+            if (card) card.classList.add('spec-selected');
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport) return;
+            if (payload && payload.stageCode === 'win') {
+                viewport.innerHTML = `
+                    <div class="final-detail-card">
+                        <div class="final-detail-title">${getTeamDisplayName(id)}</div>
+                        <div class="final-detail-row"><span>Trạng thái</span><strong>Đã hoàn thành</strong></div>
+                        <div class="final-detail-row"><span>Thời gian</span><strong>${v141FinalSeconds(payload)}s</strong></div>
+                        <div class="final-detail-row"><span>Khôi phục</span><strong>${payload.hp}%</strong></div>
+                        <div class="final-detail-row"><span>Nguồn</span><strong>${payload.reason || payload.extra?.source || 'auto'}</strong></div>
+                    </div>`;
+            } else {
+                viewport.innerHTML = `<div class="final-center-note">⏳ ${getTeamDisplayName(id)} chưa có kết quả cuối. Nếu người chơi đã xong mà host chưa hiện, nhập mã dự phòng trên điện thoại.</div>`;
+            }
+            updateAutoFollowButton();
+        }
+
+        function mirrorPlayerScreen(payload) {
+            if (!payload || payload.stageCode !== 'win') return;
+            selectSpecTeam(payload.team);
+        }
+
+        function refreshHostPresenceCards() {
+            if (!isHost) return;
+            activeTeams.forEach(id => {
+                const payload = window.teamStates[id];
+                if (payload && payload.stageCode === 'win') updateFinalHostCard(payload);
+            });
+            updateAutoFollowButton();
+        }
+
+        function restoreHostHistory() {
+            if (!isHost) return;
+            try {
+                const raw = localStorage.getItem(HOST_HISTORY_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (!data || data.room !== ROOM_CODE || !data.teamStates) return;
+                const cutoff = getHostResetCutoff();
+                Object.keys(data.teamStates).forEach(team => {
+                    const payload = data.teamStates[team];
+                    if (payload && payload.stageCode === 'win' && (!cutoff || Number(payload.sentAt || 0) >= cutoff)) {
+                        applyHostPayload(payload, { fromHistory: true, persist: false });
+                    }
+                });
+                renderLeaderboard();
+                renderFinalCenter();
+            } catch(e) {}
+        }
+
+        function copyFinalResultCode() {
+            try {
+                const text = document.getElementById('manual-result-code')?.innerText || '';
+                if (!text) return;
+                navigator.clipboard?.writeText(text);
+                const btn = document.getElementById('copy-result-code-btn');
+                if (btn) {
+                    const old = btn.innerHTML;
+                    btn.innerHTML = '✅ ĐÃ COPY MÃ KẾT QUẢ';
+                    setTimeout(() => btn.innerHTML = old, 1500);
+                }
+            } catch(e) {}
+        }
+
     </script>
 </body>
 </html>
