@@ -1523,7 +1523,7 @@
 
 
         /* ======================================================= */
-        /* V13.0 RESULT-ONLY STABLE UI - BILLION-CLASS EXPERIENCE      */
+        /* V14.0 FINAL-ONLY SAFE UI - BILLION-CLASS EXPERIENCE      */
         /* ======================================================= */
         .elite-hero-strip {
             display: grid;
@@ -2106,7 +2106,7 @@
         }
 
 
-        /* V13.0 RESULT-ONLY STABLE PATCH */
+        /* V14.0 FINAL-ONLY SAFE PATCH */
         .actual-mirror-video,
         video[id^="actual-screen-video-"] {
             width: 100% !important;
@@ -2129,7 +2129,7 @@
 
 
         /* ======================================================= */
-        /* V13.0 RESULT-ONLY STABLE WORKSHOP UI                    */
+        /* V14.0 FINAL-ONLY SAFE WORKSHOP UI                    */
         /* ======================================================= */
         .result-only-shell {
             width: 100%;
@@ -2333,6 +2333,206 @@
             }
         }
 
+
+        /* ======================================================= */
+        /* V14.0 FINAL-ONLY SAFE WORKSHOP UI                       */
+        /* ======================================================= */
+        body.host-mode-active .host-split-layout {
+            grid-template-columns: 1fr;
+        }
+        .final-only-card {
+            cursor: pointer;
+            opacity: .92;
+        }
+        .final-complete-card {
+            border-color: rgba(0,255,136,.55) !important;
+            box-shadow: 0 0 22px rgba(0,255,136,.14), inset 0 0 18px rgba(0,255,136,.05) !important;
+            opacity: 1;
+        }
+        .manual-result-panel {
+            margin: 14px 0;
+            padding: 14px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,211,106,.08), rgba(0,229,255,.055));
+            border: 1px solid rgba(255,211,106,.24);
+            box-shadow: inset 0 0 20px rgba(255,211,106,.035), 0 12px 24px rgba(0,0,0,.20);
+        }
+        .manual-title {
+            color: #fff4ca;
+            font-size: .86rem;
+            font-weight: 1000;
+            letter-spacing: .06em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .manual-grid {
+            display: grid;
+            grid-template-columns: 1.2fr .85fr .75fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+        .manual-code-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .manual-input {
+            width: 100%;
+            min-width: 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0,229,255,.22);
+            background: rgba(2,6,18,.88);
+            color: #fff;
+            padding: 11px 12px;
+            font-family: inherit;
+            font-weight: 800;
+        }
+        .manual-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 11px 13px;
+            background: linear-gradient(135deg, #00d2ff, #7c3cff);
+            color: #fff;
+            font-family: inherit;
+            font-weight: 1000;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 0 18px rgba(0,229,255,.14);
+        }
+        .manual-btn.ghost {
+            background: rgba(255,211,106,.12);
+            border: 1px solid rgba(255,211,106,.24);
+            color: #fff4ca;
+        }
+        .final-center-shell, .final-detail-card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+        .final-center-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(12,18,44,.76);
+            border: 1px solid rgba(0,229,255,.18);
+        }
+        .final-center-kicker {
+            color: #9eeaff;
+            font-size: .72rem;
+            font-weight: 1000;
+            letter-spacing: .14em;
+            margin-bottom: 5px;
+        }
+        .final-center-title {
+            color: #fff;
+            font-size: 1.18rem;
+            font-weight: 1000;
+        }
+        .final-center-status {
+            align-self: flex-start;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: rgba(0,255,136,.10);
+            border: 1px solid rgba(0,255,136,.22);
+            color: #d8fff0;
+            font-size: .74rem;
+            font-weight: 1000;
+            white-space: nowrap;
+        }
+        .final-center-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 10px;
+        }
+        .final-center-card {
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(12,18,44,.72);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+        .final-center-card span {
+            color: #9eeaff;
+            font-size: .68rem;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .final-center-card strong {
+            display:block;
+            color:#fff4ca;
+            font-size:1.42rem;
+            font-weight:1000;
+            margin-top:7px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+        .final-center-card small {
+            display:block;
+            color:#91a7b8;
+            font-size:.72rem;
+            margin-top:5px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+        .final-center-note {
+            padding: 13px 14px;
+            border-radius: 16px;
+            background: rgba(0,229,255,.07);
+            border: 1px solid rgba(0,229,255,.16);
+            color: #cbd5e1;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+        .final-detail-card {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(12,18,44,.78);
+            border: 1px solid rgba(0,229,255,.18);
+        }
+        .final-detail-title {
+            color:#fff4ca;
+            font-size:1.35rem;
+            font-weight:1000;
+            margin-bottom:4px;
+        }
+        .final-detail-row {
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            padding:10px 0;
+            border-top:1px solid rgba(255,255,255,.07);
+            color:#cbd5e1;
+        }
+        .final-detail-row strong {
+            color:#fff;
+            text-align:right;
+        }
+        #copy-result-code-btn {
+            border-color: rgba(255,211,106,.35) !important;
+            color: #fff4ca !important;
+        }
+        @media (max-width: 760px) {
+            .manual-grid, .manual-code-row, .final-center-grid {
+                grid-template-columns: 1fr;
+            }
+            .manual-btn {
+                width: 100%;
+            }
+            .final-center-head {
+                flex-direction: column;
+            }
+            .final-center-status {
+                align-self: stretch;
+                text-align: center;
+            }
+        }
+
 </style>
 </head>
 <body id="main-body">
@@ -2369,16 +2569,16 @@
         <!-- TRUNG TÂM GIÁM SÁT MÁY CHIẾU -->
         <div id="view-host" class="view">
             <h1>CO-LOGIX MISSION CONTROL CENTER</h1>
-            <div class="mission-subtitle">[ HOST THEO DÕI KẾT QUẢ TỪNG TẦNG - ỔN ĐỊNH CHO WORKSHOP ]</div>
+            <div class="mission-subtitle">[ HOST CHỈ HIỆN KẾT QUẢ CUỐI SAU KHI HOÀN THÀNH - CÓ NHẬP TAY DỰ PHÒNG ]</div>
             <div class="sonic-badge">Supreme Audio Core / Prestige Command Deck</div>
             <div class="winner-strip" id="winner-strip">🏁 CHƯA CÓ NHÓM NÀO HOÀN THÀNH 100%</div>
             <div class="leaderboard-panel">
                 <div class="leaderboard-title">
-                    <span>🏆 LIVE LEADERBOARD</span>
+                    <span>🏆 FINAL LEADERBOARD</span>
                     <span class="leaderboard-rule">Điều kiện thắng: khôi phục 100% + thời gian nhanh nhất</span>
                 </div>
                 <div class="leaderboard-list" id="leaderboard-list">
-                    <div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ các nhóm phá đảo...</div>
+                    <div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ nhóm hoàn thành và gửi kết quả cuối...</div>
                 </div>
             </div>
             
@@ -2386,7 +2586,7 @@
                 <div class="host-left-side" id="host-dashboard"></div>
                 
                 <div class="host-right-side">
-                    <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📡 MIRROR MATRIX FEED: IDLE</div>
+                    <div style="font-weight: bold; font-size: 1.2rem; color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); text-align: center;" id="spec-title">📊 FINAL RESULT CENTER: READY</div>
                     <div class="mirror-controls">
                         <button class="mirror-control-btn active" id="auto-follow-btn" onclick="enableAutoFollow()">🔴 AUTO-FOLLOW NHÓM ĐANG CHƠI</button>
                         <button class="mirror-control-btn" id="clear-results-btn" onclick="clearHostResults()">🧹 XÓA KẾT QUẢ / RESET HOST</button>
@@ -2394,7 +2594,7 @@
                     </div>
                     <div class="mirror-phone-viewport" id="mirror-viewport">
                         <div style="text-align: center; color: #475569; font-style: italic; margin: auto;">
-                            Host sẽ tự hiện nhóm đang chơi khi người chơi bấm kích hoạt. Có thể click một nhóm bên trái để xem riêng màn chơi realtime của nhóm đó.
+                            Host chỉ hiện kết quả cuối sau khi người chơi hoàn thành. Nếu mạng không gửi được, nhập tay bằng mã kết quả trên điện thoại người chơi.
                         </div>
                     </div>
                 </div>
@@ -2404,7 +2604,7 @@
         <!-- GIAO DIỆN CHƠI TRÊN ĐIỆN THOẠI CỦA CÁC NHÓM -->
         <!-- TẦNG 1: ĐĂNG NHẬP -->
         <div id="view-login" class="view">
-            <h1>E-LOGIX SHIELD V13.0</h1>
+            <h1>E-LOGIX SHIELD V14.0</h1>
             <div style="text-align:center; margin-bottom: 10px; color: var(--neon-blue); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">[ PHÒNG ĐIỀU HÀNH TÁC CHIẾN CHUỖI CUNG ỨNG ]</div>
             <div class="sonic-badge" style="margin-bottom:25px;">Supreme Audio Core / Prestige Command Deck</div>
             <div id="player-room-info" style="text-align:center; color:#94a3b8; font-size:.78rem; font-weight:800; margin:-12px 0 18px;">ROOM: lop1 · Realtime ready</div>
@@ -2499,8 +2699,13 @@
                 <div>💎 <span style="color: #94a3b8;">Lực lượng giải cứu:</span> <span id="res-team" style="font-weight: bold; color: white;">-</span></div>
                 <div>⏱️ <span style="color: #94a3b8;">Thời gian phá đảo:</span> <span id="res-time" style="font-weight: bold; color:var(--neon-blue)">0</span> giây</div>
                 <div>🔐 <span style="color: #94a3b8;">Mã Chứng Nhận Gốc:</span> <span id="res-code" style="color: var(--neon-purple); font-weight: bold;">-</span></div>
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(0,240,255,0.18);">
+                    🧾 <span style="color:#94a3b8;">Mã nhập tay dự phòng:</span>
+                    <span id="manual-result-code" style="color:#fff4ca; font-weight:900; word-break:break-word;">-</span>
+                </div>
             </div>
-            <div style="text-align: center; font-size: 0.95rem; color: #64748b; margin-top: 20px;">Hệ thống đã tự động đẩy kết quả lên màn hình máy chiếu báo cáo cô giáo!</div>
+            <button class="btn" id="copy-result-code-btn" onclick="copyFinalResultCode()" style="margin-top:14px;">📋 COPY MÃ KẾT QUẢ ĐỂ GỬI CHO HOST</button>
+            <div style="text-align: center; font-size: 0.95rem; color: #94a3b8; margin-top: 20px; line-height:1.45;">Kết quả sẽ tự gửi lên host sau khi hoàn thành. Nếu mạng lớp chập chờn, đọc/copy mã nhập tay dự phòng cho host.</div>
         </div>
     </div>
 
@@ -2696,9 +2901,9 @@
         // Khi test hoặc thi thật có thể thêm &session=ten-buoi-choi vào cả host và người chơi.
         const NETWORK_SESSION = String(urlParams.get('session') || urlParams.get('s') || 'main')
             .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 42) || 'main';
-        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v112_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v112_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
-        const NETWORK_TOPIC_FINAL = "elogix_chitk9480_controltower_v112_finish_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_PRIMARY = "elogix_chitk9480_controltower_v14_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_STABLE = "elogix_chitk9480_controltower_v14_stable_" + ROOM_CODE + "_" + NETWORK_SESSION;
+        const NETWORK_TOPIC_FINAL = "elogix_chitk9480_controltower_v14_finish_" + ROOM_CODE + "_" + NETWORK_SESSION;
         // V11.2: tách kênh mới hoàn toàn để không dính cache/kẹt tầng từ V9/V10/V11 cũ.
         // Kênh FINISH riêng giúp host nhận được thời gian khóa cuối cùng chắc hơn.
         const NETWORK_PUBLISH_TOPICS = Array.from(new Set([NETWORK_TOPIC_PRIMARY, NETWORK_TOPIC_STABLE]));
@@ -2751,8 +2956,8 @@
             return teamLabels[id] || ("Nhóm Cổ Đông " + id);
         }
 
-        const HOST_HISTORY_KEY = `elogix_host_history_v112_${ROOM_CODE}_${NETWORK_SESSION}`;
-        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v112_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_HISTORY_KEY = `elogix_host_history_v14_final_${ROOM_CODE}_${NETWORK_SESSION}`;
+        const HOST_RESET_KEY = `elogix_host_reset_cutoff_v14_final_${ROOM_CODE}_${NETWORK_SESSION}`;
 
         function getHostResetCutoff() {
             try { return Number(localStorage.getItem(HOST_RESET_KEY) || 0) || 0; }
@@ -3240,7 +3445,7 @@
                                            .sort((a, b) => getPayloadFinalSeconds(a) - getPayloadFinalSeconds(b));
 
             if (!finished.length) {
-                list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ các nhóm phá đảo...</div>`;
+                list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:10px;">Đang chờ nhóm hoàn thành và gửi kết quả cuối...</div>`;
                 strip.innerHTML = "🏁 CHƯA CÓ NHÓM NÀO HOÀN THÀNH 100%";
                 return;
             }
@@ -3976,7 +4181,7 @@ function startPlayerRealtimeLoop() {
         function updateRoomLabels() {
             try {
                 const info = document.getElementById('player-room-info');
-                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V13.0 RESULT-ONLY STABLE`;
+                if (info) info.innerHTML = `ROOM: ${ROOM_CODE.toUpperCase()} · SESSION: ${NETWORK_SESSION.toUpperCase()} · V14.0 FINAL-ONLY SAFE`;
                 const pill = document.getElementById('live-status-pill');
                 if (pill) pill.innerHTML = `ROOM ${ROOM_CODE.toUpperCase()} · SESSION ${NETWORK_SESSION.toUpperCase()} · ĐANG NGHE`;
             } catch(e) {}
@@ -3984,7 +4189,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V13.0 RESULT-ONLY STABLE LAYER: command deck + stage rail + host metrics
+        // V14.0 FINAL-ONLY SAFE LAYER: command deck + stage rail + host metrics
         function installPrestigeInterface() {
             if (window.__prestigeUIInstalled) return;
             window.__prestigeUIInstalled = true;
@@ -4117,7 +4322,7 @@ function startPlayerRealtimeLoop() {
 
 
 
-        // V13.0 RESULT-ONLY STABLE UI LAYER: billionaire-grade overview + mission intelligence
+        // V14.0 FINAL-ONLY SAFE UI LAYER: billionaire-grade overview + mission intelligence
         function installInfinityEliteUI() {
             if (window.__infinityEliteInstalled) return;
             window.__infinityEliteInstalled = true;
@@ -4214,7 +4419,7 @@ function startPlayerRealtimeLoop() {
 
 
         // =======================================================
-        // V13.0 RESULT-ONLY STABLE WORKSHOP MODE
+        // V14.0 FINAL-ONLY SAFE WORKSHOP MODE
         // Bỏ live màn hình/video để ưu tiên ổn định: host chỉ hiển thị kết quả từng tầng.
         // =======================================================
         const RESULT_STAGE_META = [
@@ -4368,6 +4573,387 @@ function startPlayerRealtimeLoop() {
         function renderActualMirror(payload) {
             // Dù còn stream cũ/cache, bản V13 chỉ hiển thị kết quả.
             return mirrorPlayerScreen(payload);
+        }
+
+
+
+        // =======================================================
+        // V14.0 FINAL-ONLY SAFE WORKSHOP MODE
+        // Host chỉ nhận/hiện kết quả cuối. Không theo realtime nữa để giảm rủi ro.
+        // Có nhập tay dự phòng nếu mạng không gửi được.
+        // =======================================================
+        function isFinalPayload(payload) {
+            return !!payload && String(payload.stageCode || '') === 'win';
+        }
+
+        function getFinalPayloadSeconds(payload) {
+            return getPayloadFinalSeconds(payload);
+        }
+
+        function makeFinalPayload(team, hp, seconds, source = 'manual') {
+            team = String(team || '');
+            hp = Math.max(0, Math.min(100, Number(hp || 0)));
+            seconds = Math.max(0, Math.floor(Number(seconds || 0)));
+            return {
+                game: 'elogix-shield',
+                version: '14.0-final-only-safe',
+                room: ROOM_CODE,
+                session: NETWORK_SESSION,
+                clientId: source + '_' + Date.now(),
+                team,
+                stage: 'Hoàn thành',
+                stageCode: 'win',
+                hp,
+                time: seconds,
+                finalTime: seconds,
+                startedAt: 0,
+                finishedAt: Date.now(),
+                sentAt: Date.now(),
+                activityAt: Date.now(),
+                seq: Date.now(),
+                reason: source,
+                isPlaying: false,
+                online: true,
+                screenShareStatus: 'final_only',
+                extra: { finalIntegrity: hp, finalTime: seconds, source }
+            };
+        }
+
+        function getFinalCode(team, hp, seconds) {
+            return `TEAM=${String(team || '').toUpperCase()};TIME=${Math.max(0, Math.floor(Number(seconds || 0)))};HP=${Math.max(0, Math.min(100, Number(hp || 0)))};ROOM=${String(ROOM_CODE || '').toUpperCase()}`;
+        }
+
+        function parseFinalCodeText(text) {
+            const raw = String(text || '').trim();
+            if (!raw) return null;
+            const normalized = raw.replace(/[|,]/g, ';');
+            const out = {};
+            normalized.split(';').forEach(part => {
+                const [k, ...rest] = part.split('=');
+                if (!k || !rest.length) return;
+                out[k.trim().toLowerCase()] = rest.join('=').trim();
+            });
+            const teamRaw = out.team || out.nhom || out.group || out.id || '';
+            let team = teamRaw.toLowerCase()
+                .replace('nhóm cổ đông', '')
+                .replace('nhom co dong', '')
+                .replace('nhóm', '')
+                .replace('nhom', '')
+                .trim();
+            if (team.includes('châu') || team.includes('chau')) team = 'chau';
+            if (team.includes('dung') || team.includes('dũng')) team = 'dung';
+            const time = Number(out.time || out.seconds || out.giay || out['thời gian'] || 0);
+            const hp = Number(out.hp || out.integrity || out.khoiphuc || out['khôi phục'] || 100);
+            if (!team || !activeTeams.includes(team)) return null;
+            if (!Number.isFinite(time) || time < 0) return null;
+            if (!Number.isFinite(hp) || hp < 0) return null;
+            return { team, time: Math.floor(time), hp: Math.max(0, Math.min(100, Math.floor(hp))) };
+        }
+
+        function applyHostPayload(payload, options = {}) {
+            if (!payload || !payload.team) return;
+            // V14: Host bỏ qua mọi gói chưa hoàn thành để không phụ thuộc realtime.
+            if (!isFinalPayload(payload)) return;
+
+            const incomingStamp = Number(payload.sentAt || 0) || Date.now();
+            const cutoff = getHostResetCutoff();
+            if (cutoff && incomingStamp < cutoff) return;
+
+            payload.team = String(payload.team);
+            payload._receivedAt = options.fromHistory ? (payload._receivedAt || Date.now()) : Date.now();
+            payload.stageCode = 'win';
+            payload.stage = 'Hoàn thành';
+            payload.finalTime = getFinalPayloadSeconds(payload);
+            payload.time = payload.finalTime;
+
+            const previousPayload = window.teamStates[payload.team];
+            if (previousPayload && previousPayload.stageCode === 'win') {
+                // Nếu cùng nhóm gửi lại nhiều lần, giữ kết quả tốt nhất: ưu tiên HP cao hơn, rồi thời gian nhanh hơn.
+                const oldHp = Number(previousPayload.hp || 0);
+                const newHp = Number(payload.hp || 0);
+                const oldT = getFinalPayloadSeconds(previousPayload);
+                const newT = getFinalPayloadSeconds(payload);
+                if (newHp < oldHp) return;
+                if (newHp === oldHp && newT >= oldT) return;
+            }
+
+            window.teamStates[payload.team] = payload;
+            updateFinalHostCard(payload);
+            renderLeaderboard();
+            renderFinalCenter();
+            updateAutoFollowButton();
+            if (options.persist !== false) saveHostHistory();
+        }
+
+        function updateFinalHostCard(payload) {
+            const id = String(payload.team);
+            const card = document.getElementById(`card-team-${id}`);
+            if (!card) return;
+            card.classList.add('active-card', 'final-complete-card');
+            const stageEl = document.getElementById(`host-stage-${id}`);
+            const timeEl = document.getElementById(`host-time-${id}`);
+            const hpTxtEl = document.getElementById(`host-hp-txt-${id}`);
+            const fill = document.getElementById(`host-hp-fill-${id}`);
+            if (stageEl) stageEl.innerHTML = `🏁 ĐÃ HOÀN THÀNH · ${getFinalPayloadSeconds(payload)}s`;
+            if (timeEl) timeEl.innerHTML = `${getFinalPayloadSeconds(payload)}s`;
+            if (hpTxtEl) hpTxtEl.innerHTML = `${payload.hp ?? 100}%`;
+            if (fill) {
+                fill.style.width = `${payload.hp ?? 100}%`;
+                fill.style.background = Number(payload.hp) === 100 ? 'var(--neon-green)' : 'orange';
+            }
+        }
+
+        function initHostDashboard() {
+            document.getElementById("main-body").classList.add("host-mode-active");
+            const container = document.getElementById("host-dashboard");
+            if (!container) return;
+            container.innerHTML = activeTeams.map(id => `
+                <div class="host-card final-only-card" id="card-team-${id}" onclick="selectSpecTeam('${id}')">
+                    <div class="host-team-name"><span>${getTeamDisplayName(id)}</span> <span id="host-time-${id}">—</span></div>
+                    <div class="host-team-stage" id="host-stage-${id}">Chưa có kết quả cuối</div>
+                    <div style="font-size:0.8rem; display:flex; justify-content:space-between; margin-top:3px;"><span>Khôi phục:</span><span id="host-hp-txt-${id}">—</span></div>
+                    <div class="host-hp-bar"><div class="host-hp-fill" id="host-hp-fill-${id}" style="width:0%"></div></div>
+                </div>
+            `).join("");
+            renderLeaderboard();
+            installManualResultPanel();
+            renderFinalCenter();
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById("leaderboard-list");
+            const strip = document.getElementById("winner-strip");
+            if (!list || !strip) return;
+
+            document.querySelectorAll(".host-card").forEach(card => card.classList.remove("winner-card"));
+
+            const finished = activeTeams
+                .map(id => window.teamStates[id])
+                .filter(s => s && s.stageCode === "win")
+                .sort((a, b) => {
+                    const aPerfect = Number(a.hp) === 100 ? 1 : 0;
+                    const bPerfect = Number(b.hp) === 100 ? 1 : 0;
+                    if (bPerfect !== aPerfect) return bPerfect - aPerfect;
+                    if (Number(b.hp) !== Number(a.hp)) return Number(b.hp) - Number(a.hp);
+                    return getFinalPayloadSeconds(a) - getFinalPayloadSeconds(b);
+                });
+
+            const perfectFinishers = finished.filter(s => Number(s.hp) === 100)
+                                           .sort((a, b) => getFinalPayloadSeconds(a) - getFinalPayloadSeconds(b));
+
+            if (!finished.length) {
+                list.innerHTML = `<div style="grid-column: 1 / -1; color:#64748b; text-align:center; font-style:italic; padding:16px;">Đang chờ nhóm hoàn thành. Host không theo realtime để giảm rủi ro mạng.</div>`;
+                strip.innerHTML = "🏁 CHƯA CÓ KẾT QUẢ CUỐI";
+                return;
+            }
+
+            if (perfectFinishers.length) {
+                const winner = perfectFinishers[0];
+                strip.innerHTML = `🏆 TẠM DẪN ĐẦU: ${getTeamDisplayName(winner.team)} — 100% TRONG ${getFinalPayloadSeconds(winner)} GIÂY`;
+                const winnerCard = document.getElementById(`card-team-${winner.team}`);
+                if (winnerCard) winnerCard.classList.add("winner-card");
+            } else {
+                strip.innerHTML = "⚠️ ĐÃ CÓ KẾT QUẢ, NHƯNG CHƯA CÓ AI ĐẠT 100%";
+            }
+
+            list.innerHTML = finished.map((s) => {
+                const perfect = Number(s.hp) === 100;
+                const rankLabel = perfect ? `#${perfectFinishers.findIndex(x => x.team === s.team) + 1}` : "—";
+                const status = perfect ? "Đủ điều kiện tranh hạng" : "Hoàn thành nhưng không đạt 100%";
+                return `
+                    <div class="leader-row ${perfect ? "perfect" : "not-perfect"}">
+                        <div class="rank-badge">${rankLabel}</div>
+                        <div>
+                            <div>${getTeamDisplayName(s.team)}</div>
+                            <div class="leader-meta">${status}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="color:${perfect ? "var(--neon-green)" : "orange"}">${s.hp}%</div>
+                            <div class="leader-meta">${getFinalPayloadSeconds(s)}s</div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderFinalCenter() {
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport || !isHost) return;
+            const finished = activeTeams.map(id => window.teamStates[id]).filter(s => s && s.stageCode === 'win');
+            const pending = activeTeams.filter(id => !window.teamStates[id] || window.teamStates[id].stageCode !== 'win');
+            const best = finished
+                .filter(s => Number(s.hp) === 100)
+                .sort((a,b) => getFinalPayloadSeconds(a) - getFinalPayloadSeconds(b))[0];
+
+            viewport.innerHTML = `
+                <div class="final-center-shell">
+                    <div class="final-center-head">
+                        <div>
+                            <div class="final-center-kicker">SAFE WORKSHOP MODE</div>
+                            <div class="final-center-title">Chỉ hiển thị kết quả cuối</div>
+                        </div>
+                        <div class="final-center-status">${finished.length}/${activeTeams.length} đã hoàn thành</div>
+                    </div>
+                    <div class="final-center-grid">
+                        <div class="final-center-card">
+                            <span>Đã có kết quả</span>
+                            <strong>${finished.length}</strong>
+                            <small>nhóm/người chơi</small>
+                        </div>
+                        <div class="final-center-card">
+                            <span>Chưa xong</span>
+                            <strong>${pending.length}</strong>
+                            <small>${pending.slice(0,3).map(getTeamDisplayName).join(', ') || 'Không còn'}</small>
+                        </div>
+                        <div class="final-center-card">
+                            <span>Đang dẫn đầu</span>
+                            <strong>${best ? getFinalPayloadSeconds(best) + 's' : '—'}</strong>
+                            <small>${best ? getTeamDisplayName(best.team) : 'Chưa có 100%'}</small>
+                        </div>
+                    </div>
+                    <div class="final-center-note">
+                        ✅ Cách an toàn: người chơi hoàn thành xong mới gửi kết quả. Nếu mạng không gửi được, nhập tay bằng mã kết quả trên điện thoại người chơi.
+                    </div>
+                </div>`;
+        }
+
+        function installManualResultPanel() {
+            if (!isHost) return;
+            const hostRight = document.querySelector('#view-host .host-right-side');
+            if (!hostRight || document.getElementById('manual-result-panel')) return;
+            const panel = document.createElement('div');
+            panel.id = 'manual-result-panel';
+            panel.className = 'manual-result-panel';
+            panel.innerHTML = `
+                <div class="manual-title">🛟 Nhập kết quả dự phòng nếu mạng không gửi được</div>
+                <div class="manual-grid">
+                    <select id="manual-team" class="manual-input">
+                        ${activeTeams.map(id => `<option value="${id}">${getTeamDisplayName(id)}</option>`).join('')}
+                    </select>
+                    <input id="manual-time" class="manual-input" type="number" min="0" placeholder="Thời gian giây">
+                    <input id="manual-hp" class="manual-input" type="number" min="0" max="100" value="100" placeholder="% khôi phục">
+                    <button class="manual-btn" onclick="submitManualResult()">GHI KẾT QUẢ</button>
+                </div>
+                <div class="manual-code-row">
+                    <input id="manual-code-input" class="manual-input" placeholder="Hoặc dán mã: TEAM=1;TIME=102;HP=100">
+                    <button class="manual-btn ghost" onclick="submitManualCode()">NHẬP MÃ</button>
+                </div>
+            `;
+            const controls = hostRight.querySelector('.mirror-controls');
+            if (controls) controls.insertAdjacentElement('afterend', panel);
+            else hostRight.insertBefore(panel, hostRight.firstChild);
+        }
+
+        function submitManualResult() {
+            const team = document.getElementById('manual-team')?.value;
+            const time = Number(document.getElementById('manual-time')?.value || 0);
+            const hp = Number(document.getElementById('manual-hp')?.value || 100);
+            if (!team || !Number.isFinite(time) || time <= 0) {
+                alert('Nhập thời gian hợp lệ trước nha.');
+                return;
+            }
+            const payload = makeFinalPayload(team, hp, time, 'manual-host');
+            applyHostPayload(payload);
+            saveHostHistory();
+        }
+
+        function submitManualCode() {
+            const text = document.getElementById('manual-code-input')?.value || '';
+            const parsed = parseFinalCodeText(text);
+            if (!parsed) {
+                alert('Mã chưa đúng. Ví dụ: TEAM=1;TIME=102;HP=100');
+                return;
+            }
+            const payload = makeFinalPayload(parsed.team, parsed.hp, parsed.time, 'manual-code');
+            applyHostPayload(payload);
+            saveHostHistory();
+        }
+
+        function updateAutoFollowButton() {
+            const btn = document.getElementById('auto-follow-btn');
+            const pill = document.getElementById('live-status-pill');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '🛡️ FINAL-ONLY SAFE MODE';
+                btn.disabled = true;
+            }
+            if (pill) {
+                const finished = activeTeams.filter(id => window.teamStates[id] && window.teamStates[id].stageCode === 'win').length;
+                pill.innerHTML = `${finished}/${activeTeams.length} KẾT QUẢ CUỐI`;
+            }
+        }
+
+        function selectSpecTeam(id) {
+            window.selectedSpecTeam = id;
+            const payload = window.teamStates[id];
+            document.querySelectorAll('.host-card').forEach(c => c.classList.remove('spec-selected'));
+            const card = document.getElementById(`card-team-${id}`);
+            if (card) card.classList.add('spec-selected');
+            const viewport = document.getElementById('mirror-viewport');
+            if (!viewport) return;
+            if (payload && payload.stageCode === 'win') {
+                viewport.innerHTML = `
+                    <div class="final-detail-card">
+                        <div class="final-detail-title">${getTeamDisplayName(id)}</div>
+                        <div class="final-detail-row"><span>Trạng thái</span><strong>Đã hoàn thành</strong></div>
+                        <div class="final-detail-row"><span>Thời gian</span><strong>${getFinalPayloadSeconds(payload)}s</strong></div>
+                        <div class="final-detail-row"><span>Khôi phục</span><strong>${payload.hp}%</strong></div>
+                        <div class="final-detail-row"><span>Nguồn</span><strong>${payload.reason || payload.extra?.source || 'auto'}</strong></div>
+                    </div>`;
+            } else {
+                viewport.innerHTML = `<div class="final-center-note">⏳ ${getTeamDisplayName(id)} chưa có kết quả cuối. Nếu người chơi đã xong mà host chưa hiện, nhập tay bằng mã kết quả trên điện thoại.</div>`;
+            }
+            updateAutoFollowButton();
+        }
+
+        function mirrorPlayerScreen(payload) {
+            // V14 không mirror màn hình. Click card để xem chi tiết kết quả.
+            if (!payload || payload.stageCode !== 'win') return;
+            selectSpecTeam(payload.team);
+        }
+
+        function refreshHostPresenceCards() {
+            if (!isHost) return;
+            activeTeams.forEach(id => {
+                const payload = window.teamStates[id];
+                const card = document.getElementById(`card-team-${id}`);
+                if (!card) return;
+                if (payload && payload.stageCode === 'win') updateFinalHostCard(payload);
+            });
+            updateAutoFollowButton();
+        }
+
+        function restoreHostHistory() {
+            if (!isHost) return;
+            try {
+                const raw = localStorage.getItem(HOST_HISTORY_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (!data || data.room !== ROOM_CODE || !data.teamStates) return;
+                const cutoff = getHostResetCutoff();
+                Object.keys(data.teamStates).forEach(team => {
+                    const payload = data.teamStates[team];
+                    if (payload && payload.stageCode === 'win' && (!cutoff || Number(payload.sentAt || 0) >= cutoff)) {
+                        applyHostPayload(payload, { fromHistory: true, persist: false });
+                    }
+                });
+                renderLeaderboard();
+                renderFinalCenter();
+            } catch(e) {}
+        }
+
+        function copyFinalResultCode() {
+            try {
+                const text = document.getElementById('manual-result-code')?.innerText || '';
+                if (!text) return;
+                navigator.clipboard?.writeText(text);
+                const btn = document.getElementById('copy-result-code-btn');
+                if (btn) {
+                    const old = btn.innerHTML;
+                    btn.innerHTML = '✅ ĐÃ COPY MÃ KẾT QUẢ';
+                    setTimeout(() => btn.innerHTML = old, 1500);
+                }
+            } catch(e) {}
         }
 
 
@@ -4648,6 +5234,8 @@ function startPlayerRealtimeLoop() {
             document.getElementById('res-team').innerHTML = teamName;
             document.getElementById('res-time').innerHTML = seconds;
             document.getElementById('res-code').innerHTML = "CERT-" + Math.floor(Math.random()*9000+1000) + "-" + integrity + "X";
+            const manualCodeEl = document.getElementById('manual-result-code');
+            if (manualCodeEl) manualCodeEl.innerHTML = getFinalCode(teamId, integrity, seconds);
             const title = document.getElementById('result-title');
             if (integrity === 100) {
                 title.innerHTML = "KHÔI PHỤC 100% — ĐỦ ĐIỀU KIỆN TRANH HẠNG";
