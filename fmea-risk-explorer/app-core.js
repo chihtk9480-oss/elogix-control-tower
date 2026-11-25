@@ -16,10 +16,11 @@ let state={page:'overview',stage:'all',search:'',scale:'s',solutionFilter:'all',
 const screen=document.getElementById('screen');
 const titles={overview:'Tổng quan',errors:'13 kiểu lỗi',simulator:'Mô phỏng RPN',solutions:'Giải pháp',scale:'Thang S–O–D'};
 function syncNavigation(){document.getElementById('crumb-title').textContent=titles[state.page];document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===state.page))}
-function nav(page){state.page=page;syncNavigation();render()}
+function refreshSimulatorSelection(){let selected=findRisk(state.simRisk);if(!currentScore(selected)){selected=scoredRisks()[0]||findRisk('K2');state.simRisk=selected.code}state.sim={...currentScore(selected)}}
+function nav(page){if(page==='simulator')refreshSimulatorSelection();state.page=page;syncNavigation();render()}
 function showToast(message){let el=document.getElementById('app-toast');if(!el){el=document.createElement('div');el.id='app-toast';el.className='app-toast';document.body.appendChild(el)}el.textContent=message;el.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>el.classList.remove('show'),2200)}
-function saveRiskScore(code,values){scoreOverrides[code]=values;persistScoreOverrides();render();openRisk(code);showToast('Đã lưu đánh giá '+code)}
-function resetRiskScore(code){delete scoreOverrides[code];persistScoreOverrides();render();openRisk(code);showToast('Đã khôi phục điểm ban đầu')}
+function saveRiskScore(code,values){scoreOverrides[code]=values;persistScoreOverrides();if(state.simRisk===code)refreshSimulatorSelection();render();openRisk(code);showToast('Đã lưu đánh giá '+code)}
+function resetRiskScore(code){delete scoreOverrides[code];persistScoreOverrides();if(state.simRisk===code)refreshSimulatorSelection();render();openRisk(code);showToast('Đã khôi phục điểm ban đầu')}
 document.addEventListener('click',e=>{
  const n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}
  const stage=e.target.closest('[data-stage]');if(stage){state.stage=stage.dataset.stage;state.search='';state.page='errors';syncNavigation();render();return}
