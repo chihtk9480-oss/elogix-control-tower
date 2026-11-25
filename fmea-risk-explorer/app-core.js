@@ -12,7 +12,7 @@ function isPriority(r){return priorityCodes().has(r.code)}
 function isUserScored(r){return Boolean(scoreOverrides[r.code])}
 function icon(name){return `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name]||icons.grid}</svg>`}
 document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
-let state={page:'overview',stage:'all',search:'',scale:'s',solutionFilter:'all',simRisk:'K2',sim:{s:9,o:4,d:8}};
+let state={page:'overview',stage:'all',search:'',scale:'s',solutionFilter:'all',simRisk:'K2',sim:{...currentScore(riskData.find(r=>r.code==='K2'))}};
 const screen=document.getElementById('screen');
 const titles={overview:'Tổng quan',errors:'13 kiểu lỗi',simulator:'Mô phỏng RPN',solutions:'Giải pháp',scale:'Thang S–O–D'};
 function syncNavigation(){document.getElementById('crumb-title').textContent=titles[state.page];document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===state.page))}
