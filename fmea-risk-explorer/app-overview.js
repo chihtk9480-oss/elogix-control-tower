@@ -2,11 +2,13 @@ function renderOverview(){
  const top=topRisks();
  const extras=[...priorityCodes()].filter(code=>!top.some(r=>r.code===code)).map(findRisk);
  const assessed=scoredCount();
- const total=riskData.every(r=>currentScore(r))?riskData.reduce((sum,r)=>sum+currentRpn(r),0):3068;
+ const complete=riskData.every(r=>currentScore(r));
+ const total=complete?riskData.reduce((sum,r)=>sum+currentRpn(r),0):3068;
+ const totalLabel=complete?'RPN HIỆN TẠI':'RPN CƠ SỞ';
  return `${pageHead('WAREHOUSE RISK CONTROL','Nhìn thấy rủi ro.<br><span class="accent">Chủ động kiểm soát.</span>','Theo dõi lỗi vận hành, đánh giá mức độ ưu tiên và chọn giải pháp phù hợp.','MULTI-SKU FULFILLMENT CENTER')}
- <section class="hero-panel"><div class="hero-copy"><div class="hero-kicker"><span></span> FMEA · RISK MANAGEMENT</div><h2 class="hero-title">Một quy trình.<br><em>13 điểm cần kiểm soát.</em></h2><p class="hero-desc">Từ nhặt hàng đến kiểm soát tồn kho — khám phá rủi ro và giải pháp trên cùng một màn hình.</p></div><div class="hero-visual"><div class="hero-grid">${Array.from({length:15},()=>'<span></span>').join('')}</div><div class="hero-score"><small>TỔNG RPN</small><strong>${total.toLocaleString('vi-VN')}</strong></div></div></section>
+ <section class="hero-panel"><div class="hero-copy"><div class="hero-kicker"><span></span> FMEA · RISK MANAGEMENT</div><h2 class="hero-title">Một quy trình.<br><em>13 điểm cần kiểm soát.</em></h2><p class="hero-desc">Từ nhặt hàng đến kiểm soát tồn kho — khám phá rủi ro và giải pháp trên cùng một màn hình.</p></div><div class="hero-visual"><div class="hero-grid">${Array.from({length:15},()=>'<span></span>').join('')}</div><div class="hero-score"><small>${totalLabel}</small><strong>${total.toLocaleString('vi-VN')}</strong></div></div></section>
  <section class="stats-grid">
-  <article class="stat-card"><div class="stat-top">Tổng điểm RPN <span class="stat-icon">${icon('chart')}</span></div><div class="stat-value">${total.toLocaleString('vi-VN')}<span>điểm</span></div><div class="stat-foot">Chỉ số ưu tiên rủi ro</div></article>
+  <article class="stat-card"><div class="stat-top">${totalLabel==="RPN HIỆN TẠI"?"RPN hiện tại":"RPN cơ sở"} <span class="stat-icon">${icon('chart')}</span></div><div class="stat-value">${total.toLocaleString('vi-VN')}<span>điểm</span></div><div class="stat-foot">Chỉ số ưu tiên rủi ro</div></article>
   <article class="stat-card"><div class="stat-top">Kiểu lỗi <span class="stat-icon">${icon('layers')}</span></div><div class="stat-value">13<span>lỗi</span></div><div class="stat-foot">Picking · Packing · Inventory</div></article>
   <article class="stat-card"><div class="stat-top">Đã chấm điểm <span class="stat-icon">${icon('check')}</span></div><div class="stat-value">${assessed}<span>/13</span></div><div class="stat-foot">Tiến độ đánh giá S–O–D</div></article>
  </section>
